@@ -2,10 +2,8 @@ import { useCallback, useMemo, useState } from 'react'
 import ChargingMap from './components/ChargingMap.jsx'
 import ControlPanel from './components/ControlPanel.jsx'
 import AnalyticsPanel from './components/AnalyticsPanel.jsx'
-import MapStats from './components/MapStats.jsx'
 import MapLegend from './components/MapLegend.jsx'
 import { useChargingData } from './hooks/useChargingData.js'
-import { resolveRegion } from './data/analytics.js'
 import { DEFAULT_FILTERS, GERMANY } from './config/map.js'
 import './App.css'
 
@@ -17,7 +15,9 @@ export default function App() {
   const [siteMode, setSiteMode] = useState(false)
   const { data, regions, states, detail, detailPending, status, error, selectSite, reload } = useChargingData(filters)
   const mapOptions = useMemo(() => ({ ...options, state: filters.state }), [options, filters.state])
-  const activeRegion = resolveRegion(regions?.states, filters.state, clickedRegion)
+  const activeRegion = clickedRegion
+    ? regions?.[clickedRegion.level]?.find(feature => (feature.properties.district_code || feature.properties.state_code) === (clickedRegion.district_code || clickedRegion.state_code))?.properties || null
+    : regions?.states.find(feature => feature.properties.state_name === filters.state)?.properties || null
   const closeSite = useCallback(() => { setSiteMode(false); selectSite(-1) }, [selectSite])
   const onFilters = useCallback(next => {
     setFilters(next)
@@ -40,10 +40,11 @@ export default function App() {
   return <main className="map-app">
     <ChargingMap data={data} regions={regions} options={mapOptions} viewState={viewState} onViewChange={setViewState}
       onSite={index => { setSiteMode(true); selectSite(index) }} onRegion={showRegion} onMapError={setMapError} />
-    <ControlPanel states={states} filters={filters} onFilters={onFilters} options={options} onOptions={onOptions} onReset={() => setViewState(GERMANY)} />
-    <MapStats data={data} showSites={options.showSites} status={status} error={error || mapError} onRetry={() => { closeSite(); setClickedRegion(null); reload() }} />
+    <ControlPanel states={states} filters={filters} onFilters={onFilters} options={options} onOptions={onOptions} onReset={() => { setViewState(GERMANY); setFilters({ ...DEFAULT_FILTERS }); setClickedRegion(null); closeSite() }} />
+
     <MapLegend regions={regions} options={mapOptions} />
     <AnalyticsPanel states={regions?.states} site={siteMode ? detail : null} region={activeRegion} metric={options.metric} pending={siteMode && detailPending}
+      data={data} showSites={options.showSites} status={status} error={error || mapError} onRetry={() => { closeSite(); setClickedRegion(null); reload() }}
       onCloseSite={closeSite} onOverview={overview} onSelectRegion={showRegion} />
     <div className="source">Данные: <a href="https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/start.html" target="_blank" rel="noreferrer">BNetzA · CC BY 4.0</a> · KBA · BKG · обработка и группировка</div>
   </main>

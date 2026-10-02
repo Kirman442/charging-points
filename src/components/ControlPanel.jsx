@@ -9,7 +9,7 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
         <label className="check"><input type="checkbox" checked={filters.dcOnly} onChange={event => change('dcOnly', event.target.checked)} />Есть DC-точки</label>
         <label className="check"><input type="checkbox" checked={filters.alwaysOpen} onChange={event => change('alwaysOpen', event.target.checked)} />Вся площадка работает 24/7</label>
         <label className="check"><input type="checkbox" checked={options.showSites} onChange={event => onOptions({ ...options, showSites: event.target.checked })} />Показать зарядные площадки</label>
-        <p className="note">Счётчик включает все точки выбранных площадок. Мощность и DC могут относиться к разным точкам.</p>
+        
       </fieldset>
       <fieldset className="controls"><legend>Отображение карты</legend>
         <label>Аналитический слой<select value={options.metric} onChange={event => onOptions({ ...options, metric: event.target.value })}><option value="sites">Зарядные площадки</option><option value="bev">Число BEV</option><option value="ratio">Точки на 1 000 BEV · земли</option></select></label>
@@ -17,6 +17,6 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
         <label>Подложка<select value={options.style} onChange={event => onOptions({ ...options, style: event.target.value })}><option value="dark">Dark Matter</option><option value="light">Positron</option></select></label>
       </fieldset>
     </div>
-    <button className="reset" onClick={onReset}>Показать Германию</button>
+    <button className="reset" onClick={onReset}>Сбросить выборку</button>
   </aside>
 }

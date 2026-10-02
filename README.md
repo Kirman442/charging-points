@@ -1,81 +1,72 @@
 # Charging infrastructure — Germany
 
-## Development
+React + deck.gl + MapLibre + Arrow/Parquet Workers.
+Work on dev; GitHub Actions deploys main. Vite base: /charging-points/.
+Run npm ci, npm run dev. Checks: npm run lint, npm run build,
+node --test tests/*.test.mjs. Production preview: npm run preview.
 
-Work on `dev`. Run `npm ci`, then `npm run dev`.
-Checks: `npm run lint`, `npm run build`, `node --test tests/data.test.mjs`.
-Production preview: `npm run preview`. GitHub Actions deploys `main`.
+## Panels and selection
+
+ControlPanel: compact controls on the left. AnalyticsPanel: persistent panel on
+the right with the current selection's sites and charging points, metric headline,
+regional details and state ranking. No separate top statistics panel is rendered.
+MapLegend: permanently separate from the control scroll area.
+Selecting a state immediately resolves its analytics. Site details replace regional
+contents without unmounting the panel; previous contents remain while loading.
+The reset-selection button resets state/power/DC/24_7, closes selected regions/sites,
+and centers Germany. Metric, boundary settings, basemap and marker visibility remain.
+
+## Filtering and metrics
+
+Filters select sites: minimum power means at least one suitable point; DC means
+at least one DC point. Conditions may refer to different points. 24/7 means the
+whole site is categorized 24_7. All points at selected sites are counted.
+Filters update BOTH map and analytics: site/point totals, state and district
+aggregates, rankings and ratio colors. BEV counts and their denominators remain
+unchanged. National ratio = selected points / BEV across the 16 states * 1000,
+not an average of state ratios. KBA Sonstige is not included in the 16-state total.
+An empty selection yields zero charging counts, retaining automobile counts.
+BNetzA 2026-09-01 vs KBA 2026-01-01: comparison of snapshots, not live availability.
+
+## Spatial data
+
+Accepted charging tables: 67,680 sites, 208,570 points. Coordinate validation is
+recorded in data-quality/2026-09-01. Exclusion counts are not shown on the map.
+New site_district_counts_zstd10.parquet is a compact site/district point-count index,
+built using original equipment coordinates and unsimplified KBA district polygons.
+All 208,570 points are assigned; no snapping, unmatched equipment, or boundary ties.
+There are 67,681 site/district rows: ONE site has equipment in TWO districts.
+Each district counts that site once and only its own points; Germany counts the
+site once. Consequently, summed district site counts can exceed the national
+site count. Point counts reconcile exactly. Do not use simplified display polygons
+for spatial assignment.
+District labels come from BKG VG250 GEN/BEZ. All Kreisfreie Stadt and Stadtkreis
+are labeled as autonomous cities; names retain proper spelling and accents.
+Region Hannover, Städteregion Aachen, Regionalverband Saarbrücken and combined
+Trier / Trier-Saarburg are identified separately. Trier follows KBA territory.
 
 ## Structure
 
-- `src/App.jsx`: composes the map and panels; owns UI choices.
-- `src/components/ChargingMap.jsx`: DeckGL and MapLibre.
-- `src/components/ControlPanel.jsx`: filters, layer controls, statistics.
-- `src/components/DetailPanel.jsx`: site and regional details.
-- `src/hooks/useChargingData.js`: Worker lifecycle, messages, retries, stale-result checks.
-- `src/workers/charging.worker.js`: fetching, WASM decoding, filtering and detail lookup.
-- `src/data/prepareSites.js`: column access, site filters and typed rendering attributes.
-- `src/data/regions.js`: WKB conversion and state aggregation.
-- `src/map/layers.js`: point and polygon layers.
-- `src/map/maplibre.js`: MapLibre 6 worker initialization.
-- `src/config/map.js`: filenames, map styles, defaults.
-- `src/utils/format.js`: numeric formatting.
+src/App.jsx: UI composition and selection state.
+src/components: map, controls, analytics, legend.
+src/hooks/useChargingData.js: Worker messages, retries and stale-result checks.
+src/workers/charging.worker.js: loading, decoding, filtering and aggregation.
+src/data/prepareSites.js: typed rendering attributes and original row IDs.
+src/data/regions.js: region decoding, district links and regional counts.
+src/map: layers and explicit MapLibre 6 worker initialization.
+src/config/map.js: files, styles and defaults. src/utils: format and territory labels.
 
-## Data and metrics
-
-Loads the sites file and both display boundary files from `public/data`.
-The charging points file is not loaded yet. Arrow tables remain in the Worker;
-rendering arrays are transferred. All record batches are read. Each filtered
-marker retains its original row index for correct detail lookup.
-Region WKB is decoded to GeoJSON in the Worker (16 states, 400 KBA districts).
-This is not an end-to-end zero-copy implementation.
-
-Filters select SITES. The displayed point count includes all points at those
-sites. Minimum power means at least one point at that power; DC means at least
-one DC point. Those conditions can be fulfilled by different points.
-24/7 means the entire site is categorized as 24_7; mixed or unknown is excluded.
-
-State statistics use the full registry and state_name, with checked matching
-to all 16 state polygons. Charging points / passenger BEV * 1000 is a comparison
-of BNetzA 2026-09-01 and KBA 2026-01-01 snapshots. It is not current occupancy,
-traffic demand, or guaranteed access. Region statistics do not change when
-site power/DC/hours filters change. The state selector restricts displayed
-regions; choropleth scaling recalculates across the displayed regions.
-
-Districts show BEV and passenger-car counts. Charging ratios at district level
-are postponed until KBA/BNetzA territorial matching is checked. Display geometry
-is simplified and should not be used for precise spatial assignment. Trier city
-and Trier-Saarburg are combined to match KBA's registration district.
-
-The 16 state BEV total excludes KBA's geographically unassigned Sonstige category.
-Source references and transformation details are in `public/data/README*.txt`.
+The Worker loads sites, boundaries, the compact district index and district labels;
+it does not load the full charging-points table in the browser. Rendering arrays are
+transferred, geometry decoded to GeoJSON; the pipeline is not end-to-end zero-copy.
 Map tiles are external CARTO/OpenStreetMap; MapLibre displays attribution.
+For reproducible spatial indexing, scripts/prepare_district_index.py requires
+pyarrow, shapely>=2, pyproj, numpy; arguments: --districts-original PATH,
+--states-original PATH, --gpkg PATH (and optional --repo PATH).
 
-Vite base is `/charging-points/`. Explicit MapLibre worker URL and `?worker&url`
-are required for version 6. No extra WASM plugins or isolation headers are used.
+## Validation and remaining work
 
-## Validation
-
-Build and ESLint pass. Data tests check full row/point totals, all boundaries,
-state aggregation, combined filters, empty selections and original row IDs.
-Browser rendering of the expanded interface still needs a local visual check.
-
-## Coordinate audit
-
-The public charging tables now contain the accepted subset: 67,680 sites and 208,570 points. All state aggregates use these files. No exclusion counts are shown on the map. See data-quality/2026-09-01/README.md and scripts/audit_coordinates.py for methodology and developer diagnostics.
-
-## Interface step 3
-
-ControlPanel owns settings only. MapStats and MapLegend are separate fixed
-map overlays. AnalyticsPanel stays mounted: the state selector immediately
-resolves region analytics, and metric selection changes the headline and the
-state ranking. Germany's points/BEV ratio uses totals, not an average of ratios.
-The Worker retains the previous site details while a new request is pending;
-stale replies are ignored, and the panel shows a loading status without disappearing.
-A click on a site replaces the analytics content; Back returns to the selected
-region. All states clears the state selection but preserves other site filters.
-The overview is a ranking of states; district details still open from the map.
-No new dependencies or data-file replacements are required for this UI step.
-Checks: `npm run lint`, `npm run build`, `node --test tests/*.test.mjs`.
-Browser layout and live interactions still need a local visual check.
-Boundary controls and clustering remain separate follow-up tasks.
+Build, ESLint and ten data/analytics tests pass. Panel markup is checked separately.
+Live layout/interaction should be verified locally. On small screens control scroll
+is retained rather than clipping controls. Clustering, region highlight/fly-to,
+boundary-control redesign and load optimization remain separate steps.

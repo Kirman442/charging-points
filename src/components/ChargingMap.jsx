@@ -19,7 +19,7 @@ export default function ChargingMap({ data, regions, options, viewState, onViewC
       if (isSite(info) && info.index >= 0) return { text: `${format(data.pointCounts[info.index])} зарядных точек\nДо ${format(data.powers[info.index])} kW` }
       if (info.object?.properties) {
         const p = info.object.properties
-        return { text: `${p.state_name || p.district_name}\n${options.metric === 'ratio' ? 'Точек на 1 000 BEV' : 'BEV'}: ${format(regionValue(info.object, options.metric))}` }
+        return { text: `${p.state_name || p.display_name || p.district_name}\n${options.metric === 'ratio' ? 'Точек на 1 000 BEV' : 'BEV'}: ${format(regionValue(info.object, options.metric))}` }
       }
       return null
     }}>

@@ -35,3 +35,40 @@ export function enrichStates(features, totals) {
     return { ...feature, properties: { ...feature.properties, ...stats, points_per_1000_bev: bev > 0 ? stats.points / bev * 1000 : null } }
   })
 }
+
+export function buildDistrictIndex(table, indexTable) {
+  const rowById = new Map(Array.from(table.getChild('site_id'), (id, row) => [id, row]))
+  const links = []
+  for (let i = 0; i < indexTable.numRows; i++) {
+    const row = rowById.get(indexTable.getChild('site_id').get(i))
+    if (row === undefined) throw new Error('District index does not match site IDs')
+    links.push({ row, code: indexTable.getChild('district_code').get(i), points: indexTable.getChild('charging_point_count').get(i) })
+  }
+  return links
+}
+export function aggregateSelection(table, indices, links = []) {
+  const states = {}, districts = {}
+  const mask = new Uint8Array(table.numRows)
+  for (const row of indices) {
+    mask[row] = 1
+    const name = table.getChild('state_name').get(row)
+    states[name] ||= { sites: 0, points: 0 }
+    states[name].sites++
+    states[name].points += table.getChild('charging_point_count').get(row)
+  }
+  for (const link of links) if (mask[link.row]) {
+    districts[link.code] ||= { sites: 0, points: 0 }
+    districts[link.code].sites++
+    districts[link.code].points += link.points
+  }
+  return { states, districts }
+}
+export function applyRegionStats(regions, stats) {
+  const enrich = (features, level) => features.map(feature => {
+    const p = feature.properties
+    const key = level === 'states' ? p.state_name : p.district_code
+    const count = stats[level][key] || { sites: 0, points: 0 }
+    return { ...feature, properties: { ...p, ...count, points_per_1000_bev: p.bev_count > 0 ? count.points / p.bev_count * 1000 : null } }
+  })
+  return { states: enrich(regions.states, 'states'), districts: enrich(regions.districts, 'districts') }
+}

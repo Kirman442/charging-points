@@ -1,27 +1,25 @@
 .map-app { position: relative; width: 100%; height: 100dvh; overflow: hidden; --left: 290px; --right: 340px; --gap: 16px; }
 .panel { position: absolute; z-index: 2; background: #fffffff5; border: 1px solid #dce7e2; border-radius: 14px; box-shadow: 0 8px 36px #18332f16; padding: 18px; }
 .eyebrow { font-size: 9px; font-weight: 750; letter-spacing: 1.2px; color: #377c70; }
-h1 { font-size: 22px; letter-spacing: -.6px; line-height: 1.2; margin: 10px 0 14px; }
+h1 { font-size: 18px; letter-spacing: -.6px; line-height: 1.2; margin: 8px 0 10px; }
 h2 { font-size: 19px; margin: 12px 0 10px; }
 p { font-size: 12px; line-height: 1.5; margin: 7px 0; }
 .muted,.note { color: #647973; }
 .note { font-size: 10px; }
 .control-panel { top: var(--gap); left: var(--gap); width: var(--left); bottom: 225px; display: flex; flex-direction: column; }
 .control-scroll { overflow-y: auto; min-height: 0; scrollbar-gutter: stable; }
-.controls { display: grid; gap: 10px; margin: 12px 0; padding: 10px 0; border: 0; border-top: 1px solid #dce7e2; }
+.controls { display: grid; gap: 5px; margin: 6px 0; padding: 5px 0; border: 0; border-top: 1px solid #dce7e2; }
 .controls legend { font-size: 11px; font-weight: 650; padding-right: 8px; }
-.controls label { display: grid; gap: 5px; font-size: 12px; }
-.controls select { width: 100%; padding: 8px; border: 1px solid #cbdcd5; border-radius: 7px; background: #f7faf8; color: #18332f; font: inherit; }
+.controls label { display: grid; gap: 2px; font-size: 11px; }
+.controls select { width: 100%; padding: 4px 6px; border: 1px solid #cbdcd5; border-radius: 7px; background: #f7faf8; color: #18332f; font: inherit; }
 .controls label.check { display: flex; align-items: center; gap: 8px; }
 .check input { accent-color: #377c70; }
 .reset,.error button { border: 1px solid #cbdcd5; background: #f0f7f3; border-radius: 8px; padding: 9px 12px; font-size: 12px; color: #21594e; margin-top: 10px; }
-.map-stats { top: var(--gap); left: calc(var(--left) + var(--gap) * 2); right: calc(var(--right) + var(--gap) * 2); display: flex; gap: 18px; flex-wrap: wrap; padding: 14px 18px; }
-.stat { flex: 1; }
-.stat strong { display: block; font-size: 25px; letter-spacing: -.6px; }
-.stat span { display: block; font-size: 10px; color: #647973; white-space: nowrap; }
-.status,.error { flex-basis: 100%; margin: 0; overflow-wrap: anywhere; }
+ .status,.error { margin: 0; overflow-wrap: anywhere; }
 .error { color: #a43c36; font-size: 12px; }
-.visibility-badge { font-size: 10px; color: #647973; flex-basis: 100%; }
+.selection-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; padding: 13px 10px; background: #eef6f1; border: 1px solid #dce9e2; border-radius: 10px; }
+.selection-stats strong { display: block; font-size: clamp(19px, 1.8vw, 25px); letter-spacing: -.6px; font-variant-numeric: tabular-nums; }
+.selection-stats span { display: block; font-size: 10px; color: #647973; margin-top: 4px; }
 .map-legend { left: var(--gap); bottom: 44px; width: var(--left); height: 165px; padding: 14px 18px; }
 .map-legend h2 { font-size: 11px; margin: 0 0 7px; }
 .map-legend section + section { margin-top: 14px; }
@@ -52,11 +50,11 @@ dt { color: #647973; font-size: 10px; margin-top: 12px; }
 dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 .source { position: absolute; z-index: 2; bottom: 8px; left: 12px; background: #ffffffdf; padding: 4px 7px; border-radius: 5px; color: #45655a; font-size: 9px; }
 .source a { color: inherit; }
-@media (max-width: 1100px) { .map-app { --left: 250px; --right: 285px; --gap: 10px; } .panel { padding: 14px; } .map-stats { gap: 8px; } .stat strong { font-size: 22px; } }
+@media (max-width: 1100px) { .map-app { --left: 250px; --right: 285px; --gap: 10px; } .panel { padding: 14px; } }
 @media (max-width: 760px) {
   .map-app { --left: 220px; --right: 260px; }
-  .map-stats { top: 10px; left: 10px; right: 10px; padding: 10px 14px; }
-  .control-panel { top: 100px; bottom: auto; max-height: 38dvh; }
+  
+  .control-panel { top: 10px; bottom: auto; max-height: 38dvh; }
   .analytics-panel { top: auto; bottom: 44px; height: 40dvh; }
   .map-legend { width: 180px; height: 160px; padding: 12px; }
   .power-bands { grid-template-columns: 1fr; gap: 4px; }
@@ -71,3 +69,5 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
   .analytics-toolbar { flex-wrap: wrap; gap: 5px; }
   .analytics-panel footer .note { font-size: 9px; }
 }
+
+@media (min-width: 761px) and (min-height: 760px) { .control-panel { bottom: auto; height: 510px; } .control-scroll { overflow-y: visible; } }

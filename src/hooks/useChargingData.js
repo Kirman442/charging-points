@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { applyRegionStats } from '../data/regions.js'
 import { FILES } from '../config/map.js'
 
 export function useChargingData(filters) {
@@ -15,7 +16,7 @@ export function useChargingData(filters) {
       if (message.type === 'progress') setStatus(message.message)
       if (message.type === 'catalog') setStates(message.states)
       if (message.type === 'ready') { setData(message); setReady(true); setStatus('Загрузка границ…') }
-      if (message.type === 'filtered' && message.requestId === requestId.current) setData(message)
+      if (message.type === 'filtered' && message.requestId === requestId.current) { setData(message); setRegions(previous => previous ? applyRegionStats(previous, message.regionStats) : previous) }
       if (message.type === 'regions') { setRegions(message); setStatus('Готово') }
       if (message.type === 'detail' && message.index === selectedIndex.current) { setDetail(message.detail); setDetailPending(false) }
       if (message.type === 'error') { setError(message.message); setDetailPending(false) }

@@ -5,4 +5,10 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   base: '/charging-points/',
+  optimizeDeps: {
+    exclude: ['maplibre-gl'],
+  },
+  worker: {
+    format: 'es',
+  },
 })

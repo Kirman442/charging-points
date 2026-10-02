@@ -59,3 +59,23 @@ are required for version 6. No extra WASM plugins or isolation headers are used.
 Build and ESLint pass. Data tests check full row/point totals, all boundaries,
 state aggregation, combined filters, empty selections and original row IDs.
 Browser rendering of the expanded interface still needs a local visual check.
+
+## Coordinate audit
+
+The public charging tables now contain the accepted subset: 67,680 sites and 208,570 points. All state aggregates use these files. No exclusion counts are shown on the map. See data-quality/2026-09-01/README.md and scripts/audit_coordinates.py for methodology and developer diagnostics.
+
+## Interface step 3
+
+ControlPanel owns settings only. MapStats and MapLegend are separate fixed
+map overlays. AnalyticsPanel stays mounted: the state selector immediately
+resolves region analytics, and metric selection changes the headline and the
+state ranking. Germany's points/BEV ratio uses totals, not an average of ratios.
+The Worker retains the previous site details while a new request is pending;
+stale replies are ignored, and the panel shows a loading status without disappearing.
+A click on a site replaces the analytics content; Back returns to the selected
+region. All states clears the state selection but preserves other site filters.
+The overview is a ranking of states; district details still open from the map.
+No new dependencies or data-file replacements are required for this UI step.
+Checks: `npm run lint`, `npm run build`, `node --test tests/*.test.mjs`.
+Browser layout and live interactions still need a local visual check.
+Boundary controls and clustering remain separate follow-up tasks.

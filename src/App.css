@@ -70,4 +70,4 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
   .analytics-panel footer .note { font-size: 9px; }
 }
 
-@media (min-width: 761px) and (min-height: 760px) { .control-panel { bottom: auto; height: 510px; } .control-scroll { overflow-y: visible; } }
+@media (min-width: 761px) and (min-height: 760px) { .control-panel { bottom: auto; max-height: calc(100dvh - 241px); } }

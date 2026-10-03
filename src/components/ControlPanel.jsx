@@ -13,7 +13,8 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
       </fieldset>
       <fieldset className="controls"><legend>Отображение карты</legend>
         <label>Аналитический слой<select value={options.metric} onChange={event => onOptions({ ...options, metric: event.target.value })}><option value="sites">Зарядные площадки</option><option value="bev">Число BEV</option><option value="ratio">Точки на 1 000 BEV · земли</option></select></label>
-        <label>Границы<select value={options.metric === 'ratio' ? 'states' : options.level} disabled={options.metric === 'ratio'} onChange={event => onOptions({ ...options, level: event.target.value })}><option value="none" disabled={options.metric !== 'sites'}>Скрыть</option><option value="states">Земли</option><option value="districts">Районы KBA</option></select></label>
+        {options.metric === 'bev' && <label>Территории аналитики<select value={options.analysisLevel} onChange={event => onOptions({ ...options, analysisLevel: event.target.value })}><option value="states">Земли</option><option value="districts">Районы KBA</option></select></label>}
+        <label>Контуры<select value={options.level} onChange={event => onOptions({ ...options, level: event.target.value })}><option value="none">Скрыть</option><option value="states">Земли</option><option value="districts">Районы KBA</option></select></label>
         <label>Подложка<select value={options.style} onChange={event => onOptions({ ...options, style: event.target.value })}><option value="dark">Dark Matter</option><option value="light">Positron</option></select></label>
       </fieldset>
     </div>

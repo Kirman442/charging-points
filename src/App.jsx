@@ -9,7 +9,7 @@ import './App.css'
 
 export default function App() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
-  const [options, setOptions] = useState({ metric: 'sites', level: 'states', showSites: true, style: 'dark' })
+  const [options, setOptions] = useState({ metric: 'sites', level: 'states', analysisLevel: 'states', showSites: true, style: 'dark' })
   const [viewState, setViewState] = useState(GERMANY)
   const [clickedRegion, setClickedRegion] = useState(null), [mapError, setMapError] = useState('')
   const [siteMode, setSiteMode] = useState(false)
@@ -25,7 +25,7 @@ export default function App() {
     setSiteMode(false); selectSite(-1)
   }, [filters.state, selectSite])
   const onOptions = useCallback(next => {
-    setOptions({ ...next, level: next.metric !== 'sites' && next.level === 'none' ? 'states' : next.level })
+    setOptions(next)
     if (next.metric !== options.metric) {
       setSiteMode(false); selectSite(-1)
       if (next.metric === 'ratio' && clickedRegion?.level === 'districts') setClickedRegion(null)

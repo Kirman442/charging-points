@@ -28,6 +28,15 @@ not an average of state ratios. KBA Sonstige is not included in the 16-state tot
 An empty selection yields zero charging counts, retaining automobile counts.
 BNetzA 2026-09-01 vs KBA 2026-01-01: comparison of snapshots, not live availability.
 
+## Independent map layers
+
+Contours (hidden / states / KBA districts) are independent of analytical fill.
+Switching metrics preserves the contour choice. In charging-sites mode there
+is no visible region fill. Hidden contours remain hidden in every metric.
+BEV fill has its own territory selector (states / KBA districts); the ratio
+metric uses states. The legend uses the fill's domain, regardless of contours.
+Marker visibility does not disable DC/24h filters or change the selection.
+
 ## Spatial data
 
 Accepted charging tables: 67,680 sites, 208,570 points. Coordinate validation is

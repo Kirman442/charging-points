@@ -4,20 +4,30 @@ export function regionValue(feature, metric) {
 }
 export function createLayers(data, regions, options) {
   const layers = []
-  const level = options.metric === 'ratio' ? 'states' : options.level
-  const features = regions?.[level]?.filter(feature => !options.state || (level === 'states' ? feature.properties.state_name === options.state : feature.properties.state_code === regions.states.find(state => state.properties.state_name === options.state)?.properties.state_code)) || []
+  const analysisLevel = options.metric === 'ratio' ? 'states' : (options.analysisLevel || 'states')
+  const featuresFor = level => regions?.[level]?.filter(feature => !options.state || (
+    level === 'states'
+      ? feature.properties.state_name === options.state
+      : feature.properties.state_code === regions?.states?.find(state => state.properties.state_name === options.state)?.properties.state_code
+  )) || []
+  const features = featuresFor(analysisLevel)
   const maximum = Math.max(1, ...features.map(feature => regionValue(feature, options.metric) || 0))
-  if (options.level !== 'none' || options.metric !== 'sites') layers.push(new GeoJsonLayer({
-    id: `regions-${level}`, data: features, pickable: true, stroked: true, filled: true,
-    getLineColor: [180,205,199,180], getLineWidth: 1, lineWidthUnits: 'pixels',
+  if (options.metric !== 'sites') layers.push(new GeoJsonLayer({
+    id: `analysis-${analysisLevel}`, data: features, pickable: true, stroked: false, filled: true,
     getFillColor: feature => {
-      if (options.metric === 'sites') return [40,90,85,12]
       const value = regionValue(feature, options.metric)
       if (value === null || value === undefined) return [110,110,110,100]
       const t = value / maximum
       return [Math.round(45 + 190 * t), Math.round(150 - 50 * t), Math.round(175 - 110 * t), 155]
     },
     updateTriggers: { getFillColor: [maximum, options.metric] },
+  }))
+  if (options.level !== 'none') layers.push(new GeoJsonLayer({
+    id: `boundaries-${options.level}`, data: featuresFor(options.level),
+    // Keep region clicks in marker mode without adding a visible fill.
+    pickable: true, stroked: true, filled: options.metric === 'sites',
+    getFillColor: [0,0,0,0],
+    getLineColor: [180,205,199,180], getLineWidth: 1, lineWidthUnits: 'pixels',
   }))
   if (data && options.showSites) layers.push(new ScatterplotLayer({
     id: 'charging-sites', data: { length: data.count, attributes: {

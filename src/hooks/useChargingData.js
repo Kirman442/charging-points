@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { applyRegionStats } from '../data/regions.js'
-import { clusterZoom, markersForView } from '../config/clustering.js'
+import { CLUSTER_MAX_ZOOM, clusterZoom, markersForView } from '../config/clustering.js'
 import { FILES } from '../config/map.js'
 
-export function useChargingData(filters, zoom) {
-  const zoomLevel = clusterZoom(zoom), zoomRef = useRef(zoomLevel)
+export function useChargingData(filters, zoom, clusterSites) {
+  const zoomLevel = clusterSites ? Math.min(CLUSTER_MAX_ZOOM, clusterZoom(zoom)) : CLUSTER_MAX_ZOOM, zoomRef = useRef(zoomLevel)
   useEffect(() => { zoomRef.current = zoomLevel }, [zoomLevel])
   const [markerPacket, setMarkerPacket] = useState(null)
   const workerRef = useRef(null), selectedIndex = useRef(-1), requestId = useRef(0)
@@ -21,7 +21,7 @@ export function useChargingData(filters, zoom) {
       if (message.type === 'catalog') setStates(message.states)
       if (message.type === 'ready') { setData(message); setMarkerPacket({ requestId: 0, zoom: message.markers?.zoom, markers: message.markers }); setReady(true); setStatus('Загрузка границ…') }
       if (message.type === 'filtered' && message.requestId === requestId.current) { setData(message); setMarkerPacket({ requestId: message.requestId, zoom: message.markers?.zoom, markers: message.markers }); setRegions(previous => previous ? applyRegionStats(previous, message.regionStats) : previous) }
-      if (message.type === 'clusters' && message.requestId === requestId.current && message.zoom === zoomRef.current) setMarkerPacket(message)
+      if (message.type === 'clusters' && message.requestId === requestId.current && message.zoom === zoomRef.current && message.markers) setMarkerPacket(message)
       if (message.type === 'regions') { setRegions(message); setStatus('Готово') }
       if (message.type === 'detail' && message.index === selectedIndex.current) { setDetail(message.detail); setDetailPending(false) }
       if (message.type === 'error') { setError(message.message); setDetailPending(false) }

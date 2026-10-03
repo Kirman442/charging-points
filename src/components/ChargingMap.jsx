@@ -1,32 +1,28 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import DeckGL from '@deck.gl/react'
-import { FlyToInterpolator } from '@deck.gl/core'
 import Map from 'react-map-gl/maplibre'
 import maplibre from '../map/maplibre.js'
 import { createLayers, regionValue } from '../map/layers.js'
-import { ChargingMapController, mapCursor, markerSelection } from '../map/interaction.js'
-import { CLUSTER_MAX_ZOOM } from '../config/clustering.js'
+import { ChargingMapController, mapCursor, markerSelection, zoomViewState } from '../map/interaction.js'
+import { useClusters } from '../config/clustering.js'
 import { MAP_STYLES } from '../config/map.js'
 import { format } from '../utils/format.js'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 export default function ChargingMap({ data, markers, regions, options, viewState, onViewChange, onSite, onCluster, onRegion, onMapError }) {
-  const clustered = viewState.zoom < CLUSTER_MAX_ZOOM
+  const clustered = useClusters(options, viewState.zoom)
+  const markerHover = useRef(false)
   const { layers } = useMemo(() => createLayers(data, regions, options, markers, clustered), [data, regions, options, markers, clustered])
   const isSite = info => info.layer?.id === 'charging-sites'
   const isMarker = info => info.layer?.id === 'charging-markers'
   return <DeckGL viewState={viewState} onViewStateChange={({ viewState: next }) => onViewChange(next)}
-    controller={{ type: ChargingMapController, doubleClickZoom: true }} layers={layers} pickingRadius={6} getCursor={mapCursor}
+    controller={{ type: ChargingMapController, doubleClickZoom: true }} layers={layers} pickingRadius={6} getCursor={state => mapCursor({ ...state, markerHovered: markerHover.current })}
+    onHover={info => { markerHover.current = (isSite(info) || isMarker(info)) && info.index >= 0 }}
     onClick={(info, event) => {
       const selection = isMarker(info) ? markerSelection(markers, info.index) : null
       if (event.type === 'dblclick') {
         const target = selection?.type === 'cluster' ? selection : null
-        onViewChange({ ...viewState,
-          longitude: target?.longitude ?? info.coordinate?.[0] ?? viewState.longitude,
-          latitude: target?.latitude ?? info.coordinate?.[1] ?? viewState.latitude,
-          zoom: target ? Math.max(viewState.zoom + 1, target.expansionZoom) : Math.min(20, viewState.zoom + 1),
-          transitionDuration: 650, transitionInterpolator: new FlyToInterpolator(),
-        })
+        onViewChange(zoomViewState(viewState, target, info.coordinate))
         return
       }
       if (selection?.type === 'cluster') onCluster(selection)

@@ -48,17 +48,25 @@ cluster details distinguish this from the sum of charging points. Cluster color
 uses the highest point power among its sites. Individual sites retain power colors.
 At zoom 12 and above, raw typed-array site markers are rendered without clustering.
 Single-click: cluster summary in the persistent right panel, or individual site
-details. Double-click: smooth zoom to the cluster expansion level (at least one
+details. Double-click: short, monotonic zoom to the cluster expansion level (at least one
 zoom level closer). Coincident sites are ungrouped at zoom 12 too. Background
 double-click zooms in one level; dragging/wheel zoom remain available.
-Pointer cursor, 6-pixel picking tolerance and minimum 4-pixel site radius improve
+Pointer cursor only over site/cluster markers; grab over regions and the background.
+6-pixel picking tolerance and minimum 4-pixel site radius improve
 mouse interaction. Text labels are not pickable and do not block circle clicks.
 Zoom queries reuse the Worker index; panning does not rebuild it. Only integer zoom
 changes request a new global cluster view. Original site coordinates and records
 are unchanged; the full filtered totals are used by analytics at every zoom.
 Packets carry the selection request ID and zoom; obsolete replies cannot replace
-clusters for a newer selection or zoom. Cluster details close on filter/metric/
+clusters for a newer selection. During zoom changes, the last valid cluster view
+for the same selection stays visible until the new zoom packet arrives. If none
+is available, raw sites are shown temporarily instead of a blank marker layer. Cluster details close on filter/metric/
 territory changes, marker hiding, integer zoom changes, and reset.
+
+The Group sites checkbox defaults to enabled; disabling it shows individual
+sites at every zoom and pauses zoom queries. Filter results and analytics do not
+change. Reset re-enables grouping. Click zoom uses a 280 ms linear interpolation
+with smooth easing and permits interruption by further interaction.
 
 Install updated dependencies with npm ci (supercluster is the only added library).
 Manual checks: hover a circle; click its summary; double-click to expand; zoom past

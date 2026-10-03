@@ -14,7 +14,7 @@ test('ratio switches districts to states while preserving hidden boundaries and 
   assert.equal(normalizeOptions({ ...ratio, metric: 'bev' }).territory, 'states')
 })
 test('reset restores every map setting except the chosen basemap', () => {
-  const changed = { metric: 'bev', territory: 'districts', showBoundaries: false, showSites: false, style: 'light' }
+  const changed = { metric: 'bev', territory: 'districts', showBoundaries: false, showSites: false, clusterSites: false, style: 'light' }
   assert.deepEqual(resetOptions(changed), { ...DEFAULT_OPTIONS, style: 'light' })
 })
 test('district selection becomes its parent state; switching to districts retains state summary', () => {

@@ -49,7 +49,7 @@ export function createLayers(data, regions, suppliedOptions, markers = null, clu
       pickable: false, getTextAnchor: 'middle', getAlignmentBaseline: 'center',
       updateTriggers: { getText: markers.siteCounts },
     }))
-  } else if (data && options.showSites && !clustered) layers.push(new ScatterplotLayer({
+  } else if (data && options.showSites && (!clustered || !markers)) layers.push(new ScatterplotLayer({
     id: 'charging-sites', data: { length: data.count, attributes: {
       getPosition: { value: data.positions, size: 2 }, getFillColor: { value: data.colors, size: 4 },
     } }, getRadius: 45, radiusMinPixels: 4, radiusMaxPixels: 12,

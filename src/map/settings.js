@@ -1,5 +1,5 @@
 export const DEFAULT_OPTIONS = {
-  metric: 'sites', territory: 'states', showBoundaries: true, showSites: true, style: 'dark',
+  metric: 'sites', territory: 'states', showBoundaries: true, showSites: true, clusterSites: true, style: 'dark',
 }
 
 export function normalizeOptions(options) {

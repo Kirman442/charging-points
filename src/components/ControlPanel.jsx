@@ -12,6 +12,7 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
         
       </fieldset>
       <fieldset className="controls"><legend>Отображение карты</legend>
+        <label className="check"><input type="checkbox" checked={options.clusterSites} onChange={event => onOptions({ ...options, clusterSites: event.target.checked })} />Группировать площадки</label>
         <label>Аналитический слой<select value={options.metric} onChange={event => onOptions({ ...options, metric: event.target.value })}><option value="sites">Зарядные площадки</option><option value="bev">Число BEV</option><option value="ratio">Точки на 1 000 BEV · земли</option></select></label>
         <label>Территории<select value={options.territory} disabled={options.metric === 'ratio'} onChange={event => onOptions({ ...options, territory: event.target.value })}><option value="states">Земли</option><option value="districts">Районы KBA</option></select></label>
         <label className="check"><input type="checkbox" checked={options.showBoundaries} onChange={event => onOptions({ ...options, showBoundaries: event.target.checked })} />Показать границы</label>

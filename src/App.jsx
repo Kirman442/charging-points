@@ -16,7 +16,7 @@ export default function App() {
   const [clickedRegion, setClickedRegion] = useState(null), [mapError, setMapError] = useState('')
   const [siteMode, setSiteMode] = useState(false)
   const [cluster, setCluster] = useState(null)
-  const { data, markers, regions, states, detail, detailPending, status, error, selectSite, reload } = useChargingData(filters, viewState.zoom)
+  const { data, markers, regions, states, detail, detailPending, status, error, selectSite, reload } = useChargingData(filters, viewState.zoom, options.clusterSites)
   const mapOptions = useMemo(() => ({ ...options, state: filters.state }), [options, filters.state])
   const activeRegion = clickedRegion
     ? regions?.[clickedRegion.level]?.find(feature => (feature.properties.district_code || feature.properties.state_code) === (clickedRegion.district_code || clickedRegion.state_code))?.properties || null
@@ -31,12 +31,12 @@ export default function App() {
   const onOptions = useCallback(next => {
     const normalized = normalizeOptions(next)
     setOptions(normalized)
-    if (!normalized.showSites) setCluster(null)
+    if (!normalized.showSites || normalized.clusterSites !== options.clusterSites) setCluster(null)
     if (normalized.metric !== options.metric || normalized.territory !== options.territory) {
       setCluster(null); setSiteMode(false); selectSite(-1)
       setClickedRegion(previous => reconcileRegion(previous, normalized, regions))
     }
-  }, [options.metric, options.territory, regions, selectSite])
+  }, [options.metric, options.territory, options.clusterSites, regions, selectSite])
   const resetSettings = useCallback(() => {
     setViewState(GERMANY); setFilters({ ...DEFAULT_FILTERS })
     setOptions(previous => resetOptions(previous))

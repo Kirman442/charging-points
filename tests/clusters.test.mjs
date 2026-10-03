@@ -6,9 +6,9 @@ import { tableFromIPC } from 'apache-arrow'
 import { prepareSites, matchingIndices } from '../src/data/prepareSites.js'
 import { buildClusters, clusterMarkers, markerTransfers } from '../src/data/clusters.js'
 import { createLayers } from '../src/map/layers.js'
-import { markersForView } from '../src/config/clustering.js'
+import { markersForView, useClusters } from '../src/config/clustering.js'
 import { DEFAULT_OPTIONS } from '../src/map/settings.js'
-import { markerSelection, mapCursor, ChargingMapController } from '../src/map/interaction.js'
+import { markerSelection, mapCursor, ChargingMapController, zoomViewState } from '../src/map/interaction.js'
 const { readParquet } = createRequire(import.meta.url)('parquet-wasm/node')
 const table = tableFromIPC(readParquet(new Uint8Array(fs.readFileSync(new URL('../public/data/charging_sites_zstd10.parquet', import.meta.url)))).intoIPCStream())
 const sum = array => array.reduce((total, n) => total + n, 0)
@@ -63,18 +63,19 @@ test('clicks distinguish clusters from individual sites; cursor and double-click
   assert.equal(picked.sites, markers.siteCounts[cluster])
   assert.equal(picked.points, markers.pointCounts[cluster])
   assert.equal(markerSelection(markers, -1), null)
-  assert.equal(mapCursor({ isHovering: true }), 'pointer')
+  assert.equal(mapCursor({ isHovering: true, markerHovered: true }), 'pointer')
   assert.equal(mapCursor({ isDragging: true, isHovering: true }), 'grabbing')
   assert.equal(mapCursor({}), 'grab')
   assert.equal(ChargingMapController.prototype.handleEvent({ type: 'dblclick' }), false)
 })
 
-test('obsolete marker packets cannot replace a newer filter selection or zoom', () => {
+test('zoom changes retain existing markers while a different filter revision cannot reuse them', () => {
   const markers = { count: 1 }, packet = { requestId: 7, zoom: 5, markers }
   assert.equal(markersForView(packet, { requestId: 7 }, 5.9), markers)
   assert.equal(markersForView(packet, { requestId: 8 }, 5), null)
-  assert.equal(markersForView(packet, { requestId: 7 }, 6), null)
+  assert.equal(markersForView(packet, { requestId: 7 }, 6), markers)
   assert.equal(markersForView(null, null, 5), null)
+  assert.equal(markersForView(packet, { requestId: 7 }, 12), null)
 })
 test('coincident sites aggregate power and charging points and ungroup at zoom 12', () => {
   const sites = { count: 2, positions: new Float64Array([10,51,10,51]), powers: new Float32Array([22,400]), pointCounts: new Int32Array([2,8]), rowIndices: new Uint32Array([0,60000]) }
@@ -86,4 +87,32 @@ test('coincident sites aggregate power and charging points and ungroup at zoom 1
   assert.equal(markers.expansionZooms[0], 12)
   assert.equal(clusterMarkers(index, 12), null)
   assert.deepEqual(index.getClusters([-180,-85,180,85], 12).map(f => f.properties.rowIndex).sort((a,b) => a-b), [0,60000])
+})
+
+test('grouping switch and zoom threshold choose marker rendering without altering selection', () => {
+  assert.equal(useClusters(DEFAULT_OPTIONS, 5), true)
+  assert.equal(useClusters(DEFAULT_OPTIONS, 12), false)
+  assert.equal(useClusters({ ...DEFAULT_OPTIONS, clusterSites: false }, 5), false)
+  assert.equal(mapCursor({ isHovering: true, markerHovered: false }), 'grab')
+  const sites = prepareSites(table)
+  const layers = createLayers(sites, null, { ...DEFAULT_OPTIONS, showBoundaries: false }, null, true).layers
+  assert.deepEqual(layers.map(layer => layer.id), ['charging-sites'])
+  assert.equal(layers[0].props.data.length, sites.count)
+})
+test('click zoom is monotonic and centers on the cluster; background uses click coordinates', () => {
+  const initial = { longitude: 10, latitude: 51, zoom: 5 }
+  const target = zoomViewState(initial, { longitude: 11, latitude: 52, expansionZoom: 9 })
+  const { start, end } = target.transitionInterpolator.initializeProps(initial, target)
+  let last = initial.zoom
+  for (const t of [0,.2,.4,.6,.8,1]) {
+    const current = target.transitionInterpolator.interpolateProps(start, end, target.transitionEasing(t))
+    assert.ok(current.zoom >= last && current.zoom <= 9)
+    last = current.zoom
+  }
+  assert.equal(last, 9)
+  assert.equal(target.longitude, 11)
+  assert.equal(target.latitude, 52)
+  assert.ok(target.transitionDuration <= 300)
+  assert.equal(zoomViewState(initial, null, [12,53]).zoom, 6)
+  assert.equal(zoomViewState(initial, null, [12,53]).longitude, 12)
 })

@@ -5,11 +5,12 @@ import AnalyticsPanel from './components/AnalyticsPanel.jsx'
 import MapLegend from './components/MapLegend.jsx'
 import { useChargingData } from './hooks/useChargingData.js'
 import { DEFAULT_FILTERS, GERMANY } from './config/map.js'
+import { DEFAULT_OPTIONS, normalizeOptions, resetOptions, reconcileRegion } from './map/settings.js'
 import './App.css'
 
 export default function App() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
-  const [options, setOptions] = useState({ metric: 'sites', level: 'states', analysisLevel: 'states', showSites: true, style: 'dark' })
+  const [options, setOptions] = useState(DEFAULT_OPTIONS)
   const [viewState, setViewState] = useState(GERMANY)
   const [clickedRegion, setClickedRegion] = useState(null), [mapError, setMapError] = useState('')
   const [siteMode, setSiteMode] = useState(false)
@@ -25,12 +26,18 @@ export default function App() {
     setSiteMode(false); selectSite(-1)
   }, [filters.state, selectSite])
   const onOptions = useCallback(next => {
-    setOptions(next)
-    if (next.metric !== options.metric) {
+    const normalized = normalizeOptions(next)
+    setOptions(normalized)
+    if (normalized.metric !== options.metric || normalized.territory !== options.territory) {
       setSiteMode(false); selectSite(-1)
-      if (next.metric === 'ratio' && clickedRegion?.level === 'districts') setClickedRegion(null)
+      setClickedRegion(previous => reconcileRegion(previous, normalized, regions))
     }
-  }, [options.metric, clickedRegion, selectSite])
+  }, [options.metric, options.territory, regions, selectSite])
+  const resetSettings = useCallback(() => {
+    setViewState(GERMANY); setFilters({ ...DEFAULT_FILTERS })
+    setOptions(previous => resetOptions(previous))
+    setClickedRegion(null); closeSite()
+  }, [closeSite])
   const showRegion = useCallback(value => {
     setSiteMode(false); selectSite(-1); setClickedRegion(value)
   }, [selectSite])
@@ -40,7 +47,7 @@ export default function App() {
   return <main className="map-app">
     <ChargingMap data={data} regions={regions} options={mapOptions} viewState={viewState} onViewChange={setViewState}
       onSite={index => { setSiteMode(true); selectSite(index) }} onRegion={showRegion} onMapError={setMapError} />
-    <ControlPanel states={states} filters={filters} onFilters={onFilters} options={options} onOptions={onOptions} onReset={() => { setViewState(GERMANY); setFilters({ ...DEFAULT_FILTERS }); setClickedRegion(null); closeSite() }} />
+    <ControlPanel states={states} filters={filters} onFilters={onFilters} options={options} onOptions={onOptions} onReset={resetSettings} />
 
     <MapLegend regions={regions} options={mapOptions} />
     <AnalyticsPanel states={regions?.states} site={siteMode ? detail : null} region={activeRegion} metric={options.metric} pending={siteMode && detailPending}

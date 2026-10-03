@@ -1,19 +1,21 @@
 import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers'
+import { normalizeOptions } from './settings.js'
 export function regionValue(feature, metric) {
   return metric === 'ratio' ? feature.properties.points_per_1000_bev : feature.properties.bev_count
 }
-export function createLayers(data, regions, options) {
+export function createLayers(data, regions, suppliedOptions) {
+  const options = normalizeOptions(suppliedOptions)
   const layers = []
-  const analysisLevel = options.metric === 'ratio' ? 'states' : (options.analysisLevel || 'states')
+  const level = options.territory
   const featuresFor = level => regions?.[level]?.filter(feature => !options.state || (
     level === 'states'
       ? feature.properties.state_name === options.state
       : feature.properties.state_code === regions?.states?.find(state => state.properties.state_name === options.state)?.properties.state_code
   )) || []
-  const features = featuresFor(analysisLevel)
+  const features = featuresFor(level)
   const maximum = Math.max(1, ...features.map(feature => regionValue(feature, options.metric) || 0))
   if (options.metric !== 'sites') layers.push(new GeoJsonLayer({
-    id: `analysis-${analysisLevel}`, data: features, pickable: true, stroked: false, filled: true,
+    id: `analysis-${level}`, data: features, pickable: true, stroked: false, filled: true,
     getFillColor: feature => {
       const value = regionValue(feature, options.metric)
       if (value === null || value === undefined) return [110,110,110,100]
@@ -22,8 +24,8 @@ export function createLayers(data, regions, options) {
     },
     updateTriggers: { getFillColor: [maximum, options.metric] },
   }))
-  if (options.level !== 'none') layers.push(new GeoJsonLayer({
-    id: `boundaries-${options.level}`, data: featuresFor(options.level),
+  if (options.showBoundaries) layers.push(new GeoJsonLayer({
+    id: `boundaries-${level}`, data: featuresFor(level),
     // Keep region clicks in marker mode without adding a visible fill.
     pickable: true, stroked: true, filled: options.metric === 'sites',
     getFillColor: [0,0,0,0],

@@ -13,8 +13,9 @@ regional details and state ranking. No separate top statistics panel is rendered
 MapLegend: permanently separate from the control scroll area.
 Selecting a state immediately resolves its analytics. Site details replace regional
 contents without unmounting the panel; previous contents remain while loading.
-The reset-selection button resets state/power/DC/24_7, closes selected regions/sites,
-and centers Germany. Metric, boundary settings, basemap and marker visibility remain.
+The reset-settings button resets all filters, metric, territory, boundary and
+marker visibility; closes selected regions/sites and centers Germany. The basemap
+choice remains unchanged.
 
 ## Filtering and metrics
 
@@ -28,14 +29,16 @@ not an average of state ratios. KBA Sonstige is not included in the 16-state tot
 An empty selection yields zero charging counts, retaining automobile counts.
 BNetzA 2026-09-01 vs KBA 2026-01-01: comparison of snapshots, not live availability.
 
-## Independent map layers
+## Territory and boundary controls
 
-Contours (hidden / states / KBA districts) are independent of analytical fill.
-Switching metrics preserves the contour choice. In charging-sites mode there
-is no visible region fill. Hidden contours remain hidden in every metric.
-BEV fill has its own territory selector (states / KBA districts); the ratio
-metric uses states. The legend uses the fill's domain, regardless of contours.
-Marker visibility does not disable DC/24h filters or change the selection.
+A single territory selector (states / KBA districts) controls both analytical fill
+and contours. Boundary visibility is a separate checkbox and does not affect fill.
+The ratio metric automatically selects states and locks the territory selector;
+it preserves the boundary visibility choice. BEV and marker modes allow both levels.
+Switching from a selected district to states opens its parent state's analytics.
+Switching to districts retains a selected state's summary until a district is clicked.
+The legend uses the fill's domain and selected state. Marker visibility does not
+disable DC/24h filters or change the selection.
 
 ## Spatial data
 

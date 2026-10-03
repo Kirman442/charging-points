@@ -1,9 +1,9 @@
-import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers'
+import { GeoJsonLayer, ScatterplotLayer, TextLayer } from '@deck.gl/layers'
 import { normalizeOptions } from './settings.js'
 export function regionValue(feature, metric) {
   return metric === 'ratio' ? feature.properties.points_per_1000_bev : feature.properties.bev_count
 }
-export function createLayers(data, regions, suppliedOptions) {
+export function createLayers(data, regions, suppliedOptions, markers = null, clustered = false) {
   const options = normalizeOptions(suppliedOptions)
   const layers = []
   const level = options.territory
@@ -31,10 +31,28 @@ export function createLayers(data, regions, suppliedOptions) {
     getFillColor: [0,0,0,0],
     getLineColor: [180,205,199,180], getLineWidth: 1, lineWidthUnits: 'pixels',
   }))
-  if (data && options.showSites) layers.push(new ScatterplotLayer({
+  if (options.showSites && clustered && markers) {
+    const binary = { length: markers.count, attributes: {
+      getPosition: { value: markers.positions, size: 2 },
+      getFillColor: { value: markers.colors, size: 4 },
+      getRadius: { value: markers.radii, size: 1 },
+    } }
+    layers.push(new ScatterplotLayer({
+      id: 'charging-markers', data: binary, radiusUnits: 'pixels',
+      stroked: true, getLineColor: [255,255,255,210], getLineWidth: 1, lineWidthUnits: 'pixels',
+      opacity: .95, pickable: true, autoHighlight: true, highlightColor: [255,255,255,230],
+    }))
+    layers.push(new TextLayer({
+      id: 'cluster-labels', data: { length: markers.count, attributes: { getPosition: { value: markers.positions, size: 2 } } },
+      getText: (_, { index }) => markers.siteCounts[index] > 1 ? String(markers.siteCounts[index]) : '',
+      getSize: 11, getColor: [20,35,40,255], fontWeight: 700, fontFamily: 'Arial, sans-serif',
+      pickable: false, getTextAnchor: 'middle', getAlignmentBaseline: 'center',
+      updateTriggers: { getText: markers.siteCounts },
+    }))
+  } else if (data && options.showSites && !clustered) layers.push(new ScatterplotLayer({
     id: 'charging-sites', data: { length: data.count, attributes: {
       getPosition: { value: data.positions, size: 2 }, getFillColor: { value: data.colors, size: 4 },
-    } }, getRadius: 45, radiusMinPixels: 2, radiusMaxPixels: 12,
+    } }, getRadius: 45, radiusMinPixels: 4, radiusMaxPixels: 12,
     opacity: .85, pickable: true, autoHighlight: true, highlightColor: [255,255,255,230],
   }))
   return { layers, maximum }

@@ -40,6 +40,30 @@ Switching to districts retains a selected state's summary until a district is cl
 The legend uses the fill's domain and selected state. Marker visibility does not
 disable DC/24h filters or change the selection.
 
+## Marker interaction and clustering
+
+Supercluster 8.0.1 builds a spatial index in charging.worker.js for each filtered
+site selection. Below zoom 12, circles show the number of sites; tooltip and
+cluster details distinguish this from the sum of charging points. Cluster color
+uses the highest point power among its sites. Individual sites retain power colors.
+At zoom 12 and above, raw typed-array site markers are rendered without clustering.
+Single-click: cluster summary in the persistent right panel, or individual site
+details. Double-click: smooth zoom to the cluster expansion level (at least one
+zoom level closer). Coincident sites are ungrouped at zoom 12 too. Background
+double-click zooms in one level; dragging/wheel zoom remain available.
+Pointer cursor, 6-pixel picking tolerance and minimum 4-pixel site radius improve
+mouse interaction. Text labels are not pickable and do not block circle clicks.
+Zoom queries reuse the Worker index; panning does not rebuild it. Only integer zoom
+changes request a new global cluster view. Original site coordinates and records
+are unchanged; the full filtered totals are used by analytics at every zoom.
+Packets carry the selection request ID and zoom; obsolete replies cannot replace
+clusters for a newer selection or zoom. Cluster details close on filter/metric/
+territory changes, marker hiding, integer zoom changes, and reset.
+
+Install updated dependencies with npm ci (supercluster is the only added library).
+Manual checks: hover a circle; click its summary; double-click to expand; zoom past
+12 and open a single site; change state/power/DC/24h; hide/show markers; reset.
+
 ## Spatial data
 
 Accepted charging tables: 67,680 sites, 208,570 points. Coordinate validation is

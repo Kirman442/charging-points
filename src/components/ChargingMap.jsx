@@ -1,22 +1,47 @@
 import { useMemo } from 'react'
 import DeckGL from '@deck.gl/react'
+import { FlyToInterpolator } from '@deck.gl/core'
 import Map from 'react-map-gl/maplibre'
 import maplibre from '../map/maplibre.js'
 import { createLayers, regionValue } from '../map/layers.js'
+import { ChargingMapController, mapCursor, markerSelection } from '../map/interaction.js'
+import { CLUSTER_MAX_ZOOM } from '../config/clustering.js'
 import { MAP_STYLES } from '../config/map.js'
 import { format } from '../utils/format.js'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-export default function ChargingMap({ data, regions, options, viewState, onViewChange, onSite, onRegion, onMapError }) {
-  const { layers } = useMemo(() => createLayers(data, regions, options), [data, regions, options])
+export default function ChargingMap({ data, markers, regions, options, viewState, onViewChange, onSite, onCluster, onRegion, onMapError }) {
+  const clustered = viewState.zoom < CLUSTER_MAX_ZOOM
+  const { layers } = useMemo(() => createLayers(data, regions, options, markers, clustered), [data, regions, options, markers, clustered])
   const isSite = info => info.layer?.id === 'charging-sites'
-  return <DeckGL viewState={viewState} onViewStateChange={({ viewState: next }) => onViewChange(next)} controller layers={layers}
-    onClick={info => {
-      if (isSite(info) && info.index >= 0) onSite(data.rowIndices[info.index])
+  const isMarker = info => info.layer?.id === 'charging-markers'
+  return <DeckGL viewState={viewState} onViewStateChange={({ viewState: next }) => onViewChange(next)}
+    controller={{ type: ChargingMapController, doubleClickZoom: true }} layers={layers} pickingRadius={6} getCursor={mapCursor}
+    onClick={(info, event) => {
+      const selection = isMarker(info) ? markerSelection(markers, info.index) : null
+      if (event.type === 'dblclick') {
+        const target = selection?.type === 'cluster' ? selection : null
+        onViewChange({ ...viewState,
+          longitude: target?.longitude ?? info.coordinate?.[0] ?? viewState.longitude,
+          latitude: target?.latitude ?? info.coordinate?.[1] ?? viewState.latitude,
+          zoom: target ? Math.max(viewState.zoom + 1, target.expansionZoom) : Math.min(20, viewState.zoom + 1),
+          transitionDuration: 650, transitionInterpolator: new FlyToInterpolator(),
+        })
+        return
+      }
+      if (selection?.type === 'cluster') onCluster(selection)
+      else if (selection?.type === 'site') onSite(selection.rowIndex)
+      else if (isSite(info) && info.index >= 0) onSite(data.rowIndices[info.index])
       else if (info.object?.properties) onRegion(info.object.properties)
     }}
     getTooltip={info => {
-      if (isSite(info) && info.index >= 0) return { text: `${format(data.pointCounts[info.index])} зарядных точек\nДо ${format(data.powers[info.index])} kW` }
+      if (isMarker(info) && info.index >= 0) {
+        const selection = markerSelection(markers, info.index)
+        return { text: selection?.type === 'cluster'
+          ? `${format(selection.sites)} площадок · ${format(selection.points)} зарядных точек\nКлик — сводка; двойной клик — приблизить`
+          : `${format(markers.pointCounts[info.index])} зарядных точек\nДо ${format(markers.powers[info.index])} kW\nНажми для подробностей` }
+      }
+      if (isSite(info) && info.index >= 0) return { text: `${format(data.pointCounts[info.index])} зарядных точек\nДо ${format(data.powers[info.index])} kW\nНажми для подробностей` }
       if (info.object?.properties) {
         const p = info.object.properties
         return { text: `${p.state_name || p.display_name || p.district_name}\n${options.metric === 'ratio' ? 'Точек на 1 000 BEV' : 'BEV'}: ${format(regionValue(info.object, options.metric))}` }

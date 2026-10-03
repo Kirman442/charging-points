@@ -1,3 +1,7 @@
+export function powerColor(power) {
+  return power >= 150 ? [244,122,97,255] : power >= 50 ? [240,197,91,255] : power > 22 ? [84,161,229,255] : [64,184,173,255]
+}
+
 export function matchingIndices(table, filters = {}) {
   const state = table.getChild('state_name'), power = table.getChild('max_power_kw')
   const dc = table.getChild('dc_point_count'), hours = table.getChild('opening_hours_type')
@@ -32,7 +36,7 @@ export function prepareSites(table, indices = matchingIndices(table)) {
     if (!Number.isFinite(power) || power < 0 || !Number.isInteger(points) || points < 0) throw new Error(`Некорректные данные: строка ${row}`)
     positions[i * 2] = lon; positions[i * 2 + 1] = lat
     powers[i] = power; pointCounts[i] = points; totalPoints += points
-    colors.set(power >= 150 ? [244,122,97,255] : power >= 50 ? [240,197,91,255] : power > 22 ? [84,161,229,255] : [64,184,173,255], i * 4)
+    colors.set(powerColor(power), i * 4)
   }
   return { count, positions, colors, powers, pointCounts, rowIndices, totalPoints, sourceDate: table.getChild('source_date')?.get(0) }
 }

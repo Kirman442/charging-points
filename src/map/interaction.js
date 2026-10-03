@@ -13,15 +13,21 @@ export function mapCursor({ isDragging, isHovering, markerHovered }) {
 }
 
 const zoomInterpolator = new LinearInterpolator(['longitude', 'latitude', 'zoom'])
-export function zoomViewState(viewState, cluster, coordinate) {
-  return { ...viewState,
-    longitude: cluster?.longitude ?? coordinate?.[0] ?? viewState.longitude,
-    latitude: cluster?.latitude ?? coordinate?.[1] ?? viewState.latitude,
-    zoom: Math.min(20, cluster ? Math.max(viewState.zoom + 1, cluster.expansionZoom) : viewState.zoom + 1),
+// Shorten the single-click wait without reducing the double-click time window.
+export const CLICK_RECOGNIZER_OPTIONS = { click: { interval: 200 } }
+export function transitionViewState(viewState, target) {
+  return { ...viewState, ...target,
     transitionDuration: 280, transitionInterpolator: zoomInterpolator,
     transitionEasing: t => t * t * (3 - 2 * t),
     transitionInterruption: TRANSITION_EVENTS.BREAK,
   }
+}
+export function zoomViewState(viewState, cluster, coordinate) {
+  return transitionViewState(viewState, {
+    longitude: cluster?.longitude ?? coordinate?.[0] ?? viewState.longitude,
+    latitude: cluster?.latitude ?? coordinate?.[1] ?? viewState.latitude,
+    zoom: Math.min(20, cluster ? Math.max(viewState.zoom + 1, cluster.expansionZoom) : viewState.zoom + 1),
+  })
 }
 export function markerSelection(markers, index) {
   if (!markers || index < 0 || index >= markers.count) return null

@@ -72,6 +72,18 @@ Install updated dependencies with npm ci (supercluster is the only added library
 Manual checks: hover a circle; click its summary; double-click to expand; zoom past
 12 and open a single site; change state/power/DC/24h; hide/show markers; reset.
 
+## State selection and click latency
+
+Selecting a state in the dropdown smoothly fits its complete geometry, including
+multipart states such as Bremen, in the available map area. Desktop padding is
+measured from the actual left/right panels. On mobile, vertical padding is capped
+to retain usable map space. Selecting All Germany restores the overview. Power,
+DC and opening-hours filters do not move the camera. If boundaries are still
+loading, only the latest requested state is focused once they arrive; reset
+cancels that pending focus. Geometry bounds are cached; no network calls are added.
+The single-click recognizer interval is reduced from 300 to 200 ms. The double-click
+interval is unchanged, so a quick first-click summary may appear before zooming.
+
 ## Spatial data
 
 Accepted charging tables: 67,680 sites, 208,570 points. Coordinate validation is

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ChargingMap from './components/ChargingMap.jsx'
 import ControlPanel from './components/ControlPanel.jsx'
 import AnalyticsPanel from './components/AnalyticsPanel.jsx'
@@ -7,9 +7,12 @@ import { useChargingData } from './hooks/useChargingData.js'
 import { DEFAULT_FILTERS, GERMANY } from './config/map.js'
 import { clusterZoom } from './config/clustering.js'
 import { DEFAULT_OPTIONS, normalizeOptions, resetOptions, reconcileRegion } from './map/settings.js'
+import { fitRegionViewState, mapPadding } from './map/navigation.js'
+import { transitionViewState } from './map/interaction.js'
 import './App.css'
 
 export default function App() {
+  const mapContainer = useRef(null), pendingFocus = useRef(null)
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [options, setOptions] = useState(DEFAULT_OPTIONS)
   const [viewState, setViewState] = useState(GERMANY)
@@ -22,12 +25,33 @@ export default function App() {
     ? regions?.[clickedRegion.level]?.find(feature => (feature.properties.district_code || feature.properties.state_code) === (clickedRegion.district_code || clickedRegion.state_code))?.properties || null
     : regions?.states.find(feature => feature.properties.state_name === filters.state)?.properties || null
   const closeSite = useCallback(() => { setCluster(null); setSiteMode(false); selectSite(-1) }, [selectSite])
+  const focusLand = useCallback(name => {
+    if (!name) {
+      pendingFocus.current = null
+      setViewState(previous => transitionViewState(previous, GERMANY))
+      return
+    }
+    const feature = regions?.states?.find(feature => feature.properties.state_name === name)
+    if (!feature) { pendingFocus.current = name; return }
+    pendingFocus.current = null
+    const container = mapContainer.current
+    if (!container) return
+    const rect = container.getBoundingClientRect()
+    const controls = container.querySelector('.control-panel')?.getBoundingClientRect()
+    const analytics = container.querySelector('.analytics-panel')?.getBoundingClientRect()
+    setViewState(previous => fitRegionViewState(feature, rect, previous, mapPadding(rect, controls, analytics)))
+  }, [regions])
+  useEffect(() => {
+    if (!pendingFocus.current) return
+    const frame = requestAnimationFrame(() => { if (pendingFocus.current) focusLand(pendingFocus.current) })
+    return () => cancelAnimationFrame(frame)
+  }, [focusLand])
   const onFilters = useCallback(next => {
     setCluster(null)
     setFilters(next)
-    if (next.state !== filters.state) setClickedRegion(null)
+    if (next.state !== filters.state) { setClickedRegion(null); focusLand(next.state) }
     setSiteMode(false); selectSite(-1)
-  }, [filters.state, selectSite])
+  }, [filters.state, selectSite, focusLand])
   const onOptions = useCallback(next => {
     const normalized = normalizeOptions(next)
     setOptions(normalized)
@@ -38,6 +62,7 @@ export default function App() {
     }
   }, [options.metric, options.territory, options.clusterSites, regions, selectSite])
   const resetSettings = useCallback(() => {
+    pendingFocus.current = null
     setViewState(GERMANY); setFilters({ ...DEFAULT_FILTERS })
     setOptions(previous => resetOptions(previous))
     setClickedRegion(null); closeSite()
@@ -46,13 +71,14 @@ export default function App() {
     setCluster(null); setSiteMode(false); selectSite(-1); setClickedRegion(value)
   }, [selectSite])
   const overview = useCallback(() => {
+    pendingFocus.current = null
     setCluster(null); setClickedRegion(null); setFilters(previous => ({ ...previous, state: '' })); setSiteMode(false); selectSite(-1)
   }, [selectSite])
   const onViewChange = useCallback(next => {
     if (clusterZoom(next.zoom) !== clusterZoom(viewState.zoom)) setCluster(null)
     setViewState(next)
   }, [viewState.zoom])
-  return <main className="map-app">
+  return <main className="map-app" ref={mapContainer}>
     <ChargingMap data={data} markers={markers} regions={regions} options={mapOptions} viewState={viewState} onViewChange={onViewChange}
       onCluster={value => { setSiteMode(false); selectSite(-1); setCluster(value) }}
       onSite={index => { setCluster(null); setSiteMode(true); selectSite(index) }} onRegion={showRegion} onMapError={setMapError} />

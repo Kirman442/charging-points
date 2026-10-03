@@ -3,7 +3,7 @@ import DeckGL from '@deck.gl/react'
 import Map from 'react-map-gl/maplibre'
 import maplibre from '../map/maplibre.js'
 import { createLayers, regionValue } from '../map/layers.js'
-import { ChargingMapController, mapCursor, markerSelection, zoomViewState } from '../map/interaction.js'
+import { ChargingMapController, mapCursor, markerSelection, zoomViewState, CLICK_RECOGNIZER_OPTIONS } from '../map/interaction.js'
 import { useClusters } from '../config/clustering.js'
 import { MAP_STYLES } from '../config/map.js'
 import { format } from '../utils/format.js'
@@ -16,7 +16,7 @@ export default function ChargingMap({ data, markers, regions, options, viewState
   const isSite = info => info.layer?.id === 'charging-sites'
   const isMarker = info => info.layer?.id === 'charging-markers'
   return <DeckGL viewState={viewState} onViewStateChange={({ viewState: next }) => onViewChange(next)}
-    controller={{ type: ChargingMapController, doubleClickZoom: true }} layers={layers} pickingRadius={6} getCursor={state => mapCursor({ ...state, markerHovered: markerHover.current })}
+    controller={{ type: ChargingMapController, doubleClickZoom: true }} layers={layers} eventRecognizerOptions={CLICK_RECOGNIZER_OPTIONS} pickingRadius={6} getCursor={state => mapCursor({ ...state, markerHovered: markerHover.current })}
     onHover={info => { markerHover.current = (isSite(info) || isMarker(info)) && info.index >= 0 }}
     onClick={(info, event) => {
       const selection = isMarker(info) ? markerSelection(markers, info.index) : null

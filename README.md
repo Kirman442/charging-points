@@ -210,3 +210,25 @@ build pass, and panel SSR checks cover both comparison bases and empty results.
 Actual responsive layout and interactions should be checked in the browser.
 Concentration indicators (item 3), power distribution (item 5), and motorway
 analysis (item 4) remain subsequent steps.
+
+## Step 15: analytics detail tabs
+
+Apply after step14: replace the three included files in the project root and
+restart npm run dev. Data, dependencies and analytics calculations are unchanged.
+Two mutually exclusive tabs follow the always-visible summary groups in the
+national overview: statistics by states (default) and statistics by operators.
+Only the active tab content is rendered. Tab choice and operator comparison basis
+are stored in the persistent AnalyticsPanel, surviving filter/metric changes,
+site/cluster details and regional selection. Returning to Germany restores the
+last national tab. Selected state/district summaries show only the operator
+section below their summary, without national tabs.
+
+Tabs support ArrowLeft/ArrowRight/Home/End, roving focus, selected-state semantics
+and a labeled tab panel. Long labels wrap; very narrow panels stack tab buttons.
+Russian labels are retained during development; the final release is planned in
+German (e.g. Statistik nach Bundesländern / Statistik nach Betreibern). Full
+translation and final German layout review remain future work.
+
+Validation: ESLint, production build and SSR checks for default/alternate tabs,
+one visible panel, position below summary and regional-only operator content.
+Visual behavior should be checked locally.

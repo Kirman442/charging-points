@@ -106,3 +106,13 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 .operator-bar { height: 5px; background: #e7ede9; border-radius: 3px; margin-top: 5px; overflow: hidden; }
 .operator-bar span { display: block; height: 100%; background: #377c70; border-radius: inherit; }
 .operator-value { display: block; margin-top: 3px; font-size: 10px; color: #647973; }
+
+.analytics-details { margin-top: 15px; }
+.analytics-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin-bottom: 12px; }
+.analytics-tabs button { min-width: 0; border: 1px solid #cbdcd5; border-radius: 8px; padding: 9px 7px; background: #f7faf8; color: #45655a; font: inherit; font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; hyphens: auto; cursor: pointer; }
+.analytics-tabs button[aria-selected="true"] { background: #377c70; color: white; border-color: #377c70; }
+.analytics-tabs button:focus-visible { outline: 2px solid #21594e; outline-offset: 2px; }
+.analytics-details > [role="tabpanel"]:focus-visible { outline: 2px solid #377c70; outline-offset: 2px; border-radius: 7px; }
+.analytics-details .operator-shares { margin-top: 0; padding-top: 0; border-top: 0; }
+.analytics-details .region-ranking { margin-top: 8px; }
+@container (max-width: 220px) { .analytics-tabs { grid-template-columns: minmax(0, 1fr); } }

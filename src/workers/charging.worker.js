@@ -1,3 +1,4 @@
+import { buildOperatorIndex } from '../data/operators.js'
 import { buildClusters, clusterMarkers, markerTransfers } from '../data/clusters.js'
 import initWasm, { readParquet } from 'parquet-wasm/esm'
 import wasmUrl from 'parquet-wasm/esm/parquet_wasm_bg.wasm?url'
@@ -5,7 +6,7 @@ import { tableFromIPC } from 'apache-arrow'
 import { matchingIndices, prepareSites } from '../data/prepareSites.js'
 import { aggregateSelection, applyRegionStats, buildDistrictIndex, decodeRegions } from '../data/regions.js'
 
-let table, wasmReady, districtLinks = [], currentFilters = {}, clusterIndex, currentZoom = 5, selectionRequestId = 0
+let table, operatorIndex, wasmReady, districtLinks = [], currentFilters = {}, clusterIndex, currentZoom = 5, selectionRequestId = 0
 function sendSites(type, requestId, filters, started) {
   const indices = matchingIndices(table, filters)
   const result = prepareSites(table, indices)
@@ -13,7 +14,7 @@ function sendSites(type, requestId, filters, started) {
   selectionRequestId = requestId
   const markers = clusterMarkers(clusterIndex, currentZoom)
   result.markers = markers
-  result.regionStats = aggregateSelection(table, indices, districtLinks)
+  result.regionStats = aggregateSelection(table, indices, districtLinks, operatorIndex)
   self.postMessage({ type, requestId, ...result, elapsedMs: performance.now() - started }, [result.positions.buffer, result.colors.buffer, result.powers.buffer, result.pointCounts.buffer, result.rowIndices.buffer, ...markerTransfers(markers)])
 }
 async function readTable(url) {
@@ -31,6 +32,7 @@ self.onmessage = async ({ data: message }) => {
       const started = performance.now()
       self.postMessage({ type: 'progress', message: 'Загрузка площадок…' })
       table = await readTable(message.urls.sites)
+      operatorIndex = buildOperatorIndex(table)
       self.postMessage({ type: 'catalog', states: [...new Set(table.getChild('state_name'))].sort() })
       sendSites('ready', 0, {}, started)
       try {
@@ -40,7 +42,7 @@ self.onmessage = async ({ data: message }) => {
         ])
         districtLinks = buildDistrictIndex(table, index)
         const base = { states: decodeRegions(states, 'states'), districts: decodeRegions(districts, 'districts').map(feature => ({ ...feature, properties: { ...feature.properties, ...labels[feature.properties.district_code] } })) }
-        const regions = applyRegionStats(base, aggregateSelection(table, matchingIndices(table, currentFilters), districtLinks))
+        const regions = applyRegionStats(base, aggregateSelection(table, matchingIndices(table, currentFilters), districtLinks, operatorIndex))
         self.postMessage({ type: 'regions', ...regions })
       } catch (error) { self.postMessage({ type: 'error', message: `Границы: ${error.message}` }) }
     }

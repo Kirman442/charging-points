@@ -180,3 +180,33 @@ The desktop panel is 400px wide; existing small-screen widths are retained.
 Very narrow panels show counters as compact vertical rows to avoid overflow.
 Long lists and small screens retain scrolling. Calculation notes are available
 in the expandable footer, preserving space for the summary by default.
+
+## Step 14: operator infrastructure shares
+
+Apply after step13. Replace the included source files, stylesheet, README and
+operator tests in the project root; restart npm run dev. Data and dependencies
+are unchanged. The regional/national panel displays top five operators and Others,
+with separate rankings by point count or nominal installation power. Changing
+this local comparison does not change map metrics, filters or the camera.
+The choice persists across territories during the session. Site/cluster detail
+views retain their existing content; return to analytics for operator shares.
+
+Names are normalized once when the Worker loads sites: NFC Unicode, trimmed and
+collapsed whitespace, German lowercase matching. Display names retain spelling.
+Different legal entities, subsidiaries and brand names are never inferred as
+one corporate group. Blank names remain in the denominator as Operator unknown.
+Shares describe registered infrastructure, not revenue, energy sold or sessions.
+
+The Worker aggregates each operator across the filtered national selection,
+states and equipment-assigned districts. National/state power counts installations
+once via site totals; district power uses the existing equipment-derived index.
+Each territory sends only top five plus Others for both bases and operator count;
+full per-operator maps remain in the Worker. No new data fetch is introduced.
+Zoom/pan does not recalculate shares. All installations and points at selected
+sites count, matching current DC/power/24h filter semantics.
+
+Checks: 30 existing tests plus three operator tests pass, ESLint and production
+build pass, and panel SSR checks cover both comparison bases and empty results.
+Actual responsive layout and interactions should be checked in the browser.
+Concentration indicators (item 3), power distribution (item 5), and motorway
+analysis (item 4) remain subsequent steps.

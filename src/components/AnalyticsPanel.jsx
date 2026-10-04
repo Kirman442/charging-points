@@ -1,5 +1,6 @@
 import { territoryLabel } from '../utils/territory.js'
-import { memo } from 'react'
+import OperatorShares from './OperatorShares.jsx'
+import { memo, useState } from 'react'
 import { format } from '../utils/format.js'
 import { METRICS, metricValue, rankStates, summarizeStates } from '../data/analytics.js'
 
@@ -40,30 +41,33 @@ function ClusterContent({ cluster }) {
     <p>Двойной клик по группе на карте — приблизить и раскрыть её.</p>
   </>
 }
-function RegionContent({ region, metric, showSites }) {
+function RegionContent({ region, metric, showSites, operatorBasis, onOperatorBasis }) {
   return <><div className="eyebrow">{region.level === 'states' ? 'ЗЕМЛЯ' : 'ТЕРРИТОРИЯ KBA'}</div><h2>{region.state_name || region.display_name || region.district_name}</h2>{region.territory_type && <p className="muted">{territoryLabel(region.territory_type)}</p>}
     <SelectionStats sites={region.sites} equipment={region.equipment} points={region.points} showSites={showSites} />
     <SummaryGroups summary={region} metric={metric} />
+    <OperatorShares operators={region.operators} basis={operatorBasis} onBasis={onOperatorBasis} />
   </>
 }
-function OverviewContent({ states, metric, data, showSites, onSelect }) {
+function OverviewContent({ states, metric, data, showSites, onSelect, operatorBasis, onOperatorBasis }) {
   const totals = summarizeStates(states)
   const ranked = rankStates(states, metric)
   return <><div className="eyebrow">ОБЗОР ЗЕМЕЛЬ</div><h2>Германия</h2>
     <SelectionStats sites={data?.count ?? totals.sites} equipment={totals.equipment} points={data?.totalPoints ?? totals.points} showSites={showSites} />
     <SummaryGroups summary={totals} metric={metric} />
+    <OperatorShares operators={data?.regionStats?.nationalOperators} basis={operatorBasis} onBasis={onOperatorBasis} />
     <p className="note">16 земель · {METRICS[metric].title} · нажми на строку для подробностей.</p>
     <ol className="region-ranking">{ranked.map((state, index) => <li key={state.state_code}><button onClick={() => onSelect(state)}><span className="rank">{index + 1}</span><span className="region-name">{state.state_name}</span><b>{format(metricValue(state, metric))}</b></button></li>)}</ol>
   </>
 }
 function AnalyticsPanel({ cluster, states, site, region, metric, pending, data, showSites, status, error, onRetry, onCloseSite, onOverview, onSelectRegion }) {
+  const [operatorBasis, setOperatorBasis] = useState('points')
   return <aside className="panel analytics-panel" aria-label="Региональная аналитика" aria-busy={pending}>
     <header className="analytics-toolbar"><span>АНАЛИТИКА</span>{cluster || site || pending ? <button onClick={onCloseSite}>К аналитике</button> : region ? <button onClick={onOverview}>Все земли</button> : <span className="muted">Текущая выборка</span>}</header>
     <div className="pending-line" role="status">{pending ? 'Загрузка новой площадки…' : ''}</div>
     <div className="analytics-scroll">
       {status && status !== 'Готово' && <p role="status">{status}</p>}
       {error && <div className="error" role="alert">{error} <button onClick={onRetry}>Повторить</button></div>}
-      {cluster ? <ClusterContent cluster={cluster} /> : site ? <SiteContent site={site} /> : region ? <RegionContent region={region} metric={metric} showSites={showSites} /> : states ? <OverviewContent states={states} metric={metric} data={data} showSites={showSites} onSelect={onSelectRegion} /> : <p role="status">Подготовка региональной аналитики…</p>}
+      {cluster ? <ClusterContent cluster={cluster} /> : site ? <SiteContent site={site} /> : region ? <RegionContent region={region} metric={metric} showSites={showSites} operatorBasis={operatorBasis} onOperatorBasis={setOperatorBasis} /> : states ? <OverviewContent states={states} metric={metric} data={data} showSites={showSites} onSelect={onSelectRegion} operatorBasis={operatorBasis} onOperatorBasis={setOperatorBasis} /> : <p role="status">Подготовка региональной аналитики…</p>}
     </div>
     <footer><p className="note">BNetzA: 01.09.2026 · KBA: 01.01.2026</p><details className="analytics-method"><summary>Как считаются показатели</summary><p className="note">Площадки, установки и точки — по текущим фильтрам. BEV не фильтруются. Площадка объединяет установки; установка может иметь несколько точек. Одна точка заряжает один автомобиль одновременно.</p>{!site && !cluster && <p className="note">Считаются все точки и номинальная мощность всех установок на выбранных площадках, включая обслуживаемые. Мощность не показывает фактическую выдачу или число зарядок за день. BEV по 16 землям, без «Sonstige». Отношение двух снимков, не оценка занятости.</p>}</details></footer>
   </aside>

@@ -93,3 +93,16 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
   .selection-stats.three-counters > div { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
   .selection-stats.three-counters span { margin-top: 0; }
 }
+
+.operator-shares { border-top: 1px solid #dce7e2; margin: 15px 0; padding-top: 12px; }
+.operator-shares h3 { font-size: 12px; color: #377c70; margin: 0 0 9px; }
+.operator-basis { display: grid; gap: 4px; font-size: 10px; color: #647973; }
+.operator-basis select { min-width: 0; width: 100%; padding: 5px 6px; font: inherit; font-size: 11px; color: #18332f; background: #f7faf8; border: 1px solid #cbdcd5; border-radius: 7px; }
+.operator-ranking { list-style: none; padding: 0; margin: 10px 0; }
+.operator-ranking li { margin: 12px 0; }
+.operator-row { display: flex; align-items: baseline; gap: 8px; font-size: 11px; line-height: 1.4; }
+.operator-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.operator-row strong { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.operator-bar { height: 5px; background: #e7ede9; border-radius: 3px; margin-top: 5px; overflow: hidden; }
+.operator-bar span { display: block; height: 100%; background: #377c70; border-radius: inherit; }
+.operator-value { display: block; margin-top: 3px; font-size: 10px; color: #647973; }

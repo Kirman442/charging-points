@@ -80,10 +80,10 @@ function OverviewContent({ states, metric, data, showSites, onSelect, operatorBa
     />
   </>
 }
-function AnalyticsPanel({ cluster, states, site, region, metric, pending, data, operatorBasis = 'points', onOperatorBasis, showSites, status, error, onRetry, onCloseSite, onOverview, onSelectRegion }) {
+function AnalyticsPanel({ cluster, selectedState, states, site, region, metric, pending, data, operatorBasis = 'points', onOperatorBasis, showSites, status, error, onRetry, onCloseSite, onAllTerritories, onOverview, onSelectRegion }) {
   const [activeTab, setActiveTab] = useState('states')
   return <aside className="panel analytics-panel" aria-label="Региональная аналитика" aria-busy={pending}>
-    <header className="analytics-toolbar"><span>АНАЛИТИКА</span>{cluster || site || pending ? <button onClick={onCloseSite}>К аналитике</button> : region ? <button onClick={onOverview}>Все земли</button> : <span className="muted">Текущая выборка</span>}</header>
+    <header className="analytics-toolbar"><span>АНАЛИТИКА</span>{cluster || site || pending ? <button onClick={onCloseSite}>К аналитике</button> : region ? <button onClick={region.level === 'districts' && selectedState ? onAllTerritories : onOverview}>{region.level === 'districts' && selectedState ? 'Все территории' : 'Все земли'}</button> : <span className="muted">Текущая выборка</span>}</header>
     <div className="pending-line" role="status">{pending ? 'Загрузка новой площадки…' : ''}</div>
     <div className="analytics-scroll">
       {status && status !== 'Готово' && <p role="status">{status}</p>}

@@ -260,3 +260,17 @@ Validation: all 35 tests, ESLint and production build pass. New tests cover the
 exact 60% boundary, both bases, zero totals, small selections, map colors and
 ranking consistency. SSR checks cover status cards and legend. Browser appearance
 and interactions should be checked locally.
+
+## Step 17: return from a district to the selected state
+
+Apply after step16; replace the three included files and restart npm run dev.
+When a KBA district is selected within the state filter, All territories closes
+the selected district and restores the selected state's analytics. The handler
+clears only the clicked region and site/cluster detail; it does not change filters,
+territory, analytical metric, operator basis, tab preference or camera view.
+The state summary then offers All states, using the existing national-overview
+handler. A district selected with All Germany offers All states directly.
+Site/cluster/pending-detail return continues to use Back to analytics.
+
+Validation: ESLint, production build and SSR checks for each return-button case.
+No data, dependency or calculation changes.

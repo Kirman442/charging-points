@@ -70,6 +70,10 @@ export default function App() {
   const showRegion = useCallback(value => {
     setCluster(null); setSiteMode(false); selectSite(-1); setClickedRegion(value)
   }, [selectSite])
+  const allTerritories = useCallback(() => {
+    setClickedRegion(null)
+    closeSite()
+  }, [closeSite])
   const overview = useCallback(() => {
     pendingFocus.current = null
     setCluster(null); setClickedRegion(null); setOptions(previous => territoryForSelection(previous, '')); setFilters(previous => ({ ...previous, state: '' })); setSiteMode(false); selectSite(-1)
@@ -85,9 +89,9 @@ export default function App() {
     <ControlPanel states={states} filters={filters} onFilters={onFilters} options={options} onOptions={onOptions} onReset={resetSettings} />
 
     <MapLegend regions={regions} options={mapOptions} />
-    <AnalyticsPanel cluster={cluster} states={regions?.states} site={siteMode ? detail : null} region={activeRegion} metric={options.metric} pending={siteMode && detailPending}
+    <AnalyticsPanel cluster={cluster} selectedState={filters.state} states={regions?.states} site={siteMode ? detail : null} region={activeRegion} metric={options.metric} pending={siteMode && detailPending}
       data={data} operatorBasis={options.operatorBasis} onOperatorBasis={value => onOptions({ ...options, operatorBasis: value })} showSites={options.showSites} status={status} error={error || mapError} onRetry={() => { closeSite(); setClickedRegion(null); reload() }}
-      onCloseSite={closeSite} onOverview={overview} onSelectRegion={showRegion} />
+      onCloseSite={closeSite} onAllTerritories={allTerritories} onOverview={overview} onSelectRegion={showRegion} />
     <div className="source">Данные: <a href="https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/start.html" target="_blank" rel="noreferrer">BNetzA · CC BY 4.0</a> · KBA · BKG · обработка и группировка</div>
   </main>
 }

@@ -6,7 +6,7 @@ import MapLegend from './components/MapLegend.jsx'
 import { useChargingData } from './hooks/useChargingData.js'
 import { DEFAULT_FILTERS, GERMANY } from './config/map.js'
 import { clusterZoom } from './config/clustering.js'
-import { DEFAULT_OPTIONS, normalizeOptions, resetOptions, reconcileRegion } from './map/settings.js'
+import { DEFAULT_OPTIONS, normalizeOptions, territoryForSelection, resetOptions, reconcileRegion } from './map/settings.js'
 import { fitRegionViewState, mapPadding } from './map/navigation.js'
 import { transitionViewState } from './map/interaction.js'
 import './App.css'
@@ -49,18 +49,18 @@ export default function App() {
   const onFilters = useCallback(next => {
     setCluster(null)
     setFilters(next)
-    if (next.state !== filters.state) { setClickedRegion(null); focusLand(next.state) }
+    if (next.state !== filters.state) { setClickedRegion(null); setOptions(previous => territoryForSelection(previous, next.state)); focusLand(next.state) }
     setSiteMode(false); selectSite(-1)
   }, [filters.state, selectSite, focusLand])
   const onOptions = useCallback(next => {
-    const normalized = normalizeOptions(next)
+    const normalized = next.metric !== options.metric ? territoryForSelection(next, filters.state) : normalizeOptions(next)
     setOptions(normalized)
     if (!normalized.showSites || normalized.clusterSites !== options.clusterSites) setCluster(null)
     if (normalized.metric !== options.metric || normalized.territory !== options.territory) {
       setCluster(null); setSiteMode(false); selectSite(-1)
       setClickedRegion(previous => reconcileRegion(previous, normalized, regions))
     }
-  }, [options.metric, options.territory, options.clusterSites, regions, selectSite])
+  }, [options.metric, options.territory, options.clusterSites, filters.state, regions, selectSite])
   const resetSettings = useCallback(() => {
     pendingFocus.current = null
     setViewState(GERMANY); setFilters({ ...DEFAULT_FILTERS })
@@ -72,7 +72,7 @@ export default function App() {
   }, [selectSite])
   const overview = useCallback(() => {
     pendingFocus.current = null
-    setCluster(null); setClickedRegion(null); setFilters(previous => ({ ...previous, state: '' })); setSiteMode(false); selectSite(-1)
+    setCluster(null); setClickedRegion(null); setOptions(previous => territoryForSelection(previous, '')); setFilters(previous => ({ ...previous, state: '' })); setSiteMode(false); selectSite(-1)
   }, [selectSite])
   const onViewChange = useCallback(next => {
     if (clusterZoom(next.zoom) !== clusterZoom(viewState.zoom)) setCluster(null)

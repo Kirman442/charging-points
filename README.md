@@ -33,8 +33,11 @@ BNetzA 2026-09-01 vs KBA 2026-01-01: comparison of snapshots, not live availabil
 
 A single territory selector (states / KBA districts) controls both analytical fill
 and contours. Boundary visibility is a separate checkbox and does not affect fill.
-The ratio metric automatically selects states and locks the territory selector;
-it preserves the boundary visibility choice. BEV and marker modes allow both levels.
+BEV, points per 1,000 BEV and kW per 1,000 BEV default to KBA districts when
+a state is selected and to states for All Germany. Changing one of these metrics
+also applies that default. Manual territory changes remain available; power/DC/24h
+filters preserve them. Boundary and marker visibility are independent. Marker
+mode does not automatically change the territory level.
 Switching from a selected district to states opens its parent state's analytics.
 Switching to districts retains a selected state's summary until a district is clicked.
 The legend uses the fill's domain and selected state. Marker visibility does not
@@ -94,7 +97,7 @@ All 208,570 points are assigned; no snapping, unmatched equipment, or boundary t
 There are 67,681 site/district rows: ONE site has equipment in TWO districts.
 Each district counts that site once and only its own points; Germany counts the
 site once. Consequently, summed district site counts can exceed the national
-site count. Point counts reconcile exactly. Do not use simplified display polygons
+site count. Point counts, installation counts and nominal power reconcile across districts. Do not use simplified display polygons
 for spatial assignment.
 District labels come from BKG VG250 GEN/BEZ. All Kreisfreie Stadt and Stadtkreis
 are labeled as autonomous cities; names retain proper spelling and accents.
@@ -122,7 +125,40 @@ pyarrow, shapely>=2, pyproj, numpy; arguments: --districts-original PATH,
 
 ## Validation and remaining work
 
-Build, ESLint and ten data/analytics tests pass. Panel markup is checked separately.
+Build, ESLint and 30 tests pass. Panel markup is checked separately.
 Live layout/interaction should be verified locally. On small screens control scroll
-is retained rather than clipping controls. Clustering, region highlight/fly-to,
-boundary-control redesign and load optimization remain separate steps.
+is retained rather than clipping controls. Further transition tuning, chart/dashboard design and load optimization remain
+separate steps.
+
+## Step 12: nominal power and analytical territories
+
+Apply this update to charging-points-state-navigation-step9. Extract the archive
+into the project root and replace the included files, including BOTH Parquet files
+in public/data. No npm dependencies have changed. Restart npm run dev after
+replacement; run npm run lint, npm run build and node --test tests/*.test.mjs.
+
+Terminology: charging_point_count = Ladepunkte (charging points); equipment_count
+= Ladeeinrichtungen (charging installations); site = grouped charging location.
+The site panel displays the first two counts as separate labeled rows.
+
+installed_power_kw = sum of equipment_power_kw ONCE per distinct equipment_id.
+The raw point table repeats that value at every point, so summing its rows would
+overcount power. Do not multiply site maximum power by point count, or sum
+alternative connectors. The preparation script validates finite, nonnegative
+equipment powers, updates the site table and adds installed_power_kw and
+equipment_count to the site/district index, using each installation's coordinates.
+Both updated Parquet tables use ZSTD level 10.
+
+kw_per_1000_bev = selected nominal installation power / registered passenger BEV
+* 1000. National values use totals, not average state ratios. A zero BEV denominator
+produces null. Nominal power includes all installations at selected sites, including
+those under maintenance, matching the existing infrastructure-count semantics.
+This is not measured simultaneous site output, live availability or vehicles/day;
+shared site connections and vehicle charging limits can reduce actual power.
+The browser only loads the compact site table and district index, never the full
+point table for power aggregation. Power is recomputed with existing filters;
+zoom/pan does not trigger power aggregation.
+
+Regional panels display nominal power in MW and both normalized metrics; selecting
+a state retains its summary until a district is clicked. Polygon fills, contours,
+legend and tooltips share the chosen territory level and metric.

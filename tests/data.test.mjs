@@ -10,8 +10,8 @@ const read = name => tableFromIPC(readParquet(new Uint8Array(fs.readFileSync(new
 const sites = read('charging_sites_zstd10.parquet')
 test('full registry, including the final Arrow batch', () => {
   const result = prepareSites(sites)
-  assert.equal(result.count, 67820)
-  assert.equal(result.totalPoints, 209136)
+  assert.equal(result.count, 67680)
+  assert.equal(result.totalPoints, 208570)
   assert.equal(result.rowIndices.at(-1), sites.numRows - 1)
   assert.equal(result.positions.at(-2), sites.getChild('longitude').get(sites.numRows - 1))
 })
@@ -20,7 +20,7 @@ test('state aggregates conserve registry totals and decode WKB', () => {
   const districts = decodeRegions(read('districts_bev_display_100m_string.parquet'), 'districts')
   assert.equal(states.length, 16)
   assert.equal(districts.length, 400)
-  assert.equal(states.reduce((sum, f) => sum + f.properties.points, 0), 209136)
+  assert.equal(states.reduce((sum, f) => sum + f.properties.points, 0), 208570)
   assert.equal(states.reduce((sum, f) => sum + f.properties.bev_count, 0), 2031870)
   for (const f of [...states, ...districts]) {
     assert.ok(['Polygon', 'MultiPolygon'].includes(f.geometry.type))

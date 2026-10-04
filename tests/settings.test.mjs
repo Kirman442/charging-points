@@ -1,17 +1,23 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { DEFAULT_OPTIONS, normalizeOptions, resetOptions, reconcileRegion } from '../src/map/settings.js'
+import { DEFAULT_OPTIONS, normalizeOptions, territoryForSelection, resetOptions, reconcileRegion } from '../src/map/settings.js'
 
 const state = { level: 'states', state_code: '05', state_name: 'Nordrhein-Westfalen' }
 const district = { level: 'districts', state_code: '05', district_code: '05111' }
 const regions = { states: [{ properties: state }] }
 
-test('ratio switches districts to states while preserving hidden boundaries and markers', () => {
-  const ratio = normalizeOptions({ ...DEFAULT_OPTIONS, metric: 'ratio', territory: 'districts', showBoundaries: false, showSites: false })
-  assert.equal(ratio.territory, 'states')
-  assert.equal(ratio.showBoundaries, false)
-  assert.equal(ratio.showSites, false)
-  assert.equal(normalizeOptions({ ...ratio, metric: 'bev' }).territory, 'states')
+test('analytical metrics default to districts for a selected state and states nationally', () => {
+  for (const metric of ['bev', 'ratio', 'power']) {
+    const options = { ...DEFAULT_OPTIONS, metric, showBoundaries: false, showSites: false }
+    const selected = territoryForSelection(options, 'Hessen')
+    assert.equal(selected.territory, 'districts')
+    assert.equal(selected.showBoundaries, false)
+    assert.equal(selected.showSites, false)
+    assert.equal(territoryForSelection(selected, '').territory, 'states')
+    assert.equal(normalizeOptions({ ...selected, territory: 'states' }).territory, 'states')
+    assert.equal(normalizeOptions({ ...selected, territory: 'districts' }).territory, 'districts')
+  }
+  assert.equal(territoryForSelection({ ...DEFAULT_OPTIONS, territory: 'districts' }, '').territory, 'districts')
 })
 test('reset restores every map setting except the chosen basemap', () => {
   const changed = { metric: 'bev', territory: 'districts', showBoundaries: false, showSites: false, clusterSites: false, style: 'light' }

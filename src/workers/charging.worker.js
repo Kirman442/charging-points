@@ -53,7 +53,7 @@ self.onmessage = async ({ data: message }) => {
       }
     }
     if (message.type === 'detail' && table && Number.isInteger(message.index) && message.index >= 0 && message.index < table.numRows) {
-      const fields = ['city', 'street', 'house_number', 'postal_code', 'state_name', 'operator', 'district_name', 'equipment_count', 'charging_point_count', 'opening_hours_label', 'operating_point_count', 'maintenance_point_count']
+      const fields = ['city', 'street', 'house_number', 'postal_code', 'state_name', 'operator', 'district_name', 'equipment_count', 'installed_power_kw', 'charging_point_count', 'opening_hours_label', 'operating_point_count', 'maintenance_point_count']
       const detail = Object.fromEntries(fields.map(name => [name, table.getChild(name)?.get(message.index)]))
       detail.available_power_kw = Array.from(table.getChild('available_power_kw')?.get(message.index) || [])
       self.postMessage({ type: 'detail', index: message.index, detail })

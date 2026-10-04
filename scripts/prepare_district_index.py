@@ -27,7 +27,15 @@ for code,kind in [('03241','Region'),('05334','Städteregion'),('10041','Regiona
 labels['07211']={'display_name':'Trier / Trier-Saarburg','territory_type':'Объединённая территория KBA'}
 for d in districts: assert d['district_code'] in labels,d['district_code']
 statecodes={s['state_name']:s['state_code'] for s in pq.read_table(args.states_original).to_pylist()}
-counts=collections.Counter(); review=[]; ambiguous=[]
+counts=collections.Counter(); powers=collections.Counter(); equipment_counts=collections.Counter(); site_powers=collections.Counter(); review=[]; ambiguous=[]
+for eid,p in eq.items():
+ power=p["equipment_power_kw"]
+ if power is None or not np.isfinite(power) or power<0: raise ValueError(f"Invalid equipment power: {eid}")
+ site_powers[p["site_id"]]+=power
+site_table=pq.read_table(repo/"public/data/charging_sites_zstd10.parquet")
+if "installed_power_kw" in site_table.column_names: site_table=site_table.drop(["installed_power_kw"])
+site_table=site_table.append_column("installed_power_kw",pa.array([site_powers[sid] for sid in site_table.column("site_id").to_pylist()],type=pa.float64()))
+pq.write_table(site_table,repo/"public/data/charging_sites_zstd10.parquet",compression="zstd",compression_level=10)
 transform=Transformer.from_crs(4326,3035,always_xy=True)
 projpolys=shapely.transform(polys,transform.transform,interleaved=False)
 for index,eid in enumerate(ids):
@@ -42,9 +50,12 @@ for index,eid in enumerate(ids):
   continue
  chosen=min(options,key=lambda i:districts[i]['district_code'])
  if len(options)>1:ambiguous.append({'equipment_id':eid,'codes':[districts[i]['district_code'] for i in options],'chosen':districts[chosen]['district_code']})
- counts[(p['site_id'],districts[chosen]['district_code'])]+=eqcounts[eid]
-rows=[{'site_id':sid,'district_code':code,'charging_point_count':n} for (sid,code),n in sorted(counts.items())]
-schema=pa.schema([('site_id',pa.string()),('district_code',pa.string()),('charging_point_count',pa.int32())],metadata={b'join':b'original KBA district polygons; equipment coordinates; boundary included; deterministic boundary tie by code; no snapping',b'compression_level':b'10'})
+ key=(p['site_id'],districts[chosen]['district_code'])
+ counts[key]+=eqcounts[eid]
+ powers[key]+=p['equipment_power_kw']
+ equipment_counts[key]+=1
+rows=[{'site_id':sid,'district_code':code,'charging_point_count':n,'installed_power_kw':powers[(sid,code)],'equipment_count':equipment_counts[(sid,code)]} for (sid,code),n in sorted(counts.items())]
+schema=pa.schema([('site_id',pa.string()),('district_code',pa.string()),('charging_point_count',pa.int32()),('installed_power_kw',pa.float64()),('equipment_count',pa.int32())],metadata={b'join':b'original KBA district polygons; equipment coordinates; boundary included; deterministic boundary tie by code; no snapping',b'compression_level':b'10'})
 pq.write_table(pa.Table.from_pylist(rows,schema=schema),repo/'public/data/site_district_counts_zstd10.parquet',compression='zstd',compression_level=10)
 (repo/'public/data/district_labels.json').write_text(json.dumps(labels,ensure_ascii=False),encoding='utf-8')
 out=repo/'data-quality/2026-09-01/district_assignment.json'

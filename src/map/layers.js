@@ -1,8 +1,7 @@
 import { GeoJsonLayer, ScatterplotLayer, TextLayer } from '@deck.gl/layers'
+import { metricValue } from '../data/analytics.js'
 import { normalizeOptions } from './settings.js'
-export function regionValue(feature, metric) {
-  return metric === 'ratio' ? feature.properties.points_per_1000_bev : feature.properties.bev_count
-}
+export function regionValue(feature, metric) { return metricValue(feature.properties, metric) }
 export function createLayers(data, regions, suppliedOptions, markers = null, clustered = false) {
   const options = normalizeOptions(suppliedOptions)
   const layers = []

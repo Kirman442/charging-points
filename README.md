@@ -162,3 +162,21 @@ zoom/pan does not trigger power aggregation.
 Regional panels display nominal power in MW and both normalized metrics; selecting
 a state retains its summary until a district is clicked. Polygon fills, contours,
 legend and tooltips share the chosen territory level and metric.
+
+## Step 13: compact analytics summary
+
+Apply after step12. Replace src/components/AnalyticsPanel.jsx, src/App.css and
+README.md from the update archive; restart npm run dev. No data or dependencies
+change. Regional codes remain in data but are omitted from the analytics panel.
+Counters are ordered sites / installations / charging points, with explanatory
+hover titles. Site details use the same order. Cluster summaries retain two
+counts because their packet contains sites and points only.
+
+Fleet and charging-infrastructure indicators are separate sections, including
+the national overview. The current analytical metric is highlighted in place;
+the duplicate headline card has been removed. Sections use two columns when
+the scroll area's available width is at least 320px, otherwise one column.
+The desktop panel is 400px wide; existing small-screen widths are retained.
+Very narrow panels show counters as compact vertical rows to avoid overflow.
+Long lists and small screens retain scrolling. Calculation notes are available
+in the expandable footer, preserving space for the summary by default.

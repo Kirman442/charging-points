@@ -5,11 +5,32 @@ import { METRICS, metricValue, rankStates, summarizeStates } from '../data/analy
 
 function SiteContent({ site }) {
   return <><div className="eyebrow">ЗАРЯДНАЯ ПЛОЩАДКА</div><h2>{site.city}</h2><p>{site.street} {site.house_number}</p><p className="muted">{site.postal_code} · {site.state_name}</p>
-    <dl><dt>Оператор</dt><dd>{site.operator}</dd><dt>Зарядные точки</dt><dd>{format(site.charging_point_count)}</dd><dt>Зарядные установки</dt><dd>{format(site.equipment_count)}</dd><dt>Номинальная мощность площадки</dt><dd>{format(site.installed_power_kw)} кВт</dd><dt>Доступные мощности</dt><dd>{site.available_power_kw.map(format).join(', ')} kW</dd><dt>Часы работы</dt><dd>{site.opening_hours_label}</dd><dt>Статус в реестре</dt><dd>{site.operating_point_count} в эксплуатации; {site.maintenance_point_count} на обслуживании</dd><dt>Район</dt><dd>{site.district_name}</dd></dl>
+    <SelectionStats sites={1} equipment={site.equipment_count} points={site.charging_point_count} showSites />
+    <dl><dt>Оператор</dt><dd>{site.operator}</dd><dt>Номинальная мощность площадки</dt><dd>{format(site.installed_power_kw)} кВт</dd><dt>Доступные мощности</dt><dd>{site.available_power_kw.map(format).join(', ')} kW</dd><dt>Часы работы</dt><dd>{site.opening_hours_label}</dd><dt>Статус в реестре</dt><dd>{site.operating_point_count} в эксплуатации; {site.maintenance_point_count} на обслуживании</dd><dt>Район</dt><dd>{site.district_name}</dd></dl>
     <p className="note">Реестр не показывает текущую занятость или исправность точек.</p></>
 }
-function SelectionStats({ sites, points, showSites, sitesLabel = 'площадок в выборке' }) {
-  return <><div className="selection-stats"><div><strong>{format(sites)}</strong><span>{sitesLabel}</span></div><div><strong>{format(points)}</strong><span>зарядных точек</span></div></div>{!showSites && <p className="note">Маркеры скрыты; выборка сохранена.</p>}</>
+function SelectionStats({ sites, equipment, points, showSites, sitesLabel = 'Площадки' }) {
+  const counters = [
+    { value: sites, label: sitesLabel, description: 'Площадка — сгруппированное место размещения зарядных установок.' },
+    ...(equipment == null ? [] : [{ value: equipment, label: 'Установки', description: 'Ladeeinrichtung — отдельная зарядная установка, у которой может быть несколько зарядных точек.' }]),
+    { value: points, label: 'Точки', description: 'Ladepunkt — зарядная точка для одного автомобиля одновременно.' },
+  ]
+  return <><div className={`selection-stats${equipment == null ? '' : ' three-counters'}`} aria-label="Зарядная инфраструктура в выборке">{counters.map(counter => <div key={counter.label}><strong>{format(counter.value)}</strong><span><abbr title={counter.description}>{counter.label}</abbr></span></div>)}</div>{!showSites && <p className="note">Маркеры скрыты; выборка сохранена.</p>}</>
+}
+function SummaryGroups({ summary, metric }) {
+  const groups = [
+    { title: 'Автопарк', rows: [
+      { label: 'Всего легковых автомобилей', value: format(summary.pkw_count) },
+      { label: 'Легковые BEV', value: format(summary.bev_count), metric: 'bev' },
+      { label: 'Доля BEV', value: summary.pkw_count > 0 ? `${format(summary.bev_count / summary.pkw_count * 100)} %` : '—' },
+    ] },
+    { title: 'Зарядная инфраструктура', rows: [
+      { label: 'Номинальная мощность', value: `${format(summary.installed_power_kw / 1000)} МВт` },
+      { label: 'Точки на 1 000 BEV', value: format(summary.points_per_1000_bev), metric: 'ratio' },
+      { label: 'кВт на 1 000 BEV', value: format(summary.kw_per_1000_bev), metric: 'power' },
+    ] },
+  ]
+  return <div className="analytics-groups">{groups.map(group => <section className="analytics-group" key={group.title} aria-label={group.title}><h3>{group.title}</h3><dl>{group.rows.map(row => <div key={row.label} className={row.metric === metric ? 'summary-row selected-metric' : 'summary-row'}><dt>{row.label}{row.metric === metric && <span className="sr-only"> — выбранная метрика карты</span>}</dt><dd>{row.value}</dd></div>)}</dl></section>)}</div>
 }
 function ClusterContent({ cluster }) {
   return <><div className="eyebrow">ГРУППА ПЛОЩАДОК НА КАРТЕ</div><h2>Зарядная инфраструктура</h2>
@@ -20,22 +41,18 @@ function ClusterContent({ cluster }) {
   </>
 }
 function RegionContent({ region, metric, showSites }) {
-  const definition = METRICS[metric]
   return <><div className="eyebrow">{region.level === 'states' ? 'ЗЕМЛЯ' : 'ТЕРРИТОРИЯ KBA'}</div><h2>{region.state_name || region.display_name || region.district_name}</h2>{region.territory_type && <p className="muted">{territoryLabel(region.territory_type)}</p>}
-    <SelectionStats sites={region.sites} points={region.points} showSites={showSites} />
-    {metric !== 'sites' && <div className="metric-card"><span>{definition.title}</span><strong>{format(metricValue(region, metric))}</strong><small>{definition.unit}</small></div>}
-    
-    <dl><dt>Код</dt><dd>{region.district_code || region.state_code}</dd><dt>Легковые BEV</dt><dd>{format(region.bev_count)}</dd><dt>Всего легковых автомобилей</dt><dd>{format(region.pkw_count)}</dd><dt>Доля BEV</dt><dd>{region.pkw_count > 0 ? `${format(region.bev_count / region.pkw_count * 100)} %` : '—'}</dd>
-    <dt>Зарядные установки</dt><dd>{format(region.equipment)}</dd><dt>Номинальная мощность</dt><dd>{format(region.installed_power_kw / 1000)} МВт</dd><dt>кВт на 1 000 BEV</dt><dd>{format(region.kw_per_1000_bev)}</dd><dt>Точки на 1 000 BEV</dt><dd>{format(region.points_per_1000_bev)}</dd></dl>
+    <SelectionStats sites={region.sites} equipment={region.equipment} points={region.points} showSites={showSites} />
+    <SummaryGroups summary={region} metric={metric} />
   </>
 }
 function OverviewContent({ states, metric, data, showSites, onSelect }) {
   const totals = summarizeStates(states)
   const ranked = rankStates(states, metric)
-  const definition = METRICS[metric]
-  return <><div className="eyebrow">ОБЗОР ЗЕМЕЛЬ</div><h2>Германия</h2><SelectionStats sites={data?.count ?? totals.sites} points={data?.totalPoints ?? totals.points} showSites={showSites} />{metric !== 'sites' && <div className="metric-card"><span>{definition.title}</span><strong>{format(metricValue(totals, metric))}</strong><small>{definition.unit}</small></div>}
-    <dl><dt>Номинальная мощность</dt><dd>{format(totals.installed_power_kw / 1000)} МВт</dd><dt>Точки на 1 000 BEV</dt><dd>{format(totals.points_per_1000_bev)}</dd><dt>кВт на 1 000 BEV</dt><dd>{format(totals.kw_per_1000_bev)}</dd></dl>
-    <p className="note">16 земель · нажми на строку для подробностей.</p>
+  return <><div className="eyebrow">ОБЗОР ЗЕМЕЛЬ</div><h2>Германия</h2>
+    <SelectionStats sites={data?.count ?? totals.sites} equipment={totals.equipment} points={data?.totalPoints ?? totals.points} showSites={showSites} />
+    <SummaryGroups summary={totals} metric={metric} />
+    <p className="note">16 земель · {METRICS[metric].title} · нажми на строку для подробностей.</p>
     <ol className="region-ranking">{ranked.map((state, index) => <li key={state.state_code}><button onClick={() => onSelect(state)}><span className="rank">{index + 1}</span><span className="region-name">{state.state_name}</span><b>{format(metricValue(state, metric))}</b></button></li>)}</ol>
   </>
 }
@@ -48,7 +65,7 @@ function AnalyticsPanel({ cluster, states, site, region, metric, pending, data, 
       {error && <div className="error" role="alert">{error} <button onClick={onRetry}>Повторить</button></div>}
       {cluster ? <ClusterContent cluster={cluster} /> : site ? <SiteContent site={site} /> : region ? <RegionContent region={region} metric={metric} showSites={showSites} /> : states ? <OverviewContent states={states} metric={metric} data={data} showSites={showSites} onSelect={onSelectRegion} /> : <p role="status">Подготовка региональной аналитики…</p>}
     </div>
-    <footer><p className="note">Площадки и зарядные точки — по текущим фильтрам. BEV не фильтруются. Зарядки: 01.09.2026; BEV: 01.01.2026.</p>{!site && !cluster && <p className="note">Фильтры выбирают площадки; считаются все точки и номинальная мощность всех установок на них, включая обслуживаемые. Мощность не показывает фактическую выдачу или число зарядок за день. BEV по 16 землям, без «Sonstige». Отношение двух снимков, не оценка занятости.</p>}</footer>
+    <footer><p className="note">BNetzA: 01.09.2026 · KBA: 01.01.2026</p><details className="analytics-method"><summary>Как считаются показатели</summary><p className="note">Площадки, установки и точки — по текущим фильтрам. BEV не фильтруются. Площадка объединяет установки; установка может иметь несколько точек. Одна точка заряжает один автомобиль одновременно.</p>{!site && !cluster && <p className="note">Считаются все точки и номинальная мощность всех установок на выбранных площадках, включая обслуживаемые. Мощность не показывает фактическую выдачу или число зарядок за день. BEV по 16 землям, без «Sonstige». Отношение двух снимков, не оценка занятости.</p>}</details></footer>
   </aside>
 }
 

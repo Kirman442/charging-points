@@ -6,6 +6,7 @@ import { createLayers, regionValue } from '../map/layers.js'
 import { ChargingMapController, mapCursor, markerSelection, zoomViewState, CLICK_RECOGNIZER_OPTIONS } from '../map/interaction.js'
 import { useClusters } from '../config/clustering.js'
 import { MAP_STYLES } from '../config/map.js'
+import { operatorConcentration } from '../data/concentration.js'
 import { METRICS } from '../data/analytics.js'
 import { format } from '../utils/format.js'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -41,7 +42,8 @@ export default function ChargingMap({ data, markers, regions, options, viewState
       if (isSite(info) && info.index >= 0) return { text: `${format(data.pointCounts[info.index])} зарядных точек\nДо ${format(data.powers[info.index])} kW\nНажми для подробностей` }
       if (info.object?.properties) {
         const p = info.object.properties
-        return { text: `${p.state_name || p.display_name || p.district_name}\n${METRICS[options.metric].title}: ${format(regionValue(info.object, options.metric))}` }
+        const concentration = options.metric === 'concentration' ? operatorConcentration(p.operators, options.operatorBasis) : null
+        return { text: `${p.state_name || p.display_name || p.district_name}\n${METRICS[options.metric].title}: ${format(regionValue(info.object, options.metric, options.operatorBasis))}${options.metric === 'concentration' ? ' %' : ''}${concentration ? `\n${concentration.name}\n${options.operatorBasis === 'power' ? 'По номинальной мощности' : 'По числу точек'}` : ''}` }
       }
       return null
     }}>

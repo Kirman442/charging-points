@@ -1,7 +1,8 @@
 import { GeoJsonLayer, ScatterplotLayer, TextLayer } from '@deck.gl/layers'
+import { operatorConcentration } from '../data/concentration.js'
 import { metricValue } from '../data/analytics.js'
 import { normalizeOptions } from './settings.js'
-export function regionValue(feature, metric) { return metricValue(feature.properties, metric) }
+export function regionValue(feature, metric, basis = 'points') { return metricValue(feature.properties, metric, basis) }
 export function createLayers(data, regions, suppliedOptions, markers = null, clustered = false) {
   const options = normalizeOptions(suppliedOptions)
   const layers = []
@@ -12,16 +13,17 @@ export function createLayers(data, regions, suppliedOptions, markers = null, clu
       : feature.properties.state_code === regions?.states?.find(state => state.properties.state_name === options.state)?.properties.state_code
   )) || []
   const features = featuresFor(level)
-  const maximum = Math.max(1, ...features.map(feature => regionValue(feature, options.metric) || 0))
+  const maximum = options.metric === 'concentration' ? 100 : Math.max(1, ...features.map(feature => regionValue(feature, options.metric, options.operatorBasis) || 0))
   if (options.metric !== 'sites') layers.push(new GeoJsonLayer({
     id: `analysis-${level}`, data: features, pickable: true, stroked: false, filled: true,
     getFillColor: feature => {
-      const value = regionValue(feature, options.metric)
+      const value = regionValue(feature, options.metric, options.operatorBasis)
       if (value === null || value === undefined) return [110,110,110,100]
+      if (options.metric === 'concentration') return operatorConcentration(feature.properties.operators, options.operatorBasis)?.high ? [205,90,65,160] : [65,155,140,145]
       const t = value / maximum
       return [Math.round(45 + 190 * t), Math.round(150 - 50 * t), Math.round(175 - 110 * t), 155]
     },
-    updateTriggers: { getFillColor: [maximum, options.metric] },
+    updateTriggers: { getFillColor: [maximum, options.metric, options.operatorBasis] },
   }))
   if (options.showBoundaries) layers.push(new GeoJsonLayer({
     id: `boundaries-${level}`, data: featuresFor(level),

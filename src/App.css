@@ -116,3 +116,18 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 .analytics-details .operator-shares { margin-top: 0; padding-top: 0; border-top: 0; }
 .analytics-details .region-ranking { margin-top: 8px; }
 @container (max-width: 220px) { .analytics-tabs { grid-template-columns: minmax(0, 1fr); } }
+
+.concentration-card { background: #eef6f1; border: 1px solid #cbdcd5; border-radius: 9px; padding: 11px; margin: 10px 0; }
+.concentration-card.high-concentration { background: #fff1e9; border-color: #e5b59e; }
+.concentration-status { display: block; font-size: 10px; color: #45655a; font-weight: 650; }
+.high-concentration .concentration-status { color: #954c32; }
+.concentration-leader { font-size: 12px; font-weight: 650; overflow-wrap: anywhere; }
+.concentration-card strong { display: block; font-size: 23px; font-variant-numeric: tabular-nums; }
+.concentration-card small { display: block; font-size: 10px; color: #647973; }
+.concentration-key { display: grid; gap: 4px; font-size: 10px; }
+.concentration-key > span { display: flex; align-items: center; gap: 6px; }
+.concentration-key i { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+.concentration-normal { background: rgb(65,155,140); }
+.concentration-high { background: rgb(205,90,65); }
+.concentration-missing { background: rgb(110,110,110); }
+.map-legend:has(.concentration-key) { height: auto; max-height: 180px; overflow-y: auto; }

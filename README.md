@@ -232,3 +232,31 @@ translation and final German layout review remain future work.
 Validation: ESLint, production build and SSR checks for default/alternate tabs,
 one visible panel, position below summary and regional-only operator content.
 Visual behavior should be checked locally.
+
+## Step 16: operator concentration
+
+Apply after step15: replace the included source files, stylesheet, test and README
+in the project root; restart npm run dev. No data or dependency changes.
+The new Concentration operators map metric displays the largest operator's share
+by point count or nominal installation power, using current site filters. The
+comparison basis is shared by the left controls, operator section, state ranking,
+map fill, legend and polygon tooltip. Changing it requires no Worker recalculation
+or new fetch: both operator rankings are already available. Reset restores points.
+
+Selecting a state defaults this metric to KBA districts, as with the other
+analytical metrics; All Germany defaults to states. Manual territories remain
+available. Orange = leader share strictly >60%, teal = <=60%, grey = no eligible
+infrastructure or zero denominator. The descriptive threshold is defined once
+in src/data/concentration.js. This is not a legal market dominance assessment,
+a price assessment or a profitability prediction. Operator names remain separate
+legal registry entities without inferred corporate ownership.
+
+The operator section shows the leader, share, absolute value, denominator,
+operator count and a threshold status. Small selections retain their actual share
+and volume rather than hiding 100% from a single small installation. No-data
+concentration is null, not 0%. HHI and power-distribution charts remain later work.
+
+Validation: all 35 tests, ESLint and production build pass. New tests cover the
+exact 60% boundary, both bases, zero totals, small selections, map colors and
+ranking consistency. SSR checks cover status cards and legend. Browser appearance
+and interactions should be checked locally.

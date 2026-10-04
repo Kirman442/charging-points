@@ -16,7 +16,7 @@ export function matchingIndices(table, filters = {}) {
   return indices
 }
 
-export function prepareSites(table, indices = matchingIndices(table)) {
+export function prepareSites(table, indices = matchingIndices(table), selection = null) {
   const names = ['longitude', 'latitude', 'max_power_kw', 'charging_point_count']
   const columns = Object.fromEntries(names.map(name => {
     const column = table.getChild(name)
@@ -31,7 +31,7 @@ export function prepareSites(table, indices = matchingIndices(table)) {
   for (let i = 0; i < count; i++) {
     const row = indices[i]
     const lon = columns.longitude.get(row), lat = columns.latitude.get(row)
-    const power = columns.max_power_kw.get(row), points = columns.charging_point_count.get(row)
+    const power = selection ? selection.maxPowers[row] : columns.max_power_kw.get(row), points = selection ? selection.points[row] : columns.charging_point_count.get(row)
     if (!Number.isFinite(lon) || !Number.isFinite(lat) || Math.abs(lon) > 180 || Math.abs(lat) > 90) throw new Error(`Некорректные координаты: строка ${row}`)
     if (!Number.isFinite(power) || power < 0 || !Number.isInteger(points) || points < 0) throw new Error(`Некорректные данные: строка ${row}`)
     positions[i * 2] = lon; positions[i * 2 + 1] = lat

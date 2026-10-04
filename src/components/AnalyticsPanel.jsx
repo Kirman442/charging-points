@@ -1,3 +1,4 @@
+import PowerDistribution from './PowerDistribution.jsx'
 import { territoryLabel } from '../utils/territory.js'
 import OperatorShares from './OperatorShares.jsx'
 import { memo, useId, useState } from 'react'
@@ -6,8 +7,9 @@ import { METRICS, metricValue, rankStates, summarizeStates } from '../data/analy
 
 function SiteContent({ site }) {
   return <><div className="eyebrow">ЗАРЯДНАЯ ПЛОЩАДКА</div><h2>{site.city}</h2><p>{site.street} {site.house_number}</p><p className="muted">{site.postal_code} · {site.state_name}</p>
-    <SelectionStats sites={1} equipment={site.equipment_count} points={site.charging_point_count} showSites />
-    <dl><dt>Оператор</dt><dd>{site.operator}</dd><dt>Номинальная мощность площадки</dt><dd>{format(site.installed_power_kw)} кВт</dd><dt>Доступные мощности</dt><dd>{site.available_power_kw.map(format).join(', ')} kW</dd><dt>Часы работы</dt><dd>{site.opening_hours_label}</dd><dt>Статус в реестре</dt><dd>{site.operating_point_count} в эксплуатации; {site.maintenance_point_count} на обслуживании</dd><dt>Район</dt><dd>{site.district_name}</dd></dl>
+    <SelectionStats sites={1} equipment={site.selected_equipment_count ?? site.equipment_count} points={site.selected_point_count ?? site.charging_point_count} showSites />
+    <p className="note">В выборке: {format(site.selected_point_count ?? site.charging_point_count)} точек и {format(site.selected_equipment_count ?? site.equipment_count)} установок. Всего на площадке: {format(site.charging_point_count)} точек и {format(site.equipment_count)} установок.</p>
+    <dl><dt>Оператор</dt><dd>{site.operator}</dd><dt>Мощность установок в выборке</dt><dd>{format(site.selected_power_kw ?? site.installed_power_kw)} кВт</dd><dt>Номинальная мощность всей площадки</dt><dd>{format(site.installed_power_kw)} кВт</dd><dt>Доступные мощности всей площадки</dt><dd>{site.available_power_kw.map(format).join(', ')} kW</dd><dt>Часы работы</dt><dd>{site.opening_hours_label}</dd><dt>Статус всех точек площадки</dt><dd>{site.operating_point_count} в эксплуатации; {site.maintenance_point_count} на обслуживании</dd><dt>Район</dt><dd>{site.district_name}</dd></dl>
     <p className="note">Реестр не показывает текущую занятость или исправность точек.</p></>
 }
 function SelectionStats({ sites, equipment, points, showSites, sitesLabel = 'Площадки' }) {
@@ -45,6 +47,7 @@ function RegionContent({ region, metric, showSites, operatorBasis, onOperatorBas
   return <><div className="eyebrow">{region.level === 'states' ? 'ЗЕМЛЯ' : 'ТЕРРИТОРИЯ KBA'}</div><h2>{region.state_name || region.display_name || region.district_name}</h2>{region.territory_type && <p className="muted">{territoryLabel(region.territory_type)}</p>}
     <SelectionStats sites={region.sites} equipment={region.equipment} points={region.points} showSites={showSites} />
     <SummaryGroups summary={region} metric={metric} />
+    <PowerDistribution summary={region} />
     <OperatorShares operators={region.operators} basis={operatorBasis} onBasis={onOperatorBasis} />
   </>
 }
@@ -73,6 +76,7 @@ function OverviewContent({ states, metric, data, showSites, onSelect, operatorBa
   return <><div className="eyebrow">ОБЗОР ЗЕМЕЛЬ</div><h2>Германия</h2>
     <SelectionStats sites={data?.count ?? totals.sites} equipment={totals.equipment} points={data?.totalPoints ?? totals.points} showSites={showSites} />
     <SummaryGroups summary={totals} metric={metric} />
+    <PowerDistribution summary={totals} />
     <AnalyticsTabs activeTab={activeTab} onTab={onTab}
       operatorsContent={<OperatorShares operators={data?.regionStats?.nationalOperators} basis={operatorBasis} onBasis={onOperatorBasis} />}
       statesContent={<><p className="note">{METRICS[metric].title}{metric === 'concentration' ? (operatorBasis === 'power' ? ' · по мощности' : ' · по точкам') : ''} · нажми на строку для подробностей.</p>
@@ -90,7 +94,7 @@ function AnalyticsPanel({ cluster, selectedState, states, site, region, metric, 
       {error && <div className="error" role="alert">{error} <button onClick={onRetry}>Повторить</button></div>}
       {cluster ? <ClusterContent cluster={cluster} /> : site ? <SiteContent site={site} /> : region ? <RegionContent region={region} metric={metric} showSites={showSites} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} /> : states ? <OverviewContent states={states} metric={metric} data={data} showSites={showSites} onSelect={onSelectRegion} activeTab={activeTab} onTab={setActiveTab} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} /> : <p role="status">Подготовка региональной аналитики…</p>}
     </div>
-    <footer><p className="note">BNetzA: 01.09.2026 · KBA: 01.01.2026</p><details className="analytics-method"><summary>Как считаются показатели</summary><p className="note">Площадки, установки и точки — по текущим фильтрам. BEV не фильтруются. Площадка объединяет установки; установка может иметь несколько точек. Одна точка заряжает один автомобиль одновременно.</p>{!site && !cluster && <p className="note">Считаются все точки и номинальная мощность всех установок на выбранных площадках, включая обслуживаемые. Мощность не показывает фактическую выдачу или число зарядок за день. BEV по 16 землям, без «Sonstige». Отношение двух снимков, не оценка занятости.</p>}</details></footer>
+    <footer><p className="note">BNetzA: 01.09.2026 · KBA: 01.01.2026</p><details className="analytics-method"><summary>Как считаются показатели</summary><p className="note">Площадки, установки и точки — по текущим фильтрам. BEV не фильтруются. Площадка объединяет установки; установка может иметь несколько точек. Одна точка заряжает один автомобиль одновременно.</p>{!site && !cluster && <p className="note">Мощность и DC фильтруют точки совместно. Считается полная номинальная мощность каждой установки с подходящей точкой — один раз, включая обслуживаемые установки. Фильтр 24/7 относится ко всей площадке. Мощность не показывает фактическую выдачу или число зарядок за день. BEV по 16 землям, без «Sonstige». Отношение двух снимков, не оценка занятости.</p>}</details></footer>
   </aside>
 }
 

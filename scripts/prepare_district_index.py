@@ -27,6 +27,7 @@ for code,kind in [('03241','Region'),('05334','Städteregion'),('10041','Regiona
 labels['07211']={'display_name':'Trier / Trier-Saarburg','territory_type':'Объединённая территория KBA'}
 for d in districts: assert d['district_code'] in labels,d['district_code']
 statecodes={s['state_name']:s['state_code'] for s in pq.read_table(args.states_original).to_pylist()}
+equipment_districts={}
 counts=collections.Counter(); powers=collections.Counter(); equipment_counts=collections.Counter(); site_powers=collections.Counter(); review=[]; ambiguous=[]
 for eid,p in eq.items():
  power=p["equipment_power_kw"]
@@ -50,6 +51,7 @@ for index,eid in enumerate(ids):
   continue
  chosen=min(options,key=lambda i:districts[i]['district_code'])
  if len(options)>1:ambiguous.append({'equipment_id':eid,'codes':[districts[i]['district_code'] for i in options],'chosen':districts[chosen]['district_code']})
+ equipment_districts[eid]=districts[chosen]['district_code']
  key=(p['site_id'],districts[chosen]['district_code'])
  counts[key]+=eqcounts[eid]
  powers[key]+=p['equipment_power_kw']
@@ -57,6 +59,17 @@ for index,eid in enumerate(ids):
 rows=[{'site_id':sid,'district_code':code,'charging_point_count':n,'installed_power_kw':powers[(sid,code)],'equipment_count':equipment_counts[(sid,code)]} for (sid,code),n in sorted(counts.items())]
 schema=pa.schema([('site_id',pa.string()),('district_code',pa.string()),('charging_point_count',pa.int32()),('installed_power_kw',pa.float64()),('equipment_count',pa.int32())],metadata={b'join':b'original KBA district polygons; equipment coordinates; boundary included; deterministic boundary tie by code; no snapping',b'compression_level':b'10'})
 pq.write_table(pa.Table.from_pylist(rows,schema=schema),repo/'public/data/site_district_counts_zstd10.parquet',compression='zstd',compression_level=10)
+# Compact point cohorts preserve exact thresholds, DC membership and equipment identity.
+cohorts=collections.Counter()
+for p in points:
+ if not np.isfinite(p['max_power_kw']) or p['max_power_kw']<0: raise ValueError(f"Invalid point power: {p['point_id']}")
+ if p['equipment_id'] not in equipment_districts: raise ValueError(f"Unmatched equipment: {p['equipment_id']}")
+ cohorts[(p['site_id'],p['equipment_id'],p['max_power_kw'],p['has_dc'])]+=1
+cohort_rows=[dict(site_id=sid,equipment_id=eid,district_code=equipment_districts[eid],max_power_kw=power,has_dc=dc,point_count=n,equipment_power_kw=eq[eid]['equipment_power_kw']) for (sid,eid,power,dc),n in sorted(cohorts.items())]
+cohort_schema=pa.schema([('site_id',pa.string()),('equipment_id',pa.string()),('district_code',pa.string()),('max_power_kw',pa.float64()),('has_dc',pa.bool_()),('point_count',pa.int32()),('equipment_power_kw',pa.float64())],metadata={b'compression_level':b'10',b'counting':b'point cohorts by installation, maximum point power and DC membership; full nominal installation power counted once if any point matches'})
+pq.write_table(pa.Table.from_pylist(cohort_rows,schema=cohort_schema),repo/'public/data/charging_point_groups_zstd10.parquet',compression='zstd',compression_level=10)
+assert sum(r['point_count'] for r in cohort_rows)==len(points)
+print({'point_cohorts':len(cohort_rows)})
 (repo/'public/data/district_labels.json').write_text(json.dumps(labels,ensure_ascii=False),encoding='utf-8')
 out=repo/'data-quality/2026-09-01/district_assignment.json'
 out.parent.mkdir(parents=True,exist_ok=True)

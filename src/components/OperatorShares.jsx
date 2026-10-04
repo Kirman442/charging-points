@@ -25,7 +25,7 @@ export default function OperatorShares({ operators, basis, onBasis }) {
         {distribution.leaders.map(entry => row(entry.name, entry.value, entry.share))}
         {distribution.others.count > 0 && row(`Остальные (${format(distribution.others.count)})`, distribution.others.value, distribution.others.share)}
       </ol>}
-      <p className="note">По названиям операторов в реестре, без объединения в группы компаний. Доля точек или мощности, а не продаж энергии.</p>
+      <p className="note">По подходящим точкам и установкам с такими точками. Названия из реестра, без объединения в группы компаний. Доля точек или мощности, а не продаж энергии.</p>
     </>}
   </section>
 }

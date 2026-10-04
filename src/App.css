@@ -131,3 +131,11 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 .concentration-high { background: rgb(205,90,65); }
 .concentration-missing { background: rgb(110,110,110); }
 .map-legend:has(.concentration-key) { height: auto; max-height: 180px; overflow-y: auto; }
+
+.power-distribution { border-top: 1px solid #dce7e2; margin: 12px 0; padding-top: 10px; }
+.power-distribution h3 { margin: 0 0 8px; color: #377c70; font-size: 11px; }
+.power-distribution ul { list-style: none; padding: 0; margin: 0; }
+.power-distribution li { margin: 8px 0; }
+.power-distribution-row { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; font-variant-numeric: tabular-nums; }
+.power-distribution-row strong { text-align: right; }
+.power-distribution-row small { color: #647973; font-weight: 400; font-size: 10px; }

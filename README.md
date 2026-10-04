@@ -19,15 +19,19 @@ choice remains unchanged.
 
 ## Filtering and metrics
 
-Filters select sites: minimum power means at least one suitable point; DC means
-at least one DC point. Conditions may refer to different points. 24/7 means the
-whole site is categorized 24_7. All points at selected sites are counted.
-Filters update BOTH map and analytics: site/point totals, state and district
-aggregates, rankings and ratio colors. BEV counts and their denominators remain
-unchanged. National ratio = selected points / BEV across the 16 states * 1000,
-not an average of state ratios. KBA Sonstige is not included in the 16-state total.
-An empty selection yields zero charging counts, retaining automobile counts.
-BNetzA 2026-09-01 vs KBA 2026-01-01: comparison of snapshots, not live availability.
+Power and DC filter charging points jointly: the same point must meet both
+conditions. A site remains visible if at least one of its points qualifies.
+State and whole-site 24/7 remain site conditions. Site counters count represented
+locations; point counters and distributions count eligible points; installation
+counters and nominal power count installations with eligible points once, using
+the full reported nominal installation power, not a proportional point allocation.
+Site details distinguish eligible counts/power from whole-site totals.
+
+Filters update map markers, cluster counts, state/district aggregates, operator
+shares, concentration and normalized metrics. BEV denominators remain unchanged.
+National ratios use aggregate totals across 16 states, excluding KBA Sonstige.
+An empty selection has zero infrastructure counts and null concentration, with
+unchanged automobile counts. BNetzA 2026-09-01 vs KBA 2026-01-01 are snapshots.
 
 ## Territory and boundary controls
 
@@ -115,7 +119,7 @@ src/data/regions.js: region decoding, district links and regional counts.
 src/map: layers and explicit MapLibre 6 worker initialization.
 src/config/map.js: files, styles and defaults. src/utils: format and territory labels.
 
-The Worker loads sites, boundaries, the compact district index and district labels;
+The Worker loads sites, boundaries, compact point cohorts and district labels;
 it does not load the full charging-points table in the browser. Rendering arrays are
 transferred, geometry decoded to GeoJSON; the pipeline is not end-to-end zero-copy.
 Map tiles are external CARTO/OpenStreetMap; MapLibre displays attribution.
@@ -274,3 +278,42 @@ Site/cluster/pending-detail return continues to use Back to analytics.
 
 Validation: ESLint, production build and SSR checks for each return-button case.
 No data, dependency or calculation changes.
+
+## Step 18: point power distribution, point filters and selected territory
+
+Apply after step17. Extract the update in the project root, replacing source files,
+stylesheet, script, tests and README and adding the NEW required file
+public/data/charging_point_groups_zstd10.parquet. Restart npm run dev. npm
+dependencies and full source charging-point/site tables do not change.
+
+This step supersedes historical whole-site counting descriptions in earlier steps.
+Minimum power now selects points (>= threshold), while retaining each represented
+site's existing geometry. DC requires that the SAME selected point has DC support.
+24/7 still requires the whole site to be 24/7. Installation power is counted once
+for installations with any eligible point, including its full reported capacity
+regardless of how many points qualify; no unsupported allocation is made. All
+regional ratios, operator shares, concentration, cluster counts and marker power
+colors use this selection. Site details show selection and full-site totals.
+
+The new compact ZSTD-10 Parquet groups points by installation, maximum point
+power and DC flag, retaining district assignment from original equipment
+coordinates. 122,896 cohorts represent all 208,570 accepted points and 116,108
+installations. Its size is about 1.6 MiB, replacing the old district-index fetch
+in the browser. The Worker converts it to typed arrays and aggregates by filter;
+the full point table is not downloaded. Cohorts preserve exact power thresholds
+beyond the four display categories.
+
+Distribution after the summary and before tabs: <=22, >22 and <50, >=50 and <150,
+and >=150 kW, counted per point using maximum connector power once per point.
+Counts and percentages use eligible points for Germany, states and KBA districts.
+Unknown/invalid powers fail preparation rather than silently becoming zero.
+
+Selected state/district gets a separate blue 3px outline, without changing
+analytical fills, picking or camera. The outline respects boundary visibility,
+updates with selection and disappears on returning to the previous level.
+
+Validation: all 39 tests, ESLint and production build pass. New tests compare
+cohort results against raw point records under power/DC/state/24h/empty filters,
+verify full installation power is counted once, band boundaries and highlight
+visibility. SSR checks cover distribution and selected versus whole-site labels.
+Visual interaction should be verified locally.

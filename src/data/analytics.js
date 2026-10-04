@@ -18,6 +18,7 @@ export function summarizeStates(features = []) {
   for (const { properties: p } of features) {
     for (const key of Object.keys(result)) result[key] += p[key] || 0
   }
+  result.powerBands = [0,1,2,3].map(band => features.reduce((sum, feature) => sum + (feature.properties.powerBands?.[band] || 0), 0))
   result.points_per_1000_bev = result.bev_count > 0 ? result.points / result.bev_count * 1000 : null
   result.kw_per_1000_bev = result.bev_count > 0 ? result.installed_power_kw / result.bev_count * 1000 : null
   return result

@@ -3,10 +3,10 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
   return <aside className="panel control-panel" aria-label="Настройки карты">
     <header><div className="eyebrow">ЭЛЕКТРОМОБИЛЬНОСТЬ · ГЕРМАНИЯ</div><h1>Зарядная инфраструктура</h1></header>
     <div className="control-scroll">
-      <fieldset className="controls"><legend>Выборка площадок</legend>
+      <fieldset className="controls"><legend>Выборка инфраструктуры</legend>
         <label>Земля<select value={filters.state} onChange={event => change('state', event.target.value)}><option value="">Вся Германия</option>{states.map(state => <option key={state}>{state}</option>)}</select></label>
-        <label>Минимальная мощность<select value={filters.minPower} onChange={event => change('minPower', Number(event.target.value))}>{[0,22,50,150,300].map(power => <option key={power} value={power}>{power ? `Есть точка ≥ ${power} kW` : 'Любая мощность'}</option>)}</select></label>
-        <label className="check"><input type="checkbox" checked={filters.dcOnly} onChange={event => change('dcOnly', event.target.checked)} />Есть DC-точки</label>
+        <label>Минимальная мощность<select value={filters.minPower} onChange={event => change('minPower', Number(event.target.value))}>{[0,22,50,150,300].map(power => <option key={power} value={power}>{power ? `Точки ≥ ${power} kW` : 'Любая мощность'}</option>)}</select></label>
+        <label className="check"><input type="checkbox" checked={filters.dcOnly} onChange={event => change('dcOnly', event.target.checked)} />Только DC-точки</label>
         <label className="check"><input type="checkbox" checked={filters.alwaysOpen} onChange={event => change('alwaysOpen', event.target.checked)} />Вся площадка работает 24/7</label>
         <label className="check"><input type="checkbox" checked={options.showSites} onChange={event => onOptions({ ...options, showSites: event.target.checked })} />Показать зарядные площадки</label>
         

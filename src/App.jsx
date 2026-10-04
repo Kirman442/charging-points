@@ -20,10 +20,10 @@ export default function App() {
   const [siteMode, setSiteMode] = useState(false)
   const [cluster, setCluster] = useState(null)
   const { data, markers, regions, states, detail, detailPending, status, error, selectSite, reload } = useChargingData(filters, viewState.zoom, options.clusterSites)
-  const mapOptions = useMemo(() => ({ ...options, state: filters.state }), [options, filters.state])
   const activeRegion = clickedRegion
     ? regions?.[clickedRegion.level]?.find(feature => (feature.properties.district_code || feature.properties.state_code) === (clickedRegion.district_code || clickedRegion.state_code))?.properties || null
     : regions?.states.find(feature => feature.properties.state_name === filters.state)?.properties || null
+  const mapOptions = useMemo(() => ({ ...options, state: filters.state, selectedRegion: activeRegion }), [options, filters.state, activeRegion])
   const closeSite = useCallback(() => { setCluster(null); setSiteMode(false); selectSite(-1) }, [selectSite])
   const focusLand = useCallback(name => {
     if (!name) {

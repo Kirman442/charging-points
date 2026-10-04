@@ -87,7 +87,7 @@ export function applyRegionStats(regions, stats) {
   const enrich = (features, level) => features.map(feature => {
     const p = feature.properties
     const key = level === 'states' ? p.state_name : p.district_code
-    const count = stats[level][key] || { sites: 0, points: 0, installed_power_kw: 0, equipment: 0, operators: summarizeOperators(new Map(), []) }
+    const count = stats[level][key] || { sites: 0, points: 0, installed_power_kw: 0, equipment: 0, powerBands: [0,0,0,0], operators: summarizeOperators(new Map(), []) }
     return { ...feature, properties: { ...p, ...count, kw_per_1000_bev: p.bev_count > 0 ? count.installed_power_kw / p.bev_count * 1000 : null, points_per_1000_bev: p.bev_count > 0 ? count.points / p.bev_count * 1000 : null } }
   })
   return { states: enrich(regions.states, 'states'), districts: enrich(regions.districts, 'districts') }

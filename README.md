@@ -317,3 +317,30 @@ cohort results against raw point records under power/DC/state/24h/empty filters,
 verify full installation power is counted once, band boundaries and highlight
 visibility. SSR checks cover distribution and selected versus whole-site labels.
 Visual interaction should be verified locally.
+
+## Step 19: return navigation and compact power distribution
+
+Apply after the pushed step18. Replace the eight included files in the project
+root and restart npm run dev. No data, dependency or calculation changes.
+Back to analytics smoothly fits the region whose analytics is restored, but
+only when the state dropdown has a manually selected state. If the retained
+selection is a KBA district in that state it fits the district; otherwise it
+fits the state. All territories fits the selected state and clears district
+selection. All states fits Germany when leaving that manually selected state.
+With All Germany already selected, closing site/cluster details or clearing a
+clicked region keeps the existing camera. Internal cleanup on filters, retry
+and reset does not invoke the new return-to-analytics navigation handler.
+Existing fitBounds, panel padding and 280ms transitions are reused; no additional
+spatial query or network fetch is added.
+
+The point-power distribution is initially collapsed. Its heading is a keyboard
+accessible button with expanded-state and controlled-content semantics. Its
+open state is stored in AnalyticsPanel and survives filter/territory changes
+and site/cluster views. The selected territory outline uses the exact ordinary
+boundary color [180,205,199,180], retaining a 3px width and boundary visibility
+behavior. Clicking summary metric rows remains a possible later improvement.
+
+Validation: ESLint and production build pass. Seven relevant navigation/layer
+tests pass, including new manual-state-only return-target cases. SSR checks cover
+open/collapsed distribution and matching selected/ordinary contour colors.
+Check camera transitions and panel appearance locally.

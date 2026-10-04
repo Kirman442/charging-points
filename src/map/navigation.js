@@ -41,3 +41,14 @@ export function fitRegionViewState(feature, size, previous, padding) {
     .fitBounds(bounds, { padding, maxZoom: 11 })
   return transitionViewState(previous, { longitude: fitted.longitude, latitude: fitted.latitude, zoom: fitted.zoom, pitch: 0, bearing: 0 })
 }
+
+// Return navigation is opt-in only for a manually selected state.
+export function returnRegionFeature(regions, selectedState, region) {
+  if (!selectedState) return null
+  const state = regions?.states?.find(feature => feature.properties.state_name === selectedState)
+  if (region?.level === 'districts') {
+    const district = regions?.districts?.find(feature => feature.properties.district_code === region.district_code && feature.properties.state_code === state?.properties.state_code)
+    if (district) return district
+  }
+  return state || null
+}

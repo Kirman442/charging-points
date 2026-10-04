@@ -43,11 +43,11 @@ function ClusterContent({ cluster }) {
     <p>Двойной клик по группе на карте — приблизить и раскрыть её.</p>
   </>
 }
-function RegionContent({ region, metric, showSites, operatorBasis, onOperatorBasis }) {
+function RegionContent({ region, metric, showSites, operatorBasis, onOperatorBasis, distributionOpen, onDistributionOpen }) {
   return <><div className="eyebrow">{region.level === 'states' ? 'ЗЕМЛЯ' : 'ТЕРРИТОРИЯ KBA'}</div><h2>{region.state_name || region.display_name || region.district_name}</h2>{region.territory_type && <p className="muted">{territoryLabel(region.territory_type)}</p>}
     <SelectionStats sites={region.sites} equipment={region.equipment} points={region.points} showSites={showSites} />
     <SummaryGroups summary={region} metric={metric} />
-    <PowerDistribution summary={region} />
+    <PowerDistribution summary={region} open={distributionOpen} onOpen={onDistributionOpen} />
     <OperatorShares operators={region.operators} basis={operatorBasis} onBasis={onOperatorBasis} />
   </>
 }
@@ -70,13 +70,13 @@ export function AnalyticsTabs({ activeTab, onTab, statesContent, operatorsConten
     <div id={`${id}-panel`} role="tabpanel" aria-labelledby={`${id}-${activeTab}-tab`} tabIndex={0}>{activeTab === 'states' ? statesContent : operatorsContent}</div>
   </div>
 }
-function OverviewContent({ states, metric, data, showSites, onSelect, operatorBasis, onOperatorBasis, activeTab, onTab }) {
+function OverviewContent({ states, metric, data, showSites, onSelect, operatorBasis, onOperatorBasis, activeTab, onTab, distributionOpen, onDistributionOpen }) {
   const totals = summarizeStates(states)
   const ranked = rankStates(states, metric, operatorBasis)
   return <><div className="eyebrow">ОБЗОР ЗЕМЕЛЬ</div><h2>Германия</h2>
     <SelectionStats sites={data?.count ?? totals.sites} equipment={totals.equipment} points={data?.totalPoints ?? totals.points} showSites={showSites} />
     <SummaryGroups summary={totals} metric={metric} />
-    <PowerDistribution summary={totals} />
+    <PowerDistribution summary={totals} open={distributionOpen} onOpen={onDistributionOpen} />
     <AnalyticsTabs activeTab={activeTab} onTab={onTab}
       operatorsContent={<OperatorShares operators={data?.regionStats?.nationalOperators} basis={operatorBasis} onBasis={onOperatorBasis} />}
       statesContent={<><p className="note">{METRICS[metric].title}{metric === 'concentration' ? (operatorBasis === 'power' ? ' · по мощности' : ' · по точкам') : ''} · нажми на строку для подробностей.</p>
@@ -86,13 +86,14 @@ function OverviewContent({ states, metric, data, showSites, onSelect, operatorBa
 }
 function AnalyticsPanel({ cluster, selectedState, states, site, region, metric, pending, data, operatorBasis = 'points', onOperatorBasis, showSites, status, error, onRetry, onCloseSite, onAllTerritories, onOverview, onSelectRegion }) {
   const [activeTab, setActiveTab] = useState('states')
+  const [distributionOpen, setDistributionOpen] = useState(false)
   return <aside className="panel analytics-panel" aria-label="Региональная аналитика" aria-busy={pending}>
     <header className="analytics-toolbar"><span>АНАЛИТИКА</span>{cluster || site || pending ? <button onClick={onCloseSite}>К аналитике</button> : region ? <button onClick={region.level === 'districts' && selectedState ? onAllTerritories : onOverview}>{region.level === 'districts' && selectedState ? 'Все территории' : 'Все земли'}</button> : <span className="muted">Текущая выборка</span>}</header>
     <div className="pending-line" role="status">{pending ? 'Загрузка новой площадки…' : ''}</div>
     <div className="analytics-scroll">
       {status && status !== 'Готово' && <p role="status">{status}</p>}
       {error && <div className="error" role="alert">{error} <button onClick={onRetry}>Повторить</button></div>}
-      {cluster ? <ClusterContent cluster={cluster} /> : site ? <SiteContent site={site} /> : region ? <RegionContent region={region} metric={metric} showSites={showSites} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} /> : states ? <OverviewContent states={states} metric={metric} data={data} showSites={showSites} onSelect={onSelectRegion} activeTab={activeTab} onTab={setActiveTab} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} /> : <p role="status">Подготовка региональной аналитики…</p>}
+      {cluster ? <ClusterContent cluster={cluster} /> : site ? <SiteContent site={site} /> : region ? <RegionContent region={region} metric={metric} showSites={showSites} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} distributionOpen={distributionOpen} onDistributionOpen={setDistributionOpen} /> : states ? <OverviewContent states={states} metric={metric} data={data} showSites={showSites} onSelect={onSelectRegion} activeTab={activeTab} onTab={setActiveTab} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} distributionOpen={distributionOpen} onDistributionOpen={setDistributionOpen} /> : <p role="status">Подготовка региональной аналитики…</p>}
     </div>
     <footer><p className="note">BNetzA: 01.09.2026 · KBA: 01.01.2026</p><details className="analytics-method"><summary>Как считаются показатели</summary><p className="note">Площадки, установки и точки — по текущим фильтрам. BEV не фильтруются. Площадка объединяет установки; установка может иметь несколько точек. Одна точка заряжает один автомобиль одновременно.</p>{!site && !cluster && <p className="note">Мощность и DC фильтруют точки совместно. Считается полная номинальная мощность каждой установки с подходящей точкой — один раз, включая обслуживаемые установки. Фильтр 24/7 относится ко всей площадке. Мощность не показывает фактическую выдачу или число зарядок за день. BEV по 16 землям, без «Sonstige». Отношение двух снимков, не оценка занятости.</p>}</details></footer>
   </aside>

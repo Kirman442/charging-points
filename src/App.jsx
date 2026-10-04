@@ -7,7 +7,7 @@ import { useChargingData } from './hooks/useChargingData.js'
 import { DEFAULT_FILTERS, GERMANY } from './config/map.js'
 import { clusterZoom } from './config/clustering.js'
 import { DEFAULT_OPTIONS, normalizeOptions, territoryForSelection, resetOptions, reconcileRegion } from './map/settings.js'
-import { fitRegionViewState, mapPadding } from './map/navigation.js'
+import { fitRegionViewState, mapPadding, returnRegionFeature } from './map/navigation.js'
 import { transitionViewState } from './map/interaction.js'
 import './App.css'
 
@@ -25,6 +25,14 @@ export default function App() {
     : regions?.states.find(feature => feature.properties.state_name === filters.state)?.properties || null
   const mapOptions = useMemo(() => ({ ...options, state: filters.state, selectedRegion: activeRegion }), [options, filters.state, activeRegion])
   const closeSite = useCallback(() => { setCluster(null); setSiteMode(false); selectSite(-1) }, [selectSite])
+  const focusFeature = useCallback(feature => {
+    const container = mapContainer.current
+    if (!feature || !container) return
+    const rect = container.getBoundingClientRect()
+    const controls = container.querySelector('.control-panel')?.getBoundingClientRect()
+    const analytics = container.querySelector('.analytics-panel')?.getBoundingClientRect()
+    setViewState(previous => fitRegionViewState(feature, rect, previous, mapPadding(rect, controls, analytics)))
+  }, [])
   const focusLand = useCallback(name => {
     if (!name) {
       pendingFocus.current = null
@@ -34,13 +42,16 @@ export default function App() {
     const feature = regions?.states?.find(feature => feature.properties.state_name === name)
     if (!feature) { pendingFocus.current = name; return }
     pendingFocus.current = null
-    const container = mapContainer.current
-    if (!container) return
-    const rect = container.getBoundingClientRect()
-    const controls = container.querySelector('.control-panel')?.getBoundingClientRect()
-    const analytics = container.querySelector('.analytics-panel')?.getBoundingClientRect()
-    setViewState(previous => fitRegionViewState(feature, rect, previous, mapPadding(rect, controls, analytics)))
-  }, [regions])
+    focusFeature(feature)
+  }, [regions, focusFeature])
+  const returnToAnalytics = useCallback(() => {
+    closeSite()
+    if (filters.state) {
+      const feature = returnRegionFeature(regions, filters.state, activeRegion)
+      if (feature) focusFeature(feature)
+      else focusLand(filters.state)
+    }
+  }, [closeSite, filters.state, regions, activeRegion, focusFeature, focusLand])
   useEffect(() => {
     if (!pendingFocus.current) return
     const frame = requestAnimationFrame(() => { if (pendingFocus.current) focusLand(pendingFocus.current) })
@@ -71,13 +82,15 @@ export default function App() {
     setCluster(null); setSiteMode(false); selectSite(-1); setClickedRegion(value)
   }, [selectSite])
   const allTerritories = useCallback(() => {
+    if (filters.state) focusLand(filters.state)
     setClickedRegion(null)
     closeSite()
-  }, [closeSite])
+  }, [closeSite, filters.state, focusLand])
   const overview = useCallback(() => {
+    if (filters.state) focusLand('')
     pendingFocus.current = null
     setCluster(null); setClickedRegion(null); setOptions(previous => territoryForSelection(previous, '')); setFilters(previous => ({ ...previous, state: '' })); setSiteMode(false); selectSite(-1)
-  }, [selectSite])
+  }, [selectSite, filters.state, focusLand])
   const onViewChange = useCallback(next => {
     if (clusterZoom(next.zoom) !== clusterZoom(viewState.zoom)) setCluster(null)
     setViewState(next)
@@ -91,7 +104,7 @@ export default function App() {
     <MapLegend regions={regions} options={mapOptions} />
     <AnalyticsPanel cluster={cluster} selectedState={filters.state} states={regions?.states} site={siteMode ? detail : null} region={activeRegion} metric={options.metric} pending={siteMode && detailPending}
       data={data} operatorBasis={options.operatorBasis} onOperatorBasis={value => onOptions({ ...options, operatorBasis: value })} showSites={options.showSites} status={status} error={error || mapError} onRetry={() => { closeSite(); setClickedRegion(null); reload() }}
-      onCloseSite={closeSite} onAllTerritories={allTerritories} onOverview={overview} onSelectRegion={showRegion} />
+      onCloseSite={returnToAnalytics} onAllTerritories={allTerritories} onOverview={overview} onSelectRegion={showRegion} />
     <div className="source">Данные: <a href="https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/start.html" target="_blank" rel="noreferrer">BNetzA · CC BY 4.0</a> · KBA · BKG · обработка и группировка</div>
   </main>
 }

@@ -5,7 +5,7 @@ import { createRequire } from 'node:module'
 import { tableFromIPC } from 'apache-arrow'
 import { WebMercatorViewport } from '@deck.gl/core'
 import { decodeRegions } from '../src/data/regions.js'
-import { geometryBounds, fitRegionViewState, mapPadding } from '../src/map/navigation.js'
+import { geometryBounds, fitRegionViewState, mapPadding, returnRegionFeature } from '../src/map/navigation.js'
 import { GERMANY } from '../src/config/map.js'
 const { readParquet } = createRequire(import.meta.url)('parquet-wasm/node')
 const table = tableFromIPC(readParquet(new Uint8Array(fs.readFileSync(new URL('../public/data/states_bev_display_100m_string.parquet', import.meta.url)))).intoIPCStream())
@@ -36,4 +36,17 @@ test('multipart bounds include every component and are cached; missing geometry 
 test('mobile padding always leaves a usable vertical map area', () => {
   const p=mapPadding({width:400,height:600,left:0,right:400,top:0,bottom:600},{bottom:300},{top:250})
   assert.ok(p.top+p.bottom <= 420+.01)
+})
+
+test('return navigation focuses the retained district or state only with a manual state filter', () => {
+  const state = { properties: { state_name: 'Bayern', state_code: '09' } }
+  const district = { properties: { level: 'districts', district_code: '09373', state_code: '09' } }
+  const other = { properties: { level: 'districts', district_code: '05111', state_code: '05' } }
+  const regions = { states: [state], districts: [district, other] }
+  assert.equal(returnRegionFeature(regions, '', district.properties), null)
+  assert.equal(returnRegionFeature(regions, 'Bayern', district.properties), district)
+  assert.equal(returnRegionFeature(regions, 'Bayern', null), state)
+  assert.equal(returnRegionFeature(regions, 'Bayern', state.properties), state)
+  assert.equal(returnRegionFeature(regions, 'Bayern', other.properties), state)
+  assert.equal(returnRegionFeature(null, 'Bayern', district.properties), null)
 })

@@ -139,3 +139,9 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 .power-distribution-row { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; font-variant-numeric: tabular-nums; }
 .power-distribution-row strong { text-align: right; }
 .power-distribution-row small { color: #647973; font-weight: 400; font-size: 10px; }
+
+.distribution-toggle { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; border: 0; padding: 3px 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.distribution-toggle > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.distribution-toggle > span:last-child { flex-shrink: 0; font-size: 16px; }
+.distribution-toggle:focus-visible { outline: 2px solid #377c70; outline-offset: 3px; border-radius: 4px; }
+.power-distribution:has(.distribution-toggle[aria-expanded="false"]) h3 { margin-bottom: 0; }

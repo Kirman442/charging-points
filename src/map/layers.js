@@ -37,7 +37,7 @@ export function createLayers(data, regions, suppliedOptions, markers = null, clu
     const feature = regions?.[selected.level]?.find(feature => (feature.properties.district_code || feature.properties.state_code) === (selected.district_code || selected.state_code))
     if (feature) layers.push(new GeoJsonLayer({
       id: 'selected-territory', data: [feature], pickable: false, filled: false, stroked: true,
-      getLineColor: [55,120,255,255], getLineWidth: 3, lineWidthUnits: 'pixels',
+      getLineColor: [180,205,199,180], getLineWidth: 3, lineWidthUnits: 'pixels',
     }))
   }
   if (options.showSites && clustered && markers) {

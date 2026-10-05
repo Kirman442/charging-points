@@ -344,3 +344,39 @@ Validation: ESLint and production build pass. Seven relevant navigation/layer
 tests pass, including new manual-state-only return-target cases. SSR checks cover
 open/collapsed distribution and matching selected/ordinary contour colors.
 Check camera transitions and panel appearance locally.
+
+## Step20 — parallel startup and loading measurements
+
+Initial loading now starts Parquet WASM, sites, point cohorts, both territory
+files and district labels concurrently. Site markers are still published before
+territory geometry. A regional download failure leaves the sites usable.
+
+The initial Worker request includes the current selection. React compares the
+four selection values before sending another filter request: reaching `ready`
+with the same selection no longer recalculates analytics and rebuilds the cluster
+index. A selection changed during loading is submitted when the Worker becomes
+ready. Display controls do not enter this comparison. Reload starts a fresh
+request sequence and retains the current selection.
+
+The browser console contains two `[Charging performance]` reports:
+`Площадки готовы` and `Территории и аналитика готовы`. Tables show fetch/read,
+WASM initialization, Parquet decoding, point/operator indexing, selection and
+analytics, cluster indexing and geometry preparation. The headline includes
+Worker elapsed time and elapsed time since the main thread started loading.
+These are data-ready/message receipt timings, not a measurement of completed
+screen painting. Fetch/read durations can include scheduling waits in a busy
+Worker; use Network/HAR for actual network timings. Concurrent stages overlap,
+so do not sum the rows to obtain total loading time.
+
+For comparison with step19, run `npm run build` and `npm run preview`, keep the
+same initial camera and selection, disable browser cache and reload three times.
+Record the two console reports alongside Network statistics. Inspect warm-cache
+loading separately. HTTP compression of WASM is not changed by this update:
+that must be checked on the deployment host.
+
+Apply after step19: replace README.md, src/hooks/useChargingData.js and
+src/workers/charging.worker.js; add src/data/filterKey.js and
+tests/loading.test.mjs. No dependency or data updates. Checks:
+`npm run lint`, `npm run build`, `node --test tests/*.test.mjs`.
+The loading tests exercise the real Worker processing pipeline using a Node
+Parquet decoder and controlled transport, including early regional failure.

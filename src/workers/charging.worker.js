@@ -8,44 +8,78 @@ import { prepareSites } from '../data/prepareSites.js'
 import { applyRegionStats, decodeRegions } from '../data/regions.js'
 
 let table, operatorIndex, pointGroups, selection, wasmReady, clusterIndex, currentZoom = 5, selectionRequestId = 0
-function sendSites(type, requestId, filters, started) {
-  selection = selectPoints(table, pointGroups, filters, operatorIndex)
-  const result = prepareSites(table, selection.indices, selection)
-  clusterIndex = buildClusters(result)
+function sendSites(type, requestId, filters, started, trace = null) {
+  const measure = (name, operation) => trace ? trace.measure(name, operation) : operation()
+  selection = measure('Расчёт выборки и аналитики', () => selectPoints(table, pointGroups, filters, operatorIndex))
+  const result = measure('Буферы площадок', () => prepareSites(table, selection.indices, selection))
+  clusterIndex = measure('Кластерный индекс', () => buildClusters(result))
   selectionRequestId = requestId
   const markers = clusterMarkers(clusterIndex, currentZoom)
   result.markers = markers
   result.regionStats = selection.stats
-  self.postMessage({ type, requestId, ...result, elapsedMs: performance.now() - started }, [result.positions.buffer, result.colors.buffer, result.powers.buffer, result.pointCounts.buffer, result.rowIndices.buffer, ...markerTransfers(markers)])
+  self.postMessage({ type, requestId, ...result, filters, elapsedMs: performance.now() - started }, [result.positions.buffer, result.colors.buffer, result.powers.buffer, result.pointCounts.buffer, result.rowIndices.buffer, ...markerTransfers(markers)])
 }
-async function readTable(url) {
+function createTrace(started) {
+  const stages = []
+  const record = (name, start) => stages.push({ stage: name, startMs: start - started, durationMs: performance.now() - start })
+  return {
+    record,
+    measure(name, operation) { const start = performance.now(); const result = operation(); record(name, start); return result },
+    report(phase) { self.postMessage({ type: 'performance', phase, elapsedMs: performance.now() - started, stages: stages.splice(0) }) },
+  }
+}
+async function readTable(url, trace, label) {
+  const start = performance.now()
   const response = await fetch(url)
   if (!response.ok) throw new Error(`Загрузка ${url}: HTTP ${response.status}`)
   const bytes = new Uint8Array(await response.arrayBuffer())
-  wasmReady ||= initWasm(wasmUrl)
+  trace.record(`Скачивание: ${label}`, start)
   await wasmReady
-  return tableFromIPC(readParquet(bytes).intoIPCStream())
+  return trace.measure(`Декодирование: ${label}`, () => tableFromIPC(readParquet(bytes).intoIPCStream()))
+}
+async function readLabels(url, trace) {
+  const start = performance.now()
+  const response = await fetch(url)
+  if (!response.ok) throw new Error('Не загрузились названия районов')
+  const labels = await response.json()
+  trace.record('Скачивание: названия районов', start)
+  return labels
 }
 self.onmessage = async ({ data: message }) => {
   try {
     if (message.type === 'load') {
       currentZoom = message.zoom
-      const started = performance.now()
+      const started = performance.now(), trace = createTrace(started)
       self.postMessage({ type: 'progress', message: 'Загрузка площадок…' })
-      const loaded = await Promise.all([readTable(message.urls.sites), readTable(message.urls.pointGroups)])
+      const wasmStarted = performance.now()
+      wasmReady ||= initWasm(wasmUrl).then(() => trace.record('Загрузка и инициализация WASM', wasmStarted))
+      // Start every request now. Decode regions only after sites are ready.
+      const sitesLoad = Promise.all([
+        readTable(message.urls.sites, trace, 'площадки'),
+        readTable(message.urls.pointGroups, trace, 'группы точек'),
+      ])
+      // Resolve errors into a value immediately: a failed region request must not
+      // reject unhandled while the site pipeline is still running.
+      const regionLoad = Promise.all([
+        readTable(message.urls.states, trace, 'земли'),
+        readTable(message.urls.districts, trace, 'районы KBA'),
+        readLabels(message.urls.labels, trace),
+      ]).then(value => ({ value }), error => ({ error }))
+      const loaded = await sitesLoad
       table = loaded[0]
-      pointGroups = buildPointGroups(table, loaded[1])
-      operatorIndex = buildOperatorIndex(table)
+      pointGroups = trace.measure('Индекс групп точек', () => buildPointGroups(table, loaded[1]))
+      operatorIndex = trace.measure('Индекс операторов', () => buildOperatorIndex(table))
       self.postMessage({ type: 'catalog', states: [...new Set(table.getChild('state_name'))].sort() })
-      sendSites('ready', 0, {}, started)
+      sendSites('ready', 0, message.filters || {}, started, trace)
+      trace.report('Площадки готовы')
       try {
-        const [states, districts, labels] = await Promise.all([
-          readTable(message.urls.states), readTable(message.urls.districts),
-          fetch(message.urls.labels).then(response => { if (!response.ok) throw new Error('Не загрузились названия районов'); return response.json() }),
-        ])
-        const base = { states: decodeRegions(states, 'states'), districts: decodeRegions(districts, 'districts').map(feature => ({ ...feature, properties: { ...feature.properties, ...labels[feature.properties.district_code] } })) }
-        const regions = applyRegionStats(base, selection.stats)
+        const result = await regionLoad
+        if (result.error) throw result.error
+        const [states, districts, labels] = result.value
+        const base = trace.measure('Геометрия территорий', () => ({ states: decodeRegions(states, 'states'), districts: decodeRegions(districts, 'districts').map(feature => ({ ...feature, properties: { ...feature.properties, ...labels[feature.properties.district_code] } })) }))
+        const regions = trace.measure('Привязка региональной аналитики', () => applyRegionStats(base, selection.stats))
         self.postMessage({ type: 'regions', ...regions })
+        trace.report('Территории и аналитика готовы')
       } catch (error) { self.postMessage({ type: 'error', message: `Границы: ${error.message}` }) }
     }
     if (message.type === 'filter' && table && pointGroups) { sendSites('filtered', message.requestId, message.filters, performance.now()) }

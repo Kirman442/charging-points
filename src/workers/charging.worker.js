@@ -1,7 +1,9 @@
+import { SITE_COLUMNS, SITE_DETAIL_COLUMNS } from '../config/siteColumns.js'
+import { readProjectedTable } from '../data/readProjectedTable.js'
 import { buildPointGroups, selectPoints } from '../data/pointSelection.js'
 import { buildOperatorIndex } from '../data/operators.js'
 import { buildClusters, clusterMarkers, markerTransfers } from '../data/clusters.js'
-import initWasm, { readParquet } from 'parquet-wasm/esm'
+import initWasm, { readParquet, ParquetFile, readSchema } from 'parquet-wasm/esm'
 import wasmUrl from 'parquet-wasm/esm/parquet_wasm_bg.wasm?url'
 import { tableFromIPC } from 'apache-arrow'
 import { prepareSites } from '../data/prepareSites.js'
@@ -69,7 +71,9 @@ self.onmessage = async ({ data: message }) => {
       ]).then(value => ({ value }), error => ({ error }))
       const bytes = await sitesLoad
       await wasmReady
-      table = decodeTable(bytes[0], trace, 'площадки')
+      const sitesStarted = performance.now()
+      table = await readProjectedTable(bytes[0], SITE_COLUMNS, { ParquetFile, readSchema })
+      trace.record('Декодирование выбранных колонок: площадки', sitesStarted)
       const groupsTable = decodeTable(bytes[1], trace, 'группы точек')
       pointGroups = trace.measure('Индекс групп точек', () => buildPointGroups(table, groupsTable))
       operatorIndex = trace.measure('Индекс операторов', () => buildOperatorIndex(table))
@@ -97,8 +101,7 @@ self.onmessage = async ({ data: message }) => {
       }
     }
     if (message.type === 'detail' && table && Number.isInteger(message.index) && message.index >= 0 && message.index < table.numRows) {
-      const fields = ['city', 'street', 'house_number', 'postal_code', 'state_name', 'operator', 'district_name', 'equipment_count', 'installed_power_kw', 'charging_point_count', 'opening_hours_label', 'operating_point_count', 'maintenance_point_count']
-      const detail = Object.fromEntries(fields.map(name => [name, table.getChild(name)?.get(message.index)]))
+      const detail = Object.fromEntries(SITE_DETAIL_COLUMNS.map(name => [name, table.getChild(name)?.get(message.index)]))
       detail.available_power_kw = Array.from(table.getChild('available_power_kw')?.get(message.index) || [])
       detail.selected_point_count = selection.points[message.index]
       detail.selected_equipment_count = selection.equipmentCounts[message.index]

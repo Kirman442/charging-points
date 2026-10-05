@@ -10,7 +10,7 @@ function startWorker({ filters = {}, failRegions = false } = {}) {
   const sourceURL = new URL('../src/workers/charging.worker.js', import.meta.url)
   let source = fs.readFileSync(sourceURL, 'utf8')
     .replace(/from '(\.\.\/[^']+)'/g, (_, relative) => `from '${new URL(relative, sourceURL).href}'`)
-    .replace("import initWasm, { readParquet } from 'parquet-wasm/esm'", "import { createRequire } from 'node:module'; const { readParquet } = createRequire(ROOT)('parquet-wasm/node'); const initWasm = async () => {}")
+    .replace("import initWasm, { readParquet, ParquetFile, readSchema } from 'parquet-wasm/esm'", "import { createRequire } from 'node:module'; const { readParquet, ParquetFile, readSchema } = createRequire(ROOT)('parquet-wasm/node'); const initWasm = async () => {}")
     .replace("import wasmUrl from 'parquet-wasm/esm/parquet_wasm_bg.wasm?url'", "const wasmUrl = 'mock-wasm'")
   source = source.replace("from 'apache-arrow'", `from '${import.meta.resolve('apache-arrow')}'`)
   const root = new URL('../package.json', import.meta.url).href
@@ -56,6 +56,10 @@ test('initial loading starts all requests before ready, preserves counts and the
     const ready = await waitFor('ready')
     assert.equal(ready.count,67680); assert.equal(ready.totalPoints,208570)
     assert.equal(messages.slice(0,messages.indexOf(ready)).filter(message => message.type === 'fetch').length,5)
+    worker.postMessage({type:'detail',index:ready.rowIndices.at(-1)})
+    const detail = (await waitFor('detail')).detail
+    for (const field of ['city','operator','district_name','opening_hours_label','installed_power_kw','equipment_count']) assert.notEqual(detail[field], undefined)
+    assert.ok(detail.available_power_kw.length > 0)
     const regions = await waitFor('regions')
     assert.equal(regions.states.length,16); assert.equal(regions.districts.length,400)
     await waitFor('performance', message => message.phase === 'Территории и аналитика готовы')

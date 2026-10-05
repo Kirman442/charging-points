@@ -420,3 +420,44 @@ and compare both `[Charging performance]` reports. Checks:
 Coverage includes multi-batch/sliced operator vectors, deferred territory
 processing, regional failure and conservation of all 208570 points, 116108
 installations and 9067843.9 kW through the actual Worker pipeline.
+
+## Step22 — decode only the site columns consumed by the app
+
+The site Parquet file has 30 columns. The map, filters, analytics and complete
+site card consume 21. Their shared list lives in src/config/siteColumns.js;
+site detail fields use that same list, so changing a detail field cannot silently
+omit it from projection.
+
+In installed parquet-wasm 0.6.1, the synchronous readParquet columns option did
+not actually project columns in the checks. The projected site reader therefore
+uses ParquetFile.fromFile on the already downloaded bytes and its stream API.
+Each streamed RecordBatch is converted with its own projected schema and all
+batches are joined into an Arrow Table. The last partial batch is retained.
+It validates the requested columns against the file schema before streaming,
+retains schemas for empty files and releases the stream/file handles.
+
+Point cohorts and territories keep the step21 reader. Initial request order and
+site-before-territory priority are preserved. The site decoding report now says
+`Декодирование выбранных колонок: площадки`; its duration includes asynchronous
+in-memory reading and conversion. Network payload size is unchanged: projection
+happens after downloading the original file. No Parquet files, dependencies or
+WASM delivery settings are replaced by this update.
+
+A local Node comparison produced 25,244,280 bytes of intermediate IPC for full
+site reading and 17,410,784 bytes for the selected-column stream (about 31% less).
+That is IPC volume, not a measurement of total browser peak memory. In two warm
+comparison rounds, full decoding took 94–95 ms and projected streaming took
+64–73 ms before adding the explicit schema validation. Browser effects must be
+measured independently; cold runtime compilation can dominate the first decode.
+
+Apply after step21: replace README.md, src/workers/charging.worker.js and
+tests/loading.test.mjs; add src/config/siteColumns.js,
+src/data/readProjectedTable.js and tests/projection.test.mjs. Then run
+`npm run build` and `npm run preview` and compare the same three cold reloads
+and both console performance reports.
+
+Checks: `npm run lint`, `npm run build`, `node --test tests/*.test.mjs` (47 tests).
+Projection tests compare every value and type of all 21 retained columns against
+full decoding, all index outputs, map buffers, regional/operator/power statistics
+under combined and empty selections, final partial batches and empty schemas.
+The real Worker test also requests the final site's detail card.

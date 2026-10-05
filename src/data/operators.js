@@ -2,13 +2,23 @@ const nameOrder = new Intl.Collator('de')
 
 // Technical name cleanup only: never infer corporate ownership or merge legal entities.
 export function buildOperatorIndex(table) {
-  const names = [], byKey = new Map(), ids = new Uint32Array(table.numRows)
-  const column = table.getChild('operator')
-  for (let row = 0; row < table.numRows; row++) {
-    const display = String(column.get(row) || '').normalize('NFC').trim().replace(/\s+/gu, ' ') || 'Оператор не указан'
-    const key = display.toLocaleLowerCase('de-DE')
-    if (!byKey.has(key)) { byKey.set(key, names.length); names.push(display) }
-    ids[row] = byKey.get(key)
+  const names = [], byKey = new Map(), bySource = new Map(), ids = new Uint32Array(table.numRows)
+  let offset = 0
+  for (const batch of table.batches) {
+    const column = batch.getChild('operator')
+    for (let row = 0; row < batch.numRows; row++) {
+      const source = String(column.get(row) || '')
+      let id = bySource.get(source)
+      if (id === undefined) {
+        const display = source.normalize('NFC').trim().replace(/\s+/gu, ' ') || 'Оператор не указан'
+        const key = display.toLocaleLowerCase('de-DE')
+        id = byKey.get(key)
+        if (id === undefined) { id = names.length; byKey.set(key, id); names.push(display) }
+        bySource.set(source, id)
+      }
+      ids[offset + row] = id
+    }
+    offset += batch.numRows
   }
   return { ids, names }
 }

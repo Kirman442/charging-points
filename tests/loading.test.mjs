@@ -32,10 +32,10 @@ function startWorker({ filters = {}, failRegions = false } = {}) {
   const worker = new Worker(new URL(`data:text/javascript,${encodeURIComponent(preamble + source + '\nparentPort.on("message", data => self.onmessage({data}));')}`))
   const messages = [], waiters = []
   worker.on('message', message => { messages.push(message); for (const check of [...waiters]) check() })
-  const waitFor = type => new Promise((resolve, reject) => {
+  const waitFor = (type, predicate = () => true) => new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error(`Timeout waiting for ${type}`)), 15000)
     const check = () => {
-      const found = messages.find(message => message.type === type)
+      const found = messages.find(message => message.type === type && predicate(message))
       if (!found) return
       clearTimeout(timer); waiters.splice(waiters.indexOf(check), 1); resolve(found)
     }
@@ -58,7 +58,18 @@ test('initial loading starts all requests before ready, preserves counts and the
     assert.equal(messages.slice(0,messages.indexOf(ready)).filter(message => message.type === 'fetch').length,5)
     const regions = await waitFor('regions')
     assert.equal(regions.states.length,16); assert.equal(regions.districts.length,400)
+    await waitFor('performance', message => message.phase === 'Территории и аналитика готовы')
     const reports = messages.filter(message => message.type === 'performance')
+    const sitesReport = reports.find(message => message.phase === 'Площадки готовы')
+    assert.ok(!sitesReport.stages.some(stage => /^Декодирование: (земли|районы KBA)$/.test(stage.stage)))
+    const regionsReport = reports.find(message => message.phase === 'Территории и аналитика готовы')
+    assert.ok(regionsReport.stages.some(stage => stage.stage === 'Декодирование: земли'))
+    assert.ok(regionsReport.stages.some(stage => stage.stage === 'Декодирование: районы KBA'))
+    for (const level of [regions.states, regions.districts]) {
+      assert.equal(level.reduce((sum, feature) => sum + feature.properties.points, 0), 208570)
+      assert.equal(level.reduce((sum, feature) => sum + feature.properties.equipment, 0), 116108)
+      assert.ok(Math.abs(level.reduce((sum, feature) => sum + feature.properties.installed_power_kw, 0) - 9067843.9) < 0.01)
+    }
     assert.equal(reports.flatMap(message => message.stages).filter(stage => stage.stage === 'Расчёт выборки и аналитики').length,1)
     worker.postMessage({type:'filter',requestId:1,filters:{state:'Bayern',minPower:150,dcOnly:true}})
     const filtered = await waitFor('filtered')

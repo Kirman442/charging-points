@@ -28,21 +28,23 @@ function createTrace(started) {
     report(phase) { self.postMessage({ type: 'performance', phase, elapsedMs: performance.now() - started, stages: stages.splice(0) }) },
   }
 }
-async function readTable(url, trace, label) {
+async function readBytes(url, trace, label) {
   const start = performance.now()
   const response = await fetch(url)
   if (!response.ok) throw new Error(`Загрузка ${url}: HTTP ${response.status}`)
   const bytes = new Uint8Array(await response.arrayBuffer())
-  trace.record(`Скачивание: ${label}`, start)
-  await wasmReady
-  return trace.measure(`Декодирование: ${label}`, () => tableFromIPC(readParquet(bytes).intoIPCStream()))
+  trace.record(`Получение байтов (с ожиданием Worker): ${label}`, start)
+  return bytes
+}
+function decodeTable(bytes, trace, label) {
+  return trace.measure(`Декодирование: ${label}`, () => tableFromIPC(readParquet(bytes, { batchSize: 16384 }).intoIPCStream()))
 }
 async function readLabels(url, trace) {
   const start = performance.now()
   const response = await fetch(url)
   if (!response.ok) throw new Error('Не загрузились названия районов')
   const labels = await response.json()
-  trace.record('Скачивание: названия районов', start)
+  trace.record('Получение названий районов (с ожиданием Worker)', start)
   return labels
 }
 self.onmessage = async ({ data: message }) => {
@@ -53,21 +55,23 @@ self.onmessage = async ({ data: message }) => {
       self.postMessage({ type: 'progress', message: 'Загрузка площадок…' })
       const wasmStarted = performance.now()
       wasmReady ||= initWasm(wasmUrl).then(() => trace.record('Загрузка и инициализация WASM', wasmStarted))
-      // Start every request now. Decode regions only after sites are ready.
+      // Fetch every file now; defer all territory decoding until sites are ready.
       const sitesLoad = Promise.all([
-        readTable(message.urls.sites, trace, 'площадки'),
-        readTable(message.urls.pointGroups, trace, 'группы точек'),
+        readBytes(message.urls.sites, trace, 'площадки'),
+        readBytes(message.urls.pointGroups, trace, 'группы точек'),
       ])
       // Resolve errors into a value immediately: a failed region request must not
       // reject unhandled while the site pipeline is still running.
       const regionLoad = Promise.all([
-        readTable(message.urls.states, trace, 'земли'),
-        readTable(message.urls.districts, trace, 'районы KBA'),
+        readBytes(message.urls.states, trace, 'земли'),
+        readBytes(message.urls.districts, trace, 'районы KBA'),
         readLabels(message.urls.labels, trace),
       ]).then(value => ({ value }), error => ({ error }))
-      const loaded = await sitesLoad
-      table = loaded[0]
-      pointGroups = trace.measure('Индекс групп точек', () => buildPointGroups(table, loaded[1]))
+      const bytes = await sitesLoad
+      await wasmReady
+      table = decodeTable(bytes[0], trace, 'площадки')
+      const groupsTable = decodeTable(bytes[1], trace, 'группы точек')
+      pointGroups = trace.measure('Индекс групп точек', () => buildPointGroups(table, groupsTable))
       operatorIndex = trace.measure('Индекс операторов', () => buildOperatorIndex(table))
       self.postMessage({ type: 'catalog', states: [...new Set(table.getChild('state_name'))].sort() })
       sendSites('ready', 0, message.filters || {}, started, trace)
@@ -75,7 +79,9 @@ self.onmessage = async ({ data: message }) => {
       try {
         const result = await regionLoad
         if (result.error) throw result.error
-        const [states, districts, labels] = result.value
+        const [stateBytes, districtBytes, labels] = result.value
+        const states = decodeTable(stateBytes, trace, 'земли')
+        const districts = decodeTable(districtBytes, trace, 'районы KBA')
         const base = trace.measure('Геометрия территорий', () => ({ states: decodeRegions(states, 'states'), districts: decodeRegions(districts, 'districts').map(feature => ({ ...feature, properties: { ...feature.properties, ...labels[feature.properties.district_code] } })) }))
         const regions = trace.measure('Привязка региональной аналитики', () => applyRegionStats(base, selection.stats))
         self.postMessage({ type: 'regions', ...regions })

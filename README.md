@@ -380,3 +380,43 @@ tests/loading.test.mjs. No dependency or data updates. Checks:
 `npm run lint`, `npm run build`, `node --test tests/*.test.mjs`.
 The loading tests exercise the real Worker processing pipeline using a Node
 Parquet decoder and controlled transport, including early regional failure.
+
+## Step21 — faster indices and deferred territory decoding
+
+Identical source operator names are normalized once per initial index build.
+Case/spacing/NFC normalization, first display name, unknown-operator handling
+and separation of legal entities are preserved. The cache is local to the build.
+
+Point groups and operators now read the current Arrow RecordBatch directly,
+avoiding repeated chunk lookup for every value in a multi-batch Vector. All site
+and equipment IDs remain strings and district codes retain leading zeros.
+
+All initial downloads still start together. Downloading territory bytes no
+longer triggers Parquet/Arrow decoding immediately: that processing starts after
+the site-ready message. Sites and point groups are decoded first. Regions still
+receive the current selection statistics, including filters changed while their
+requests are outstanding. A failed region request leaves sites available.
+
+Parquet reader batchSize is now 16384 instead of the library default of 1024.
+This reduces the number of Arrow batches and IPC bookkeeping without changing
+files, schemas or row selection. Full and final partial batches are retained.
+No new dependencies, additional Workers or data replacement are required.
+
+Console fetch labels now say `Получение байтов (с ожиданием Worker)` rather than
+`Скачивание`: the measured interval includes completion scheduling in the Worker
+and must not be interpreted as pure network transfer time. Territory decoding
+appears in the second performance report, after `Площадки готовы`.
+
+A three-round local Node comparison on identical default-sized Arrow batches
+produced operator indexing times of 218–226 ms before and 55–57 ms after;
+point-group indexing took 250–271 ms before and 194–226 ms after. Full index
+outputs matched exactly. These are local processing measurements, not promised
+browser startup times. Cold/warm browser measurements remain separate.
+
+Apply after step20: replace the six files included in the archive, then run
+`npm run build` and `npm run preview`. Repeat the same three cold-cache reloads
+and compare both `[Charging performance]` reports. Checks:
+`npm run lint`, `npm run build`, `node --test tests/*.test.mjs` (44 tests).
+Coverage includes multi-batch/sliced operator vectors, deferred territory
+processing, regional failure and conservation of all 208570 points, 116108
+installations and 9067843.9 kW through the actual Worker pipeline.

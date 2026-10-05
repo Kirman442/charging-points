@@ -64,3 +64,11 @@ test('operator denominators match national/state/district infrastructure under e
     }
   }
 })
+
+test('operator cache preserves first display name across batches and sliced vectors', () => {
+  const first = tableFromArrays({operator:['Unused', '  ÄCME GmbH  ', 'Other GmbH']}).slice(1)
+  const second = tableFromArrays({operator:['  ÄCME GmbH  ', 'äcme gmbh', 'Other GmbH', null]})
+  const index = buildOperatorIndex(first.concat(second))
+  assert.deepEqual(index.names,['ÄCME GmbH','Other GmbH','Оператор не указан'])
+  assert.deepEqual(Array.from(index.ids),[0,1,0,0,1,2])
+})

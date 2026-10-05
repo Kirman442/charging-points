@@ -12,18 +12,26 @@ export function buildPointGroups(sites, table) {
   const rowById = new Map(Array.from(sites.getChild('site_id'), (id, row) => [id, row]))
   const equipmentIds = new Map(), districtIds = new Map(), codes = []
   const names = ['site_id','equipment_id','district_code','max_power_kw','has_dc','point_count','equipment_power_kw']
-  const c = Object.fromEntries(names.map(name => [name, table.getChild(name)]))
   const n = table.numRows
   const rows = new Uint32Array(n), equipment = new Uint32Array(n), districts = new Uint16Array(n)
   const powers = new Float64Array(n), nominal = new Float64Array(n), counts = new Uint32Array(n), dc = new Uint8Array(n)
-  for (let i = 0; i < n; i++) {
-    const row = rowById.get(c.site_id.get(i)), eid = c.equipment_id.get(i), code = c.district_code.get(i)
-    if (row === undefined) throw new Error('Point groups do not match site IDs')
-    if (!equipmentIds.has(eid)) equipmentIds.set(eid, equipmentIds.size)
-    if (!districtIds.has(code)) { districtIds.set(code, codes.length); codes.push(code) }
-    rows[i] = row; equipment[i] = equipmentIds.get(eid); districts[i] = districtIds.get(code)
-    powers[i] = c.max_power_kw.get(i); nominal[i] = c.equipment_power_kw.get(i); counts[i] = c.point_count.get(i); dc[i] = Number(c.has_dc.get(i))
-    if (!Number.isFinite(powers[i]) || powers[i] < 0 || !Number.isFinite(nominal[i]) || nominal[i] < 0 || counts[i] <= 0) throw new Error('Invalid point cohort')
+  let offset = 0
+  // Access the current RecordBatch directly instead of locating it for each
+  // value in a chunked Vector. IDs remain strings, including leading zeros.
+  for (const batch of table.batches) {
+    const c = Object.fromEntries(names.map(name => [name, batch.getChild(name)]))
+    for (let local = 0; local < batch.numRows; local++) {
+      const i = offset + local
+      const row = rowById.get(c.site_id.get(local)), eid = c.equipment_id.get(local), code = c.district_code.get(local)
+      if (row === undefined) throw new Error('Point groups do not match site IDs')
+      let equipmentIndex = equipmentIds.get(eid), districtIndex = districtIds.get(code)
+      if (equipmentIndex === undefined) { equipmentIndex = equipmentIds.size; equipmentIds.set(eid, equipmentIndex) }
+      if (districtIndex === undefined) { districtIndex = codes.length; districtIds.set(code, districtIndex); codes.push(code) }
+      rows[i] = row; equipment[i] = equipmentIndex; districts[i] = districtIndex
+      powers[i] = c.max_power_kw.get(local); nominal[i] = c.equipment_power_kw.get(local); counts[i] = c.point_count.get(local); dc[i] = Number(c.has_dc.get(local))
+      if (!Number.isFinite(powers[i]) || powers[i] < 0 || !Number.isFinite(nominal[i]) || nominal[i] < 0 || counts[i] <= 0) throw new Error('Invalid point cohort')
+    }
+    offset += batch.numRows
   }
   return { rows, equipment, districts, codes, powers, nominal, counts, dc, equipmentCount: equipmentIds.size }
 }

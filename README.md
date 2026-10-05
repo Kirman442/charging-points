@@ -461,3 +461,64 @@ Projection tests compare every value and type of all 21 retained columns against
 full decoding, all index outputs, map buffers, regional/operator/power statistics
 under combined and empty selections, final partial batches and empty schemas.
 The real Worker test also requests the final site's detail card.
+
+
+## Step23 — compact browser sites and separate rendering measurements
+
+The browser now fetches `charging_sites_browser_zstd10.parquet`, physically
+containing the 21 columns in src/config/siteColumns.js. The complete
+`charging_sites_zstd10.parquet` remains unchanged for offline work. Both have
+67680 rows in the same order, with identical retained values and Arrow types.
+The new file is 2792079 bytes versus 3490205 bytes (20.0% smaller).
+Compression is ZSTD level 10; there is no coordinate or numeric precision loss.
+
+Rebuild it when updating the source dataset:
+
+```sh
+python -m pip install pyarrow
+python scripts/prepare_browser_sites.py
+```
+
+The script uses a separate output, verifies its round-trip and records level 10
+in metadata. The dataset tests compare every retained value/type, map buffers,
+operator and point indexes, all analytics and combined/empty selections against
+the original. The real Worker tests now use the compact file.
+
+Runtime reading returns to synchronous `readParquet` with batchSize 16384;
+there is no streaming/schema projection in the initial-loading path. The old
+projection helper remains solely for the step22 comparison test. Territories
+and point cohorts are unchanged. All five downloads still start together, and
+site rendering is not gated on territory decoding.
+
+The map was already mounted before Worker readiness. New console reports
+`[Charging render]` distinguish:
+
+- First DeckGL frame, measured from the map component's mount effect.
+- Basemap `load` and its first `idle`, measured from the same starting point.
+- First DeckGL frame containing the nonempty site selection, measured from
+  main-thread receipt of that Worker packet. Each selection reports once;
+  camera movement does not repeat reports. Hidden sites report when shown.
+
+DeckGL's onAfterRender marks completion of its draw call, not an exact display
+paint or proof that all GPU execution has completed. Basemap idle reports the
+first idle viewport, not completion of every later pan/zoom. These measurements
+separate network/Worker preparation from React/layer drawing and MapLibre tiles;
+they do not change startup gating or promise a particular LTE loading time.
+
+Review of https://github.com/Kirman442/mobile-network-map:
+ParquetBinaryMap initially has mapReady=true and mounts DeckGL/Map immediately.
+It downloads files in groups of eight, updating the layer after each completed
+group. Its Worker fetches bytes, sends them to the main thread for readParquet,
+and receives IPC back for Arrow/buffer conversion. Our map also mounts
+immediately, but decoding and regional analytics remain in the Worker.
+Incremental layer presentation is a possible later improvement; moving WASM
+back to the main thread would introduce blocking work.
+
+Apply this archive over step22 on the local dev branch. No npm dependencies
+change. Run `npm run build` and `npm run preview`, repeat three reloads with
+cache disabled, and capture both `[Charging performance]` and
+`[Charging render]` reports. Check the Network panel requests the new browser
+filename, rather than the complete sites file. Publish only after local checks.
+
+Validation: lint, production build and all 47 Node tests pass. Native map/GPU
+render times must be measured in the browser on the target connection.

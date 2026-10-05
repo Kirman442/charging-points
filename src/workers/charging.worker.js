@@ -1,9 +1,8 @@
-import { SITE_COLUMNS, SITE_DETAIL_COLUMNS } from '../config/siteColumns.js'
-import { readProjectedTable } from '../data/readProjectedTable.js'
+import { SITE_DETAIL_COLUMNS } from '../config/siteColumns.js'
 import { buildPointGroups, selectPoints } from '../data/pointSelection.js'
 import { buildOperatorIndex } from '../data/operators.js'
 import { buildClusters, clusterMarkers, markerTransfers } from '../data/clusters.js'
-import initWasm, { readParquet, ParquetFile, readSchema } from 'parquet-wasm/esm'
+import initWasm, { readParquet } from 'parquet-wasm/esm'
 import wasmUrl from 'parquet-wasm/esm/parquet_wasm_bg.wasm?url'
 import { tableFromIPC } from 'apache-arrow'
 import { prepareSites } from '../data/prepareSites.js'
@@ -71,9 +70,7 @@ self.onmessage = async ({ data: message }) => {
       ]).then(value => ({ value }), error => ({ error }))
       const bytes = await sitesLoad
       await wasmReady
-      const sitesStarted = performance.now()
-      table = await readProjectedTable(bytes[0], SITE_COLUMNS, { ParquetFile, readSchema })
-      trace.record('Декодирование выбранных колонок: площадки', sitesStarted)
+      table = decodeTable(bytes[0], trace, 'площадки (21 колонка)')
       const groupsTable = decodeTable(bytes[1], trace, 'группы точек')
       pointGroups = trace.measure('Индекс групп точек', () => buildPointGroups(table, groupsTable))
       operatorIndex = trace.measure('Индекс операторов', () => buildOperatorIndex(table))

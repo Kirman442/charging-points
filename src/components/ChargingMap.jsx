@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import DeckGL from '@deck.gl/react'
 import Map from 'react-map-gl/maplibre'
 import maplibre from '../map/maplibre.js'
@@ -14,11 +14,26 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 export default function ChargingMap({ data, markers, regions, options, viewState, onViewChange, onSite, onCluster, onRegion, onMapError }) {
   const clustered = useClusters(options, viewState.zoom)
   const markerHover = useRef(false)
+  const timing = useRef({ started: null, events: new Set(), packets: new WeakSet() })
+  useEffect(() => { timing.current.started = performance.now() }, [])
+  const reportMapEvent = name => {
+    const trace = timing.current
+    if (trace.started === null || trace.events.has(name)) return
+    trace.events.add(name)
+    console.info(`[Charging render] ${name}: ${Math.round(performance.now() - trace.started)} ms с запуска карты`)
+  }
   const { layers } = useMemo(() => createLayers(data, regions, options, markers, clustered), [data, regions, options, markers, clustered])
   const isSite = info => info.layer?.id === 'charging-sites'
   const isMarker = info => info.layer?.id === 'charging-markers'
   return <DeckGL viewState={viewState} onViewStateChange={({ viewState: next }) => onViewChange(next)}
     controller={{ type: ChargingMapController, doubleClickZoom: true }} layers={layers} eventRecognizerOptions={CLICK_RECOGNIZER_OPTIONS} pickingRadius={6} getCursor={state => mapCursor({ ...state, markerHovered: markerHover.current })}
+    onAfterRender={() => {
+      reportMapEvent('Первый кадр DeckGL')
+      if (!data?.count || !Number.isFinite(data.receivedAt) || timing.current.packets.has(data)) return
+      if (!layers.some(layer => layer.id === 'charging-sites' || layer.id === 'charging-markers')) return
+      timing.current.packets.add(data)
+      console.info(`[Charging render] Первый кадр площадок после получения Worker: ${Math.round(performance.now() - data.receivedAt)} ms; выборка ${data.requestId}`)
+    }}
     onHover={info => { markerHover.current = (isSite(info) || isMarker(info)) && info.index >= 0 }}
     onClick={(info, event) => {
       const selection = isMarker(info) ? markerSelection(markers, info.index) : null
@@ -47,6 +62,9 @@ export default function ChargingMap({ data, markers, regions, options, viewState
       }
       return null
     }}>
-    <Map mapLib={maplibre} mapStyle={MAP_STYLES[options.style]} onError={event => onMapError(event.error?.message || 'Ошибка подложки')} />
+    <Map mapLib={maplibre} mapStyle={MAP_STYLES[options.style]}
+      onLoad={() => reportMapEvent('Подложка: load')}
+      onIdle={() => reportMapEvent('Подложка: первый idle')}
+      onError={event => onMapError(event.error?.message || 'Ошибка подложки')} />
   </DeckGL>
 }

@@ -11,10 +11,12 @@ import { prepareSites } from '../src/data/prepareSites.js'
 const { readParquet, ParquetFile, readSchema, writeParquet, Table: WasmTable } = createRequire(import.meta.url)('parquet-wasm/node')
 const bytes = fs.readFileSync(new URL('../public/data/charging_sites_zstd10.parquet', import.meta.url))
 const full = tableFromIPC(readParquet(bytes, {batchSize:16384}).intoIPCStream())
-const projected = await readProjectedTable(bytes, SITE_COLUMNS, {ParquetFile,readSchema})
+const compactBytes = fs.readFileSync(new URL('../public/data/charging_sites_browser_zstd10.parquet', import.meta.url))
+const projected = tableFromIPC(readParquet(compactBytes, {batchSize:16384}).intoIPCStream())
 const values = column => Array.from(column, value => value?.toArray ? Array.from(value.toArray()) : value)
 
-test('projection preserves every value, type, ID and final partial batch in the 21 consumed columns', () => {
+test('physical browser dataset preserves every value, type, ID and final partial batch in the 21 consumed columns', () => {
+  assert.ok(compactBytes.byteLength < bytes.byteLength)
   assert.equal(full.numCols,30); assert.equal(projected.numCols,21)
   assert.equal(projected.numRows,full.numRows)
   assert.deepEqual(projected.schema.fields.map(field => field.name).sort(), [...SITE_COLUMNS].sort())
@@ -24,7 +26,7 @@ test('projection preserves every value, type, ID and final partial batch in the 
     assert.deepEqual(values(projected.getChild(name)),values(full.getChild(name)),name)
   }
 })
-test('projected tables preserve map buffers and all analytics through combined and empty filters', () => {
+test('physical browser dataset preserves map buffers and all analytics through combined and empty filters', () => {
   const groupBytes = fs.readFileSync(new URL('../public/data/charging_point_groups_zstd10.parquet', import.meta.url))
   const cohorts = tableFromIPC(readParquet(groupBytes,{batchSize:16384}).intoIPCStream())
   const a = buildPointGroups(full,cohorts), b = buildPointGroups(projected,cohorts)

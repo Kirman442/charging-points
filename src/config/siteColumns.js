@@ -1,4 +1,4 @@
-// Shared by Parquet projection and the site-details response.
+// Browser dataset schema and site-details fields.
 export const SITE_DETAIL_COLUMNS = [
   'city', 'street', 'house_number', 'postal_code', 'state_name', 'operator',
   'district_name', 'equipment_count', 'installed_power_kw', 'charging_point_count',

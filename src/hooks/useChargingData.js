@@ -28,8 +28,8 @@ export function useChargingData(filters, zoom, clusterSites) {
       }
       if (message.type === 'progress') setStatus(message.message)
       if (message.type === 'catalog') setStates(message.states)
-      if (message.type === 'ready') { setData(message); setMarkerPacket({ requestId: 0, zoom: message.markers?.zoom, markers: message.markers }); setReady(true); setStatus('Загрузка границ…') }
-      if (message.type === 'filtered' && message.requestId === requestId.current) { setData(message); setMarkerPacket({ requestId: message.requestId, zoom: message.markers?.zoom, markers: message.markers }); setRegions(previous => previous ? applyRegionStats(previous, message.regionStats) : previous) }
+      if (message.type === 'ready') { setData({ ...message, receivedAt: performance.now() }); setMarkerPacket({ requestId: 0, zoom: message.markers?.zoom, markers: message.markers }); setReady(true); setStatus('Загрузка границ…') }
+      if (message.type === 'filtered' && message.requestId === requestId.current) { setData({ ...message, receivedAt: performance.now() }); setMarkerPacket({ requestId: message.requestId, zoom: message.markers?.zoom, markers: message.markers }); setRegions(previous => previous ? applyRegionStats(previous, message.regionStats) : previous) }
       if (message.type === 'clusters' && message.requestId === requestId.current && message.zoom === zoomRef.current && message.markers) setMarkerPacket(message)
       if (message.type === 'regions') { setRegions(message); setStatus('Готово') }
       if (message.type === 'detail' && message.index === selectedIndex.current) { setDetail(message.detail); setDetailPending(false) }

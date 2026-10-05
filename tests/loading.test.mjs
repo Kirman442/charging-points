@@ -10,7 +10,7 @@ function startWorker({ filters = {}, failRegions = false } = {}) {
   const sourceURL = new URL('../src/workers/charging.worker.js', import.meta.url)
   let source = fs.readFileSync(sourceURL, 'utf8')
     .replace(/from '(\.\.\/[^']+)'/g, (_, relative) => `from '${new URL(relative, sourceURL).href}'`)
-    .replace("import initWasm, { readParquet, ParquetFile, readSchema } from 'parquet-wasm/esm'", "import { createRequire } from 'node:module'; const { readParquet, ParquetFile, readSchema } = createRequire(ROOT)('parquet-wasm/node'); const initWasm = async () => {}")
+    .replace("import initWasm, { readParquet } from 'parquet-wasm/esm'", "import { createRequire } from 'node:module'; const { readParquet } = createRequire(ROOT)('parquet-wasm/node'); const initWasm = async () => {}")
     .replace("import wasmUrl from 'parquet-wasm/esm/parquet_wasm_bg.wasm?url'", "const wasmUrl = 'mock-wasm'")
   source = source.replace("from 'apache-arrow'", `from '${import.meta.resolve('apache-arrow')}'`)
   const root = new URL('../package.json', import.meta.url).href
@@ -42,7 +42,7 @@ function startWorker({ filters = {}, failRegions = false } = {}) {
     waiters.push(check); check()
     worker.once('error', error => { clearTimeout(timer); reject(error) })
   })
-  worker.postMessage({type:'load', zoom:5, filters, urls:{sites:'charging_sites_zstd10.parquet', pointGroups:'charging_point_groups_zstd10.parquet', states:'states_bev_display_100m_string.parquet', districts:'districts_bev_display_100m_string.parquet', labels:'district_labels.json'}})
+  worker.postMessage({type:'load', zoom:5, filters, urls:{sites:'charging_sites_browser_zstd10.parquet', pointGroups:'charging_point_groups_zstd10.parquet', states:'states_bev_display_100m_string.parquet', districts:'districts_bev_display_100m_string.parquet', labels:'district_labels.json'}})
   return {worker, messages, waitFor}
 }
 

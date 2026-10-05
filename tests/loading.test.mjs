@@ -42,7 +42,7 @@ function startWorker({ filters = {}, failRegions = false } = {}) {
     waiters.push(check); check()
     worker.once('error', error => { clearTimeout(timer); reject(error) })
   })
-  worker.postMessage({type:'load', zoom:5, filters, urls:{sites:'charging_sites_browser_zstd10.parquet', pointGroups:'charging_point_groups_zstd10.parquet', states:'states_bev_display_100m_string.parquet', districts:'districts_bev_display_100m_string.parquet', labels:'district_labels.json'}})
+  worker.postMessage({type:'load', zoom:5, filters, urls:{sites:'charging_sites_browser_zstd10.parquet', pointGroups:'charging_point_groups_numeric_zstd10.parquet', runtimeCatalog:'charging_runtime_catalog_zstd10.parquet', states:'states_bev_display_100m_string.parquet', districts:'districts_bev_display_100m_string.parquet', labels:'district_labels.json'}})
   return {worker, messages, waitFor}
 }
 
@@ -55,7 +55,7 @@ test('initial loading starts all requests before ready, preserves counts and the
   try {
     const ready = await waitFor('ready')
     assert.equal(ready.count,67680); assert.equal(ready.totalPoints,208570)
-    assert.equal(messages.slice(0,messages.indexOf(ready)).filter(message => message.type === 'fetch').length,5)
+    assert.equal(messages.slice(0,messages.indexOf(ready)).filter(message => message.type === 'fetch').length,6)
     worker.postMessage({type:'detail',index:ready.rowIndices.at(-1)})
     const detail = (await waitFor('detail')).detail
     for (const field of ['city','operator','district_name','opening_hours_label','installed_power_kw','equipment_count']) assert.notEqual(detail[field], undefined)

@@ -39,7 +39,15 @@ const empty = () => ({ sites: 0, points: 0, equipment: 0, installed_power_kw: 0,
 export function selectPoints(table, groups, filters, operatorIndex) {
   // State and whole-site 24/7 remain site conditions; power/DC must match the same point.
   const allowed = new Uint8Array(table.numRows)
-  for (const row of matchingIndices(table, { state: filters.state, alwaysOpen: filters.alwaysOpen })) allowed[row] = 1
+  if (groups.siteStates) {
+    const state = filters.state ? groups.stateNames.indexOf(filters.state) : -1
+    for (let row = 0; row < table.numRows; row++) {
+      if ((!filters.state || groups.siteStates[row] === state) && (!filters.alwaysOpen || groups.alwaysOpen[row])) allowed[row] = 1
+    }
+  } else {
+    for (const row of matchingIndices(table, { state: filters.state, alwaysOpen: filters.alwaysOpen })) allowed[row] = 1
+  }
+  const minPower = Number(filters.minPower || 0)
   const points = new Uint32Array(table.numRows), equipmentCounts = new Uint32Array(table.numRows)
   const nominal = new Float64Array(table.numRows), maxPowers = new Float32Array(table.numRows)
   const seenEquipment = new Uint8Array(groups.equipmentCount)
@@ -48,11 +56,11 @@ export function selectPoints(table, groups, filters, operatorIndex) {
   const add = (ops, key, id, count, power) => { if (!ops.has(key)) ops.set(key, new Map()); addOperator(ops.get(key), id, count, power) }
   for (let i = 0; i < groups.rows.length; i++) {
     const row = groups.rows[i]
-    if (!allowed[row] || groups.powers[i] < Number(filters.minPower || 0) || (filters.dcOnly && !groups.dc[i])) continue
+    if (!allowed[row] || groups.powers[i] < minPower || (filters.dcOnly && !groups.dc[i])) continue
     const eid = groups.equipment[i], count = groups.counts[i], code = groups.codes[groups.districts[i]]
     const first = !seenEquipment[eid], power = first ? groups.nominal[i] : 0, eqCount = Number(first)
     seenEquipment[eid] = 1
-    const name = stateColumn.get(row), op = operatorIndex.ids[row], band = powerBand(groups.powers[i])
+    const name = groups.siteStates ? groups.stateNames[groups.siteStates[row]] : stateColumn.get(row), op = operatorIndex.ids[row], band = powerBand(groups.powers[i])
     states[name] ||= empty(); districts[code] ||= empty()
     if (!points[row]) states[name].sites++
     if (!districtSites.has(code)) districtSites.set(code, new Set())

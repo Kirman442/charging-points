@@ -1,6 +1,6 @@
 import { SITE_DETAIL_COLUMNS } from '../config/siteColumns.js'
-import { buildPointGroups, selectPoints } from '../data/pointSelection.js'
-import { buildOperatorIndex } from '../data/operators.js'
+import { selectPoints } from '../data/pointSelection.js'
+import { fingerprint, readRuntimeIndexes } from '../data/runtimeIndexes.js'
 import { buildClusters, clusterMarkers, markerTransfers } from '../data/clusters.js'
 import initWasm, { readParquet } from 'parquet-wasm/esm'
 import wasmUrl from 'parquet-wasm/esm/parquet_wasm_bg.wasm?url'
@@ -59,7 +59,8 @@ self.onmessage = async ({ data: message }) => {
       // Fetch every file now; defer all territory decoding until sites are ready.
       const sitesLoad = Promise.all([
         readBytes(message.urls.sites, trace, 'площадки'),
-        readBytes(message.urls.pointGroups, trace, 'группы точек'),
+        readBytes(message.urls.pointGroups, trace, 'числовые группы точек'),
+        readBytes(message.urls.runtimeCatalog, trace, 'справочник индексов'),
       ])
       // Resolve errors into a value immediately: a failed region request must not
       // reject unhandled while the site pipeline is still running.
@@ -69,12 +70,20 @@ self.onmessage = async ({ data: message }) => {
         readLabels(message.urls.labels, trace),
       ]).then(value => ({ value }), error => ({ error }))
       const bytes = await sitesLoad
+      const hashesReady = Promise.all([fingerprint(bytes[0]), fingerprint(bytes[1])])
+        .then(value => ({ value }), error => ({ error }))
       await wasmReady
       table = decodeTable(bytes[0], trace, 'площадки (21 колонка)')
-      const groupsTable = decodeTable(bytes[1], trace, 'группы точек')
-      pointGroups = trace.measure('Индекс групп точек', () => buildPointGroups(table, groupsTable))
-      operatorIndex = trace.measure('Индекс операторов', () => buildOperatorIndex(table))
-      self.postMessage({ type: 'catalog', states: [...new Set(table.getChild('state_name'))].sort() })
+      const groupsTable = decodeTable(bytes[1], trace, 'числовые группы точек')
+      const catalogTable = decodeTable(bytes[2], trace, 'справочник индексов')
+      const hashWaitStarted = performance.now(), hashResult = await hashesReady
+      trace.record('Ожидание SHA-256 после декодирования', hashWaitStarted)
+      if (hashResult.error) throw hashResult.error
+      const [sitesHash, groupsHash] = hashResult.value
+      const indexes = trace.measure('Подключение числовых индексов', () => readRuntimeIndexes(table, groupsTable, catalogTable, { sites: sitesHash, groups: groupsHash }))
+      pointGroups = indexes.pointGroups
+      operatorIndex = indexes.operatorIndex
+      self.postMessage({ type: 'catalog', states: [...pointGroups.stateNames].sort() })
       sendSites('ready', 0, message.filters || {}, started, trace)
       trace.report('Площадки готовы')
       try {

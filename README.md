@@ -119,7 +119,8 @@ src/data/regions.js: region decoding, district links and regional counts.
 src/map: layers and explicit MapLibre 6 worker initialization.
 src/config/map.js: files, styles and defaults. src/utils: format and territory labels.
 
-The Worker loads sites, boundaries, compact point cohorts and district labels;
+The Worker loads browser sites, boundaries, numeric point cohorts, their runtime
+catalog and district labels;
 it does not load the full charging-points table in the browser. Rendering arrays are
 transferred, geometry decoded to GeoJSON; the pipeline is not end-to-end zero-copy.
 Map tiles are external CARTO/OpenStreetMap; MapLibre displays attribution.
@@ -129,7 +130,7 @@ pyarrow, shapely>=2, pyproj, numpy; arguments: --districts-original PATH,
 
 ## Validation and remaining work
 
-Build, ESLint and 30 tests pass. Panel markup is checked separately.
+Build, ESLint and 50 tests pass. Panel markup is checked separately.
 Live layout/interaction should be verified locally. On small screens control scroll
 is retained rather than clipping controls. Further transition tuning, chart/dashboard design and load optimization remain
 separate steps.
@@ -522,3 +523,83 @@ filename, rather than the complete sites file. Publish only after local checks.
 
 Validation: lint, production build and all 47 Node tests pass. Native map/GPU
 render times must be measured in the browser on the target connection.
+
+
+## Step24 — precomputed numeric joins and operator IDs
+
+Apply over charging-points-browser-data-render-timing-step23 on dev. The archive
+contains the changed source/tests/scripts and TWO new Parquet files. Do not
+replace/delete the complete source tables or the 21-column browser sites file.
+No npm dependencies change.
+
+The browser now reads charging_point_groups_numeric_zstd10.parquet (975879 bytes)
+and charging_runtime_catalog_zstd10.parquet (149743 bytes), replacing the runtime
+use of charging_point_groups_zstd10.parquet (1623196 bytes). Combined size is
+1125622 bytes, about 30.7% less. Both use ZSTD level 10. One additional small
+request is expected; all six data requests start concurrently.
+
+Python precomputes dense site row, installation, district, state and operator
+indices without changing cohort order, powers or point counts. Installation
+nominal power still counts once per eligible installation. District codes stay
+strings in the small catalog, retaining leading zeros. Numeric cohorts preserve
+Float64 powers, UInt32 row/installation/operator/count fields and UInt16 district
+indices; DC, state and whole-site opening flags use UInt8. These are distinct
+columns, not a mixed Float32 buffer.
+
+Operator normalization matches operators.js: NFC, ECMAScript whitespace cleanup,
+German lowercase, first display name retained; no corporate ownership inference
+or casefold merging of ß with ss. All 11712 normalized operator names/IDs are
+compared against the existing JavaScript implementation on the complete data.
+The operator-name dictionary occupies a compressed Parquet column instead of
+large uncompressed footer metadata.
+
+Worker connects the numeric columns directly into typed arrays, validates their
+ranges, completeness and repeated site attributes, and reuses precomputed state
+and opening flags in filters. It avoids repeated string site/equipment joins,
+operator normalization and state string decoding inside the cohort loop.
+Original buildPointGroups/buildOperatorIndex remain available for audit/tests.
+All map, region/operator/power statistics, row IDs, detail cards and cluster
+behavior remain covered by existing and new comparisons.
+
+The catalog records SHA-256 of the exact browser sites and numeric cohort files.
+Worker hashes downloaded bytes while decoding, then checks the generation link.
+Mixed assets or invalid indices fail explicitly with instructions to regenerate;
+they cannot silently attach data to the wrong site rows. The stage
+`Ожидание SHA-256 после декодирования` measures only the remaining wait at that
+point, not hashing overlapped with decoding. Numeric validation and attachment
+are measured under `Подключение числовых индексов`; the old two string-index
+stages no longer occur in the runtime startup pipeline.
+
+When updating data, regenerate in this order (requires Python pyarrow):
+
+```sh
+python scripts/prepare_browser_sites.py
+python scripts/prepare_runtime_point_groups.py
+```
+
+Commit browser sites, numeric groups and catalog together. If changing operator
+normalization, update Python and JavaScript consistently and run the comparison
+tests. Dataset generations depend on file bytes, not just row counts/dates.
+
+Local processing-only benchmark, after file decoding and hash computation:
+original index construction took 281–330 ms; numeric attachment took 18–22 ms.
+Default-selection analytics took 227–259 ms with original indexes and 146–162 ms
+with precomputed state/opening attributes. This is Node, not an end-to-end
+browser speed claim. Run the reproducible comparison with:
+
+```sh
+node scripts/benchmark_runtime_indexes.mjs
+```
+
+Validation: npm run lint, npm run build, node --test tests/*.test.mjs — 50 passing
+tests. New comparisons cover every numeric join/operator ID, all 16 states,
+power thresholds including 22/50/150, DC, 24/7, combined and empty selections,
+all statistics and rendered buffers; stale generations and invalid/repeated
+links are rejected. The actual Worker tests load the new assets, preserve all
+67680 sites / 208570 points / 116108 installations / 9067843.9 kW, then filter
+and request the final site's detail card. Regional failures still retain sites.
+
+Run npm run build and npm run preview, then repeat three cache-disabled reloads.
+Capture both [Charging performance] and [Charging render] reports. Compare
+ready times, decoding of numeric cohorts/catalog, numeric attachment and
+analytics. Map creation/rendering and WASM delivery settings are unchanged.

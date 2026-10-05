@@ -12,10 +12,11 @@ const read = name => {
   const bytes = fs.readFileSync(new URL(`../public/data/${name}_zstd10.parquet`, import.meta.url))
   return { bytes, table: tableFromIPC(readParquet(bytes, { batchSize: 16384 }).intoIPCStream()) }
 }
+const startup = read('charging_sites_startup')
 const sites = read('charging_sites_browser'), raw = read('charging_point_groups')
 const numeric = read('charging_point_groups_numeric'), catalog = read('charging_runtime_catalog')
-const hashes = { sites: await fingerprint(sites.bytes), groups: await fingerprint(numeric.bytes) }
-const indexes = readRuntimeIndexes(sites.table, numeric.table, catalog.table, hashes)
+const hashes = { sites: await fingerprint(startup.bytes), groups: await fingerprint(numeric.bytes) }
+const indexes = readRuntimeIndexes(startup.table, numeric.table, catalog.table, hashes)
 const referenceGroups = buildPointGroups(sites.table, raw.table), referenceOperators = buildOperatorIndex(sites.table)
 
 test('offline joins, operator normalization and source row identity equal the original string-based indexes', () => {
@@ -36,14 +37,14 @@ test('precomputed numeric indexes preserve all analytics and rendering under eve
   ]
   for (const filter of filters) {
     const a = selectPoints(sites.table, referenceGroups, filter, referenceOperators)
-    const b = selectPoints(sites.table, indexes.pointGroups, filter, indexes.operatorIndex)
+    const b = selectPoints(startup.table, indexes.pointGroups, filter, indexes.operatorIndex)
     assert.deepEqual(b, a, JSON.stringify(filter))
-    assert.deepEqual(prepareSites(sites.table,b.indices,b),prepareSites(sites.table,a.indices,a))
+    assert.deepEqual(prepareSites(startup.table,b.indices,b),prepareSites(sites.table,a.indices,a))
   }
 })
 test('mixed dataset generations and invalid numeric links fail explicitly', () => {
-  assert.throws(() => readRuntimeIndexes(sites.table,numeric.table,catalog.table,{...hashes,sites:'stale'}),/не соответствуют/)
-  assert.throws(() => readRuntimeIndexes(sites.table,numeric.table,catalog.table,{...hashes,groups:'stale'}),/не соответствуют/)
+  assert.throws(() => readRuntimeIndexes(startup.table,numeric.table,catalog.table,{...hashes,sites:'stale'}),/не соответствуют/)
+  assert.throws(() => readRuntimeIndexes(startup.table,numeric.table,catalog.table,{...hashes,groups:'stale'}),/не соответствуют/)
   const modified = (name, row, value) => {
     const columns = Object.fromEntries(numeric.table.schema.fields.map(field => [field.name, numeric.table.getChild(field.name).toArray().slice()]))
     columns[name][row] = value
@@ -54,11 +55,11 @@ test('mixed dataset generations and invalid numeric links fail explicitly', () =
   for (const [name,value] of [['site_row',sites.table.numRows],['equipment_index',referenceGroups.equipmentCount],
     ['district_index',referenceGroups.codes.length],['operator_index',referenceOperators.names.length],
     ['state_index',indexes.pointGroups.stateNames.length],['point_count',0],['has_dc',2],['max_power_kw',NaN]]) {
-    assert.throws(() => readRuntimeIndexes(sites.table,modified(name,0,value),catalog.table,hashes),/не соответствуют/,name)
+    assert.throws(() => readRuntimeIndexes(startup.table,modified(name,0,value),catalog.table,hashes),/не соответствуют/,name)
   }
   const duplicate = indexes.pointGroups.rows.findIndex((row, i, rows) => i > 0 && row === rows[i - 1])
   const firstRow = indexes.pointGroups.rows[duplicate]
   assert.ok(duplicate > 0)
   const wrongOperator = (indexes.operatorIndex.ids[firstRow]+1)%referenceOperators.names.length
-  assert.throws(() => readRuntimeIndexes(sites.table,modified('operator_index',duplicate,wrongOperator),catalog.table,hashes),/не соответствуют/)
+  assert.throws(() => readRuntimeIndexes(startup.table,modified('operator_index',duplicate,wrongOperator),catalog.table,hashes),/не соответствуют/)
 })

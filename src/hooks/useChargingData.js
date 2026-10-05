@@ -10,7 +10,7 @@ export function useChargingData(filters, zoom, clusterSites) {
   const [markerPacket, setMarkerPacket] = useState(null)
   const filtersRef = useRef(filters), sentFilters = useRef(null)
   useEffect(() => { filtersRef.current = filters }, [filters])
-  const workerRef = useRef(null), selectedIndex = useRef(-1), requestId = useRef(0)
+  const workerRef = useRef(null), selectedIndex = useRef(-1), requestId = useRef(0), detailsStarted = useRef(false), detailFrame = useRef(null)
   const [data, setData] = useState(null), [regions, setRegions] = useState(null)
   const [states, setStates] = useState([]), [detail, setDetail] = useState(null)
   const [detailPending, setDetailPending] = useState(false)
@@ -20,6 +20,7 @@ export function useChargingData(filters, zoom, clusterSites) {
     const worker = new Worker(new URL('../workers/charging.worker.js', import.meta.url), { type: 'module' })
     workerRef.current = worker
     requestId.current = 0
+    detailsStarted.current = false
     const started = performance.now()
     worker.onmessage = ({ data: message }) => {
       if (message.type === 'performance') {
@@ -32,15 +33,16 @@ export function useChargingData(filters, zoom, clusterSites) {
       if (message.type === 'filtered' && message.requestId === requestId.current) { setData({ ...message, receivedAt: performance.now() }); setMarkerPacket({ requestId: message.requestId, zoom: message.markers?.zoom, markers: message.markers }); setRegions(previous => previous ? applyRegionStats(previous, message.regionStats) : previous) }
       if (message.type === 'clusters' && message.requestId === requestId.current && message.zoom === zoomRef.current && message.markers) setMarkerPacket(message)
       if (message.type === 'regions') { setRegions(message); setStatus('Готово') }
-      if (message.type === 'detail' && message.index === selectedIndex.current) { setDetail(message.detail); setDetailPending(false) }
-      if (message.type === 'error') { setError(message.message); setDetailPending(false) }
+      if (message.type === 'detail' && message.index === selectedIndex.current) { setDetail(message.detail); setDetailPending(false); setError(previous => previous.startsWith('Карточки:') ? '' : previous) }
+      if (message.type === 'detail-error') { setError(message.message); if (message.index === selectedIndex.current) setDetailPending(false) }
+      if (message.type === 'error') { setError(message.message); if (!message.message.startsWith('Границы:')) setDetailPending(false) }
     }
     worker.onerror = event => { setError(event.message || 'Ошибка Worker'); setDetailPending(false) }
     const urls = Object.fromEntries(Object.entries(FILES).map(([key, name]) => [key, new URL(`${import.meta.env.BASE_URL}data/${name}`, window.location.origin).href]))
     const initialFilters = filtersRef.current
     sentFilters.current = filterKey(initialFilters)
     worker.postMessage({ type: 'load', urls, zoom: zoomRef.current, filters: initialFilters })
-    return () => { worker.terminate(); workerRef.current = null }
+    return () => { cancelAnimationFrame(detailFrame.current); worker.terminate(); workerRef.current = null }
   }, [retry])
   useEffect(() => {
     const key = filterKey(filters)
@@ -56,11 +58,20 @@ export function useChargingData(filters, zoom, clusterSites) {
   const selectSite = useCallback(index => {
     selectedIndex.current = index
     if (index >= 0) { setDetailPending(true); workerRef.current?.postMessage({ type: 'detail', index }) }
-    else { setDetail(null); setDetailPending(false) }
+    else { setDetail(null); setDetailPending(false); workerRef.current?.postMessage({ type: 'detail', index: -1 }) }
+  }, [])
+  const onDataRendered = useCallback(() => {
+    if (detailsStarted.current || !workerRef.current) return
+    detailsStarted.current = true
+    const worker = workerRef.current
+    // Send after the frame containing ready data has had a paint opportunity.
+    detailFrame.current = requestAnimationFrame(() => {
+      if (workerRef.current === worker) worker.postMessage({ type: 'load-details' })
+    })
   }, [])
   const reload = useCallback(() => {
     selectedIndex.current = -1; requestId.current++
     setData(null); setMarkerPacket(null); setRegions(null); setReady(false); setDetail(null); setDetailPending(false); setError(''); setStatus('Загрузка данных…'); setRetry(value => value + 1)
   }, [])
-  return { data, markers, regions, states, detail, detailPending, status, error, selectSite, reload }
+  return { data, markers, regions, states, detail, detailPending, status, error, selectSite, reload, onDataRendered }
 }

@@ -119,7 +119,7 @@ src/data/regions.js: region decoding, district links and regional counts.
 src/map: layers and explicit MapLibre 6 worker initialization.
 src/config/map.js: files, styles and defaults. src/utils: format and territory labels.
 
-The Worker loads browser sites, boundaries, numeric point cohorts, their runtime
+The Worker loads startup sites, boundaries, numeric point cohorts, their runtime
 catalog and district labels;
 it does not load the full charging-points table in the browser. Rendering arrays are
 transferred, geometry decoded to GeoJSON; the pipeline is not end-to-end zero-copy.
@@ -130,7 +130,7 @@ pyarrow, shapely>=2, pyproj, numpy; arguments: --districts-original PATH,
 
 ## Validation and remaining work
 
-Build, ESLint and 50 tests pass. Panel markup is checked separately.
+Build, ESLint and 56 tests pass. Panel markup is checked separately.
 Live layout/interaction should be verified locally. On small screens control scroll
 is retained rather than clipping controls. Further transition tuning, chart/dashboard design and load optimization remain
 separate steps.
@@ -603,3 +603,86 @@ Run npm run build and npm run preview, then repeat three cache-disabled reloads.
 Capture both [Charging performance] and [Charging render] reports. Compare
 ready times, decoding of numeric cohorts/catalog, numeric attachment and
 analytics. Map creation/rendering and WASM delivery settings are unchanged.
+
+## Step25 — small startup sites and background detail cards
+
+Apply charging-points-background-details-step25.zip over step24 on dev. It
+contains all changed files, TWO new Parquet files and an updated runtime catalog.
+No dependency changes or Python execution are required to try the prepared data.
+Retain complete source tables, browser sites and numeric point groups for audit
+and regeneration. Do not publish before checking the browser measurements.
+
+Startup now uses charging_sites_startup_zstd10.parquet: 5 columns, 946126 bytes
+instead of the 21-column browser file's 2792079 bytes (66.1% smaller).
+Coordinates, max_power_kw, charging_point_count and source_date retain their
+original types/values/order. Filtering, operator statistics and regional
+analytics still use step24's numeric groups; their contents are unchanged.
+Site IDs remain in the detail/audit tables rather than being decoded at startup.
+
+charging_site_details_zstd10.parquet holds site_id, every card field and the
+available powers: 15 columns, 1844456 bytes. Combined site data is 2790582 bytes,
+virtually unchanged from step24. The runtime catalog grows by 472 bytes to
+150215 bytes to link the exact startup and detail files by SHA-256 to the
+original browser sites and numeric cohorts. All files use ZSTD level 10.
+
+The existing six startup requests remain concurrent. The detail request starts
+on the main-thread acknowledgement of the first DeckGL frame with ready data,
+scheduled through requestAnimationFrame to give that frame a paint opportunity.
+This acknowledgement also handles hidden markers and an empty selection; it
+never waits for a site click. DeckGL draw completion is not a GPU/presentation
+fence. An early click can request details immediately and waits for their load.
+Repeated requests share one background load; only the latest pending site
+receives a card, closing cancels that reply, and selected counters use the
+current filter result when the response is sent. Successful details remain in
+Worker memory. A failed detail request can be retried by selecting a site;
+the map, filters and regions remain usable. Full reload uses the existing retry
+button. Detail decoding stays in the Worker and may briefly queue later
+filter/cluster requests while its synchronous decoder runs.
+
+Generation links, column availability and row counts are checked before detail
+cards can be attached. The producer retains every source row and validates
+round-trip values; tests compare every retained field and original site ID/order,
+including the final partial batch. Mixed file generations fail explicitly.
+
+Regenerate in this order when source data changes (Python pyarrow):
+
+```sh
+python scripts/prepare_browser_sites.py
+python scripts/prepare_runtime_point_groups.py
+python scripts/prepare_site_loading.py
+```
+
+The last command creates the startup/details files and updates the catalog.
+Commit these three assets together; regenerate after recreating the catalog.
+The script rejects identical input/output paths and a catalog belonging to a
+different browser source file. There is no coordinate rounding or point-count
+approximation.
+
+Processing-only Node comparison, after warming both paths and alternating order:
+21-column decoding took 67–75 ms; startup decoding took 14–18 ms. Intermediate
+Arrow IPC decreased from 17406016 to 2887488 bytes (83.4%). These measurements
+exclude network, browser/WASM initialization, hashing and rendering. Reproduce:
+
+```sh
+node scripts/benchmark_site_loading.mjs
+```
+
+Validation: lint, production build and all 56 Node tests pass. Tests exercise the
+real Worker, initial filters, early/rapid/closed card requests, current selected
+counts, background failure and stale files, plus full data/analytics equality.
+Native browser timing remains to be measured.
+
+```sh
+npm run build
+npm run preview
+```
+
+Repeat three cache-disabled reloads. Capture all [Charging performance] reports
+(including `Подробности площадок готовы (фон)`) and [Charging render]. Look for
+`Декодирование: площадки (5 колонок)` and the new filenames in Network. Expect
+one additional eventual request (about 41 under the previous viewport/style).
+Total Network Finish includes the deferred detail download, so assess earlier
+site readiness and first-site drawing separately from full network completion.
+Check an immediate site click, a later click, filters, clusters and an empty
+selection. The populated analytics still precedes site-ready; step25 only moves
+card data preparation into the background.

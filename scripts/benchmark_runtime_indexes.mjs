@@ -10,12 +10,13 @@ const read = name => {
   const bytes = fs.readFileSync(new URL(`../public/data/${name}_zstd10.parquet`, import.meta.url))
   return { bytes, table: tableFromIPC(readParquet(bytes, { batchSize: 16384 }).intoIPCStream()) }
 }
+const startup = read('charging_sites_startup')
 const s = read('charging_sites_browser'), a = read('charging_point_groups')
 const n = read('charging_point_groups_numeric'), c = read('charging_runtime_catalog')
-const hashes = { sites: await fingerprint(s.bytes), groups: await fingerprint(n.bytes) }
+const hashes = { sites: await fingerprint(startup.bytes), groups: await fingerprint(n.bytes) }
 const run = numeric => {
   const start = performance.now()
-  const indexes = numeric ? readRuntimeIndexes(s.table,n.table,c.table,hashes)
+  const indexes = numeric ? readRuntimeIndexes(startup.table,n.table,c.table,hashes)
     : { pointGroups: buildPointGroups(s.table,a.table), operatorIndex: buildOperatorIndex(s.table) }
   const attached = performance.now()
   selectPoints(s.table,indexes.pointGroups,{},indexes.operatorIndex)

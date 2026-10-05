@@ -19,7 +19,7 @@ export default function App() {
   const [clickedRegion, setClickedRegion] = useState(null), [mapError, setMapError] = useState('')
   const [siteMode, setSiteMode] = useState(false)
   const [cluster, setCluster] = useState(null)
-  const { data, markers, regions, states, detail, detailPending, status, error, selectSite, reload } = useChargingData(filters, viewState.zoom, options.clusterSites)
+  const { data, markers, regions, states, detail, detailPending, status, error, selectSite, reload, onDataRendered } = useChargingData(filters, viewState.zoom, options.clusterSites)
   const activeRegion = clickedRegion
     ? regions?.[clickedRegion.level]?.find(feature => (feature.properties.district_code || feature.properties.state_code) === (clickedRegion.district_code || clickedRegion.state_code))?.properties || null
     : regions?.states.find(feature => feature.properties.state_name === filters.state)?.properties || null
@@ -98,7 +98,7 @@ export default function App() {
   return <main className="map-app" ref={mapContainer}>
     <ChargingMap data={data} markers={markers} regions={regions} options={mapOptions} viewState={viewState} onViewChange={onViewChange}
       onCluster={value => { setSiteMode(false); selectSite(-1); setCluster(value) }}
-      onSite={index => { setCluster(null); setSiteMode(true); selectSite(index) }} onRegion={showRegion} onMapError={setMapError} />
+      onSite={index => { setCluster(null); setSiteMode(true); selectSite(index) }} onRegion={showRegion} onMapError={setMapError} onDataRendered={onDataRendered} />
     <ControlPanel states={states} filters={filters} onFilters={onFilters} options={options} onOptions={onOptions} onReset={resetSettings} />
 
     <MapLegend regions={regions} options={mapOptions} />

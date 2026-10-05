@@ -4,4 +4,4 @@ export const MAP_STYLES = {
   light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
 }
 export const DEFAULT_FILTERS = { state: '', minPower: 0, dcOnly: false, alwaysOpen: false }
-export const FILES = { sites: 'charging_sites_browser_zstd10.parquet', pointGroups: 'charging_point_groups_numeric_zstd10.parquet', runtimeCatalog: 'charging_runtime_catalog_zstd10.parquet', districtIndex: 'site_district_counts_zstd10.parquet', labels: 'district_labels.json', states: 'states_bev_display_100m_string.parquet', districts: 'districts_bev_display_100m_string.parquet' }
+export const FILES = { sites: 'charging_sites_startup_zstd10.parquet', details: 'charging_site_details_zstd10.parquet', pointGroups: 'charging_point_groups_numeric_zstd10.parquet', runtimeCatalog: 'charging_runtime_catalog_zstd10.parquet', districtIndex: 'site_district_counts_zstd10.parquet', labels: 'district_labels.json', states: 'states_bev_display_100m_string.parquet', districts: 'districts_bev_display_100m_string.parquet' }

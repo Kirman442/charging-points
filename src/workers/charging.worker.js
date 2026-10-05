@@ -1,4 +1,4 @@
-import { SITE_DETAIL_COLUMNS } from '../config/siteColumns.js'
+import { validateDetails, siteDetail } from '../data/siteDetails.js'
 import { selectPoints } from '../data/pointSelection.js'
 import { fingerprint, readRuntimeIndexes } from '../data/runtimeIndexes.js'
 import { buildClusters, clusterMarkers, markerTransfers } from '../data/clusters.js'
@@ -8,6 +8,7 @@ import { tableFromIPC } from 'apache-arrow'
 import { prepareSites } from '../data/prepareSites.js'
 import { applyRegionStats, decodeRegions } from '../data/regions.js'
 
+let detailsTable, detailsLoad, detailContext, pendingDetail = -1
 let table, operatorIndex, pointGroups, selection, wasmReady, clusterIndex, currentZoom = 5, selectionRequestId = 0
 function sendSites(type, requestId, filters, started, trace = null) {
   const measure = (name, operation) => trace ? trace.measure(name, operation) : operation()
@@ -48,6 +49,32 @@ async function readLabels(url, trace) {
   trace.record('Получение названий районов (с ожиданием Worker)', start)
   return labels
 }
+function sendPendingDetail() {
+  if (detailsTable && pendingDetail >= 0) {
+    const index = pendingDetail
+    pendingDetail = -1
+    self.postMessage({ type: 'detail', index, detail: siteDetail(detailsTable, index, selection) })
+  }
+}
+function loadDetails() {
+  if (!detailContext || detailsLoad) return
+  const started = performance.now(), trace = createTrace(started)
+  detailsLoad = (async () => {
+    const bytes = await readBytes(detailContext.url, trace, 'подробности площадок')
+    const hashStarted = performance.now(), detailsHash = await fingerprint(bytes)
+    trace.record('SHA-256: подробности площадок', hashStarted)
+    const decoded = decodeTable(bytes, trace, 'подробности площадок')
+    trace.measure('Проверка соответствия подробностей', () => validateDetails(decoded, table, detailContext.catalog, { sites: detailContext.sitesHash, details: detailsHash }))
+    detailsTable = decoded
+    trace.report('Подробности площадок готовы (фон)')
+    sendPendingDetail()
+  })().catch(error => {
+    const index = pendingDetail
+    pendingDetail = -1
+    detailsLoad = null
+    self.postMessage({ type: 'detail-error', index, message: `Карточки: ${error.message}` })
+  })
+}
 self.onmessage = async ({ data: message }) => {
   try {
     if (message.type === 'load') {
@@ -73,7 +100,7 @@ self.onmessage = async ({ data: message }) => {
       const hashesReady = Promise.all([fingerprint(bytes[0]), fingerprint(bytes[1])])
         .then(value => ({ value }), error => ({ error }))
       await wasmReady
-      table = decodeTable(bytes[0], trace, 'площадки (21 колонка)')
+      table = decodeTable(bytes[0], trace, 'площадки (5 колонок)')
       const groupsTable = decodeTable(bytes[1], trace, 'числовые группы точек')
       const catalogTable = decodeTable(bytes[2], trace, 'справочник индексов')
       const hashWaitStarted = performance.now(), hashResult = await hashesReady
@@ -81,6 +108,7 @@ self.onmessage = async ({ data: message }) => {
       if (hashResult.error) throw hashResult.error
       const [sitesHash, groupsHash] = hashResult.value
       const indexes = trace.measure('Подключение числовых индексов', () => readRuntimeIndexes(table, groupsTable, catalogTable, { sites: sitesHash, groups: groupsHash }))
+      detailContext = { url: message.urls.details, catalog: catalogTable, sitesHash }
       pointGroups = indexes.pointGroups
       operatorIndex = indexes.operatorIndex
       self.postMessage({ type: 'catalog', states: [...pointGroups.stateNames].sort() })
@@ -98,6 +126,7 @@ self.onmessage = async ({ data: message }) => {
         trace.report('Территории и аналитика готовы')
       } catch (error) { self.postMessage({ type: 'error', message: `Границы: ${error.message}` }) }
     }
+    if (message.type === 'load-details') loadDetails()
     if (message.type === 'filter' && table && pointGroups) { sendSites('filtered', message.requestId, message.filters, performance.now()) }
     if (message.type === 'clusters') {
       currentZoom = message.zoom
@@ -106,13 +135,13 @@ self.onmessage = async ({ data: message }) => {
         self.postMessage({ type: 'clusters', requestId: selectionRequestId, zoom: currentZoom, markers }, markerTransfers(markers))
       }
     }
-    if (message.type === 'detail' && table && Number.isInteger(message.index) && message.index >= 0 && message.index < table.numRows) {
-      const detail = Object.fromEntries(SITE_DETAIL_COLUMNS.map(name => [name, table.getChild(name)?.get(message.index)]))
-      detail.available_power_kw = Array.from(table.getChild('available_power_kw')?.get(message.index) || [])
-      detail.selected_point_count = selection.points[message.index]
-      detail.selected_equipment_count = selection.equipmentCounts[message.index]
-      detail.selected_power_kw = selection.nominal[message.index]
-      self.postMessage({ type: 'detail', index: message.index, detail })
+    if (message.type === 'detail' && table && Number.isInteger(message.index)) {
+      if (message.index === -1) pendingDetail = -1
+      else if (message.index >= 0 && message.index < table.numRows) {
+        pendingDetail = message.index
+        if (detailsTable) sendPendingDetail()
+        else loadDetails()
+      }
     }
   } catch (error) { self.postMessage({ type: 'error', message: error instanceof Error ? error.message : String(error) }) }
 }

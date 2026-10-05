@@ -3,7 +3,7 @@ export async function fingerprint(bytes) {
   const hash = await crypto.subtle.digest('SHA-256', bytes)
   return Array.from(new Uint8Array(hash), value => value.toString(16).padStart(2, '0')).join('')
 }
-const mismatch = () => new Error('Числовые индексы не соответствуют данным площадок. Пересоздай их: python scripts/prepare_runtime_point_groups.py')
+const mismatch = () => new Error('Числовые индексы не соответствуют данным площадок. Пересоздай их: python scripts/prepare_runtime_point_groups.py, затем python scripts/prepare_site_loading.py')
 function dictionary(metadata, key) {
   const values = JSON.parse(metadata.get(key) || 'null')
   if (!Array.isArray(values) || !values.length || values.some(value => typeof value !== 'string' || !value) || new Set(values).size !== values.length) throw mismatch()
@@ -16,9 +16,12 @@ function column(table, name, Type) {
 }
 export function readRuntimeIndexes(sites, numeric, catalog, hashes) {
   const metadata = catalog.schema.metadata
+  if (metadata.get('startup_sites_sha256') !== hashes.sites ||
+    sites.schema.metadata.get('loading_format') !== 'split-sites-v1' ||
+    sites.schema.metadata.get('source_sites_sha256') !== metadata.get('sites_sha256')) throw mismatch()
   for (const table of [numeric, catalog]) {
     if (table.schema.metadata.get('runtime_format') !== 'point-groups-v1' ||
-      table.schema.metadata.get('sites_sha256') !== hashes.sites ||
+      table.schema.metadata.get('sites_sha256') !== metadata.get('sites_sha256') ||
       Number(table.schema.metadata.get('site_count')) !== sites.numRows) throw mismatch()
   }
   if (metadata.get('numeric_groups_sha256') !== hashes.groups) throw mismatch()

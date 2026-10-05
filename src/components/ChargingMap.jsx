@@ -11,7 +11,7 @@ import { METRICS } from '../data/analytics.js'
 import { format } from '../utils/format.js'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-export default function ChargingMap({ data, markers, regions, options, viewState, onViewChange, onSite, onCluster, onRegion, onMapError }) {
+export default function ChargingMap({ data, markers, regions, options, viewState, onViewChange, onSite, onCluster, onRegion, onMapError, onDataRendered }) {
   const clustered = useClusters(options, viewState.zoom)
   const markerHover = useRef(false)
   const timing = useRef({ started: null, events: new Set(), packets: new WeakSet() })
@@ -29,6 +29,7 @@ export default function ChargingMap({ data, markers, regions, options, viewState
     controller={{ type: ChargingMapController, doubleClickZoom: true }} layers={layers} eventRecognizerOptions={CLICK_RECOGNIZER_OPTIONS} pickingRadius={6} getCursor={state => mapCursor({ ...state, markerHovered: markerHover.current })}
     onAfterRender={() => {
       reportMapEvent('Первый кадр DeckGL')
+      if (data) onDataRendered?.()
       if (!data?.count || !Number.isFinite(data.receivedAt) || timing.current.packets.has(data)) return
       if (!layers.some(layer => layer.id === 'charging-sites' || layer.id === 'charging-markers')) return
       timing.current.packets.add(data)

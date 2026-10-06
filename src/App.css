@@ -145,3 +145,18 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 .distribution-toggle > span:last-child { flex-shrink: 0; font-size: 16px; }
 .distribution-toggle:focus-visible { outline: 2px solid #377c70; outline-offset: 3px; border-radius: 4px; }
 .power-distribution:has(.distribution-toggle[aria-expanded="false"]) h3 { margin-bottom: 0; }
+
+.a9-panel { overflow-y: auto; }
+.a9-key { display: grid; gap: 9px; margin: 16px 0; font-size: 11px; }
+.a9-key > div { display: flex; align-items: center; gap: 9px; }
+.a9-line { display: inline-block; width: 34px; height: 0; border-top: 4px solid; flex-shrink: 0; }
+.a9-within { border-color: #44beaa; }
+.a9-near { border-color: #f0c246; border-top-style: dashed; }
+.a9-gap { border-color: #e8687e; border-top-style: dotted; }
+.a9-unknown { border-color: #96a2b3; border-top-style: dashed; }
+.a9-candidates { padding-left: 20px; font-size: 11px; }
+.a9-candidates li { margin: 10px 0; }
+.a9-panel summary { cursor: pointer; font-size: 12px; }
+
+.a9-site-link { background: transparent; border: 0; padding: 0; color: #8edbd0; text-align: left; cursor: pointer; text-decoration: underline; }
+.a9-site-link:focus-visible { outline: 2px solid #8edbd0; outline-offset: 3px; }

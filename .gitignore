@@ -22,3 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python preparation caches
+__pycache__/
+*.pyc
+
+# Large road extracts stay outside the runtime/repository
+data_sources/a9/access-network.json
+*.osm.pbf
+
+# Offline source road networks are not deployment assets
+offline_sources/
+data_sources/a1/access-network.json
+/data.zip

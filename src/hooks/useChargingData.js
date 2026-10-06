@@ -4,9 +4,12 @@ import { CLUSTER_MAX_ZOOM, clusterZoom, markersForView } from '../config/cluster
 import { filterKey } from '../data/filterKey.js'
 import { FILES } from '../config/map.js'
 
-export function useChargingData(filters, zoom, clusterSites) {
+export function useChargingData(filters, zoom, clusterSites, autobahnRoute = 'A9') {
   const zoomLevel = clusterSites ? Math.min(CLUSTER_MAX_ZOOM, clusterZoom(zoom)) : CLUSTER_MAX_ZOOM, zoomRef = useRef(zoomLevel)
   useEffect(() => { zoomRef.current = zoomLevel }, [zoomLevel])
+  const [autobahnPackets, setAutobahnPackets] = useState({})
+  const activePacket = autobahnPackets[autobahnRoute]
+  const a9 = activePacket?.pilot || null, a9Pending = activePacket?.pending || false, a9Error = activePacket?.error || ''
   const [markerPacket, setMarkerPacket] = useState(null)
   const filtersRef = useRef(filters), sentFilters = useRef(null)
   useEffect(() => { filtersRef.current = filters }, [filters])
@@ -23,6 +26,8 @@ export function useChargingData(filters, zoom, clusterSites) {
     detailsStarted.current = false
     const started = performance.now()
     worker.onmessage = ({ data: message }) => {
+      if (message.type === 'a9-ready') { setAutobahnPackets(previous => ({ ...previous, [message.route || 'A9']: { pilot: message.pilot, pending: false, error: '' } })) }
+      if (message.type === 'a9-error') { setAutobahnPackets(previous => ({ ...previous, [message.route || 'A9']: { pending: false, error: message.message } })) }
       if (message.type === 'performance') {
         console.info(`[Charging performance] ${message.phase}: Worker ${Math.round(message.elapsedMs)} ms; с запуска загрузки ${Math.round(performance.now() - started)} ms`)
         console.table(message.stages.map(stage => ({ 'Этап': stage.stage, 'Начало, мс': Math.round(stage.startMs), 'Время, мс': Math.round(stage.durationMs) })))
@@ -69,9 +74,15 @@ export function useChargingData(filters, zoom, clusterSites) {
       if (workerRef.current === worker) worker.postMessage({ type: 'load-details' })
     })
   }, [])
+  const loadAutobahn = useCallback(route => {
+    if (!workerRef.current) return
+    setAutobahnPackets(previous => ({ ...previous, [route]: { ...previous[route], pending: true, error: '' } }))
+    workerRef.current.postMessage({ type: 'load-a9', route, url: new URL(`${import.meta.env.BASE_URL}data/autobahn_${route.toLowerCase()}_zstd10.parquet`, window.location.origin).href })
+  }, [])
+  const loadA9 = useCallback(() => loadAutobahn(autobahnRoute), [loadAutobahn, autobahnRoute])
   const reload = useCallback(() => {
     selectedIndex.current = -1; requestId.current++
-    setData(null); setMarkerPacket(null); setRegions(null); setReady(false); setDetail(null); setDetailPending(false); setError(''); setStatus('Загрузка данных…'); setRetry(value => value + 1)
+    setAutobahnPackets({}); setData(null); setMarkerPacket(null); setRegions(null); setReady(false); setDetail(null); setDetailPending(false); setError(''); setStatus('Загрузка данных…'); setRetry(value => value + 1)
   }, [])
-  return { data, markers, regions, states, detail, detailPending, status, error, selectSite, reload, onDataRendered }
+  return { a9, a9Pending, a9Error, loadA9, loadAutobahn, data, markers, regions, states, detail, detailPending, status, error, selectSite, reload, onDataRendered }
 }

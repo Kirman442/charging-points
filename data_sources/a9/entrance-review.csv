@@ -1,0 +1,21 @@
+﻿direction,site_row,site_id,address,operator,chain_km,access_m,return_m,snap_m,exit_node,entry_node,nearby_way,entrance_checked
+north,11459,site_d99be6bda46691dba676,München Knorrstraße 147 80937,E.ON Drive Germany GmbH,3.302,1689.2,2009.8,7.3,1639311272,377434,740070893,no
+north,15789,site_44459dc4967a65e62632,Eching Bürgerplatz 1 85386,Bürger-Energie Genossenschaft Freisinger Land eG,15.122,1186.0,1220.0,46.8,2039887,20856717,15037080,no
+north,19580,site_f0b6e6d56da19017382a,Manching Lindenstr. 11 85077,Braun Entsorgung GmbH,64.64,2917.9,2769.9,6.9,21532630,30926604,52061881,no
+north,20431,site_f6a95ece0938d59603f4,Greding Raststätte Greding West 0 91171,EnBW mobility+ AG und Co.KG,106.987,1543.6,1707.3,7.2,17182206,17182205,28156415,no
+north,14198,site_498ca803275e8786ba13,Plech Gewerbepark Schoenthal 2 91287,ALDI SÜD Immobilienverwaltungs-GmbH & Co. oHG,186.547,516.0,515.7,7.4,251478919,251478906,613433977,no
+north,16966,site_57751d2a58687f3ed6d9,Himmelkron Kulmbacher Str. 1 95502,EnBW mobility+ AG und Co.KG,237.537,1681.5,1670.8,10.1,256944416,16534097,131039926,no
+north,67246,site_5c48b143d26272ffd9cd,Schleiz Industriestr. 15 07907,EWE Go GmbH,301.521,1585.4,1528.8,6.9,30049754,6303728756,4057739,no
+north,62915,site_652d97d821dfa6303706,Teuchern Osterfeld Ost  UFC 4 0 06682,E.ON Drive Infrastructure GmbH,370.416,564.8,406.2,4.0,508738,508739,129736801,no
+north,26394,site_9d1120ecdd0e4cc490a3,Beelitz Straße nach Fichtenwalde 10 14547,EA EnergieArchitektur Dresden GmbH,527.002,1642.7,1735.5,4.4,262267792,60373166,25609519,no
+north,62428,site_61a9d39fccc41ba14edf,Dessau-Roßlau Am Eichengarten 2 06842,EnBW mobility+ AG und Co.KG,458.358,1628.3,1551.7,53.1,280423024,26667769,1257611207,no
+south,26394,site_9d1120ecdd0e4cc490a3,Beelitz Straße nach Fichtenwalde 10 14547,EA EnergieArchitektur Dresden GmbH,2.5,1941.1,2023.6,4.4,60373164,262267781,25609519,no
+south,67157,site_0cc3447adae80dfe41bf,Eisenberg Jenaer Straße 54 07607,Stadtwerke Eisenberg Energie GmbH,176.484,1427.5,1408.2,6.2,1834030668,2155702063,156048720,no
+south,16958,site_8155869f146aa9ce7004,Himmelkron Bahnhofstr. 32 95502,Motor-Nützel Vertriebs-GmbH,291.605,1133.2,1107.1,4.3,21440533,21610585,1184998637,no
+south,18935,site_e75604059245f1fb8d04,Schnaittach Juraleite 2 91220,Circle K Deutschland GmbH,349.862,495.1,597.8,1.5,52614231,306270786,327796922,no
+south,15292,site_9bc21eeffd5315fcf7c2,Kipfenberg Försterstr. 12 85110,N-ERGIE Aktiengesellschaft,435.4,2904.3,2943.6,5.9,1911795491,1911795491,26749988,no
+south,19666,site_538507f038bfba2bcd9f,Schweitenkirchen Robert-Koch-Straße 1 85301,Tesla Germany GmbH,490.531,1116.3,879.2,8.5,119803319,21518736,362762307,no
+south,18188,site_b8d49bcaa584c759f075,Garching Voithstraße 0 85748,Mer Germany GmbH,520.511,2861.0,2879.3,7.4,21495115,17197477,891481310,no
+south,11363,site_9ba55f4b04361838d12a,München Johann-Fichte-Straße 5 80804,Park One GmbH,529.3,2785.9,5870.9,28.5,2382884,26823580,712726531,no
+south,11484,site_222b7a0048d84223b702,München Maria-Probst-Straße 6 80939,Georg Jos. Kaes GmbH,529.3,2699.6,3303.0,7.1,2382884,26823580,206004798,no
+south,62428,site_61a9d39fccc41ba14edf,Dessau-Roßlau Am Eichengarten 2 06842,EnBW mobility+ AG und Co.KG,71.01,1301.5,1343.8,53.1,27348822,509905,1257611207,no

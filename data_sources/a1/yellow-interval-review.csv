@@ -1,0 +1,5 @@
+﻿direction,section,interval_km,boundary,site_row,address,operator,power_kw,fast_points,access_m,return_m,snap_m,entrance_checked
+north,southern,55.595,start,59533,Illingen-Uchtelfangen Saarbrücker Str. 175 66557,BP Europa SE,900.0,6,820.2,979.8,15.5,no
+north,southern,55.595,end,59191,Mehring Am Kniebrecht 902 54346,TotalEnergies Charging Solutions Deutschland GmbH,1200.0,6,203.2,139.6,9.8,no
+south,southern,55.819,start,59192,Mehring Am Kniebrecht 903 54346,TotalEnergies Charging Solutions Deutschland GmbH,1200.0,6,490.6,360.7,2.1,no
+south,southern,55.819,end,59533,Illingen-Uchtelfangen Saarbrücker Str. 175 66557,BP Europa SE,900.0,6,961.3,1147.7,15.5,no

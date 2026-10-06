@@ -1,0 +1,41 @@
+{
+  "format": "a9-pilot-v2",
+  "startup_sites_sha256": "00336695cfadd1c46e4d29ab19d2258beabba1406e55db765d702c51670b6db5",
+  "site_count": "67680",
+  "route": "A 9",
+  "relation_id": "20738",
+  "membership_repairs": "[725303216, 725303217]",
+  "source_date": "2026-09-01",
+  "directions": [
+    {
+      "direction": "north",
+      "length_km": 529.95,
+      "candidates": 974,
+      "routed": 309,
+      "fast_routed": 133,
+      "eligible_routed": 86,
+      "max_gap_km": 41.1
+    },
+    {
+      "direction": "south",
+      "length_km": 529.3,
+      "candidates": 955,
+      "routed": 396,
+      "fast_routed": 144,
+      "eligible_routed": 87,
+      "max_gap_km": 41.0
+    }
+  ],
+  "access_network": "true",
+  "access_source": "{\"source\": \"https://download.geofabrik.de/europe/germany-latest.osm.pbf\", \"resolved_url\": \"https://ftp5.gwdg.de/pub/misc/openstreetmap/download.geofabrik.de/germany-latest.osm.pbf\", \"bytes\": 4854133786, \"last_modified\": \"Mon, 05 Oct 2026 18:52:57 GMT\", \"sha256\": \"2db099e1dea1832c3d20d95a24e50be1609c4ed4cb03d1540d20ae699b2fc741\", \"replication_timestamp\": \"2026-10-04T20:20:21Z\"}",
+  "access_network_sha256": "981a8b41756f748b3d9cf6dc3e54490fcde281cff1a3747756e15c28381685cf",
+  "access_links_sha256": "bcecf24fc08edaf35cf6bdf9bb8f3565085436896ebc9d226e37996490d1583e",
+  "assessment": "exploratory-not-legal-compliance",
+  "osm_sha256": "{\"access-links.json\": \"bcecf24fc08edaf35cf6bdf9bb8f3565085436896ebc9d226e37996490d1583e\", \"node-1937768871-ways.json\": \"a8109eb28f1d56a0cc1212185926d349867a26198799dc28f7bbf6d070f8802d\", \"node-488061-ways.json\": \"fce9595ea62e4d38dd8ff3ff9549cd7fc009682b2ee0076714e3e3955799cac2\", \"node-6801665332-ways.json\": \"04a09d5a153b2ce7de590b2eaa31ffe7d0af334b6e9ed222b1e87ae1dc8723b7\", \"node-849942052-ways.json\": \"ae39406e8b25cd4594a7f74b432f0e5c51bdfd13f42ca966bcd8d5682968d7f8\", \"relation-20738.json\": \"cd329617678671705629178f76d6fbe6e8ae160955e9c41bc8f490f1cccc2a39\", \"relation-388963.json\": \"5b560693947026935a6149a9c4ab8574b07e071349c600281d89b36638d5e75d\", \"relation-388964.json\": \"83fc9604548a6580f5d8c9b51775e2b6171f652179545fde46bfa5e20230c5e8\", \"relation-388965.json\": \"933af154746eb113a9a5a49c346d2fef21892973e7022043bf92c835e4b2cb68\", \"relation-390375.json\": \"a8a614cb7b0d143f558af44dc53f6757bbb9aca9ce83892a6b33bcce2e7d71b4\", \"relation-390376.json\": \"4aea16263ab5c48a44de86912fa6692c3d026c78e5e85b4f6cf8ec9ee4d81c8d\", \"relation-390377.json\": \"46bc5f13dfa265ef286969e405097216d8954458e749101e70e5c137bcd0b11a\", \"repair-way-725303216.json\": \"32b81d5ce80aff1f57ebde6b3b576447f7ed5ab934ce7a7b5f00e5550e6e22f5\", \"repair-way-725303217.json\": \"17a4cf118d6061c7d8d8a29ce913d3518b9bcf3506da6405e0a290a10ff02783\"}",
+  "bytes": 143211,
+  "limitations": [
+    "Actual site entrances are unverified; complex/conditional restrictions are conservatively excluded",
+    "Address groups are not certified AFIR charging pools",
+    "TEN-T classification, exceptions and route endpoints are not certified"
+  ]
+}

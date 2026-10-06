@@ -152,3 +152,51 @@ test('failed or mismatched background details preserve usable map, filters and r
     } finally { await worker.terminate() }
   }
 })
+
+test('A9 loads only on request, reuses one load and keeps regular selections usable', async () => {
+  const {worker,messages,waitFor} = startWorker()
+  try {
+    await waitFor('ready')
+    assert.ok(!messages.some(m => m.type === 'fetch' && m.url.includes('autobahn_a9')))
+    worker.postMessage({type:'load-a9',url:'autobahn_a9_zstd10.parquet'})
+    worker.postMessage({type:'load-a9',url:'autobahn_a9_zstd10.parquet'})
+    const {pilot} = await waitFor('a9-ready')
+    assert.equal(pilot.summary.length,2)
+    assert.equal(messages.filter(m => m.type === 'fetch' && m.url.includes('autobahn_a9')).length,1)
+    worker.postMessage({type:'filter',requestId:1,filters:{state:'Bayern'}})
+    const filtered = await waitFor('filtered', m => m.requestId === 1)
+    assert.ok(filtered.count > 0 && filtered.count < 67680)
+  } finally { await worker.terminate() }
+})
+
+test('Invalid A9 data fails independently and permits a corrected retry', async () => {
+  const {worker,messages,waitFor} = startWorker()
+  try {
+    await waitFor('ready')
+    worker.postMessage({type:'load-a9',url:'charging_sites_startup_zstd10.parquet'})
+    await waitFor('a9-error')
+    assert.ok(!messages.some(m => m.type === 'error'))
+    worker.postMessage({type:'load-a9',url:'autobahn_a9_zstd10.parquet'})
+    const {pilot} = await waitFor('a9-ready')
+    assert.ok(pilot.segments.length > 0)
+    await waitFor('regions')
+  } finally { await worker.terminate() }
+})
+test('A1 and A9 load independently and cache by route without mixing responses', async () => {
+  const {worker,messages,waitFor} = startWorker()
+  try {
+    await waitFor('ready')
+    assert.ok(!messages.some(m => m.type === 'fetch' && m.url.includes('autobahn_a1')))
+    worker.postMessage({type:'load-a9',route:'A1',url:'autobahn_a1_zstd10.parquet'})
+    worker.postMessage({type:'load-a9',route:'A9',url:'autobahn_a9_zstd10.parquet'})
+    const a1 = await waitFor('a9-ready',m => m.route === 'A1')
+    const a9 = await waitFor('a9-ready',m => m.route === 'A9')
+    assert.equal(a1.pilot.route,'A1'); assert.equal(a1.pilot.sections.length,4)
+    assert.equal(a9.pilot.route,'A9'); assert.equal(a9.pilot.sections,null)
+    worker.postMessage({type:'load-a9',route:'A1',url:'autobahn_a1_zstd10.parquet'})
+    worker.postMessage({type:'filter',requestId:7,filters:{state:'Schleswig-Holstein'}})
+    await waitFor('filtered',m => m.requestId === 7)
+    assert.equal(messages.filter(m => m.type === 'fetch' && m.url.includes('autobahn_a1')).length,1)
+    assert.equal(messages.filter(m => m.type === 'fetch' && m.url.includes('autobahn_a9')).length,1)
+  } finally { await worker.terminate() }
+})

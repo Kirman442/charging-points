@@ -1,3 +1,4 @@
+import { decodeAutobahn } from '../data/autobahn.js'
 import { validateDetails, siteDetail } from '../data/siteDetails.js'
 import { selectPoints } from '../data/pointSelection.js'
 import { fingerprint, readRuntimeIndexes } from '../data/runtimeIndexes.js'
@@ -8,6 +9,7 @@ import { tableFromIPC } from 'apache-arrow'
 import { prepareSites } from '../data/prepareSites.js'
 import { applyRegionStats, decodeRegions } from '../data/regions.js'
 
+const autobahnLoads = new Map()
 let detailsTable, detailsLoad, detailContext, pendingDetail = -1
 let table, operatorIndex, pointGroups, selection, wasmReady, clusterIndex, currentZoom = 5, selectionRequestId = 0
 function sendSites(type, requestId, filters, started, trace = null) {
@@ -125,6 +127,20 @@ self.onmessage = async ({ data: message }) => {
         self.postMessage({ type: 'regions', ...regions })
         trace.report('Территории и аналитика готовы')
       } catch (error) { self.postMessage({ type: 'error', message: `Границы: ${error.message}` }) }
+    }
+    if (message.type === 'load-a9') {
+      if (!detailContext || !table) throw new Error('Сначала дождись загрузки площадок')
+      const route = message.route || 'A9'
+      if (!['A1','A9'].includes(route)) throw new Error('Неизвестный автобан')
+      if (!autobahnLoads.has(route)) autobahnLoads.set(route, (async () => {
+        const response = await fetch(message.url)
+        if (!response.ok) throw new Error(`Загрузка ${route}: HTTP ${response.status}`)
+        await wasmReady
+        const decoded = tableFromIPC(readParquet(new Uint8Array(await response.arrayBuffer())).intoIPCStream())
+        return decodeAutobahn(decoded, detailContext.sitesHash, table.numRows, route)
+      })())
+      try { self.postMessage({ type: 'a9-ready', route, pilot: await autobahnLoads.get(route) }) }
+      catch (error) { autobahnLoads.delete(route); self.postMessage({ type: 'a9-error', route, message: error.message }) }
     }
     if (message.type === 'load-details') loadDetails()
     if (message.type === 'filter' && table && pointGroups) { sendSites('filtered', message.requestId, message.filters, performance.now()) }

@@ -1,3 +1,4 @@
+import { autobahnSiteRadius } from '../data/autobahn.js'
 import { GeoJsonLayer, ScatterplotLayer, TextLayer } from '@deck.gl/layers'
 import { operatorConcentration } from '../data/concentration.js'
 import { metricValue } from '../data/analytics.js'
@@ -62,6 +63,7 @@ export function createLayers(data, regions, suppliedOptions, markers = null, clu
     id: 'charging-sites', data: { length: data.count, attributes: {
       getPosition: { value: data.positions, size: 2 }, getFillColor: { value: data.colors, size: 4 },
     } }, getRadius: 45, radiusMinPixels: 4, radiusMaxPixels: 12,
+    ...(options.a9Mode ? { radiusUnits: 'pixels', getRadius: (_, { index }) => autobahnSiteRadius(options.autobahnZoom, data.colors[index*4+3] > 200), radiusMinPixels: 1, updateTriggers: { getRadius: [data.colors, options.autobahnZoom] } } : {}),
     opacity: .85, pickable: true, autoHighlight: true, highlightColor: [255,255,255,230],
   }))
   return { layers, maximum }

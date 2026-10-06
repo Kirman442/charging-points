@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ChargingMap from './components/ChargingMap.jsx'
+import AutobahnPanel from './components/AutobahnPanel.jsx'
+import { AUTOBAHNS, autobahnDisplayData } from './data/autobahn.js'
 import ControlPanel from './components/ControlPanel.jsx'
 import AnalyticsPanel from './components/AnalyticsPanel.jsx'
 import MapLegend from './components/MapLegend.jsx'
@@ -13,18 +15,23 @@ import './App.css'
 
 export default function App() {
   const mapContainer = useRef(null), pendingFocus = useRef(null)
+  const [autobahnFocus, setAutobahnFocus] = useState(null)
+  const [autobahnSites, setAutobahnSites] = useState('none')
+  const [autobahnRoute, setAutobahnRoute] = useState('A9')
+  const [a9Enabled, setA9Enabled] = useState(false), [a9Direction, setA9Direction] = useState('north'), [hideOthers, setHideOthers] = useState(true)
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [options, setOptions] = useState(DEFAULT_OPTIONS)
   const [viewState, setViewState] = useState(GERMANY)
   const [clickedRegion, setClickedRegion] = useState(null), [mapError, setMapError] = useState('')
   const [siteMode, setSiteMode] = useState(false)
   const [cluster, setCluster] = useState(null)
-  const { data, markers, regions, states, detail, detailPending, status, error, selectSite, reload, onDataRendered } = useChargingData(filters, viewState.zoom, options.clusterSites)
+  const { a9, a9Pending, a9Error, loadA9, loadAutobahn, data, markers, regions, states, detail, detailPending, status, error, selectSite, reload, onDataRendered } = useChargingData(filters, viewState.zoom, options.clusterSites && !a9Enabled, autobahnRoute)
   const activeRegion = clickedRegion
     ? regions?.[clickedRegion.level]?.find(feature => (feature.properties.district_code || feature.properties.state_code) === (clickedRegion.district_code || clickedRegion.state_code))?.properties || null
     : regions?.states.find(feature => feature.properties.state_name === filters.state)?.properties || null
-  const mapOptions = useMemo(() => ({ ...options, state: filters.state, selectedRegion: activeRegion }), [options, filters.state, activeRegion])
-  const closeSite = useCallback(() => { setCluster(null); setSiteMode(false); selectSite(-1) }, [selectSite])
+  const displayData = useMemo(() => a9Enabled ? autobahnDisplayData(data, a9, a9Direction, hideOthers, autobahnSites, autobahnFocus) : data, [data, a9Enabled, a9, a9Direction, hideOthers, autobahnSites, autobahnFocus])
+  const mapOptions = useMemo(() => ({ ...options, a9Mode: a9Enabled, showSites: a9Enabled ? (autobahnFocus !== null || autobahnSites !== 'none') : options.showSites, autobahnZoom: viewState.zoom, clusterSites: options.clusterSites && !a9Enabled, metric: a9Enabled ? 'sites' : options.metric, state: filters.state, selectedRegion: activeRegion }), [options, filters.state, activeRegion, a9Enabled, autobahnSites, autobahnFocus, viewState.zoom])
+  const closeSite = useCallback(() => { setAutobahnFocus(null); setCluster(null); setSiteMode(false); selectSite(-1) }, [selectSite])
   const focusFeature = useCallback(feature => {
     const container = mapContainer.current
     if (!feature || !container) return
@@ -74,6 +81,7 @@ export default function App() {
   }, [options.metric, options.territory, options.clusterSites, filters.state, regions, selectSite])
   const resetSettings = useCallback(() => {
     pendingFocus.current = null
+    setA9Enabled(false); setHideOthers(true); setAutobahnSites('none'); setAutobahnFocus(null); setA9Direction('north'); setAutobahnRoute('A9')
     setViewState(GERMANY); setFilters({ ...DEFAULT_FILTERS })
     setOptions(previous => resetOptions(previous))
     setClickedRegion(null); closeSite()
@@ -96,15 +104,15 @@ export default function App() {
     setViewState(next)
   }, [viewState.zoom])
   return <main className="map-app" ref={mapContainer}>
-    <ChargingMap data={data} markers={markers} regions={regions} options={mapOptions} viewState={viewState} onViewChange={onViewChange}
+    <ChargingMap data={displayData} autobahn={a9Enabled ? a9 : null} direction={a9Direction} markers={markers} regions={regions} options={mapOptions} viewState={viewState} onViewChange={onViewChange}
       onCluster={value => { setSiteMode(false); selectSite(-1); setCluster(value) }}
-      onSite={index => { setCluster(null); setSiteMode(true); selectSite(index) }} onRegion={showRegion} onMapError={setMapError} onDataRendered={onDataRendered} />
-    <ControlPanel states={states} filters={filters} onFilters={onFilters} options={options} onOptions={onOptions} onReset={resetSettings} />
+      onSite={index => { setCluster(null); setSiteMode(true); setAutobahnFocus(index); selectSite(index) }} onRegion={showRegion} onMapError={setMapError} onDataRendered={onDataRendered} />
+    <ControlPanel autobahnSites={autobahnSites} onAutobahnSites={setAutobahnSites} autobahnRoute={autobahnRoute} onAutobahnRoute={route => { setAutobahnRoute(route); closeSite(); if (a9Enabled) { loadAutobahn(route); setViewState(previous => transitionViewState(previous, AUTOBAHNS[route].view)) } }} a9Enabled={a9Enabled} a9Direction={a9Direction} hideOthers={hideOthers} a9Available={!!data} onA9Enabled={enabled => { setA9Enabled(enabled); closeSite(); if (enabled) { if (!a9 && !a9Pending) loadA9(); setViewState(previous => transitionViewState(previous, AUTOBAHNS[autobahnRoute].view)) } }} onA9Direction={value => { setA9Direction(value); closeSite() }} onHideOthers={setHideOthers} states={states} filters={filters} onFilters={onFilters} options={options} onOptions={onOptions} onReset={resetSettings} />
 
-    <MapLegend regions={regions} options={mapOptions} />
-    <AnalyticsPanel cluster={cluster} selectedState={filters.state} states={regions?.states} site={siteMode ? detail : null} region={activeRegion} metric={options.metric} pending={siteMode && detailPending}
+    {!a9Enabled && <MapLegend regions={regions} options={mapOptions} />}
+    {a9Enabled && !siteMode ? <AutobahnPanel route={autobahnRoute} pilot={a9} direction={a9Direction} pending={a9Pending} error={a9Error} onRetry={loadA9} onSite={(row, position) => { setCluster(null); setSiteMode(true); setAutobahnFocus(row); selectSite(row); setViewState(previous => ({ ...previous, longitude: position[0], latitude: position[1], zoom: Math.max(previous.zoom, 14) })) }} /> : <AnalyticsPanel cluster={cluster} selectedState={filters.state} states={regions?.states} site={siteMode ? detail : null} region={activeRegion} metric={options.metric} pending={siteMode && detailPending}
       data={data} operatorBasis={options.operatorBasis} onOperatorBasis={value => onOptions({ ...options, operatorBasis: value })} showSites={options.showSites} status={status} error={error || mapError} onRetry={() => { closeSite(); setClickedRegion(null); reload() }}
-      onCloseSite={returnToAnalytics} onAllTerritories={allTerritories} onOverview={overview} onSelectRegion={showRegion} />
-    <div className="source">Данные: <a href="https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/start.html" target="_blank" rel="noreferrer">BNetzA · CC BY 4.0</a> · KBA · BKG · обработка и группировка</div>
+      onCloseSite={returnToAnalytics} onAllTerritories={allTerritories} onOverview={overview} onSelectRegion={showRegion} />}
+    <div className="source">Данные: <a href="https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/start.html" target="_blank" rel="noreferrer">BNetzA · CC BY 4.0</a> · KBA · BKG · {a9Enabled && <><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors · ODbL</a> · </>}обработка и группировка</div>
   </main>
 }

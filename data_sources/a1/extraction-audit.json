@@ -1,0 +1,15 @@
+{
+  "ways": 259638,
+  "nodes": 1189563,
+  "restrictions": 6898,
+  "missing_route_way_ids": [],
+  "elapsed_s": 511,
+  "source": {
+    "source": "https://download.geofabrik.de/europe/germany-latest.osm.pbf",
+    "resolved_url": "https://ftp5.gwdg.de/pub/misc/openstreetmap/download.geofabrik.de/germany-latest.osm.pbf",
+    "bytes": 4854133786,
+    "last_modified": "Mon, 05 Oct 2026 18:52:57 GMT",
+    "sha256": "2db099e1dea1832c3d20d95a24e50be1609c4ed4cb03d1540d20ae699b2fc741",
+    "replication_timestamp": "2026-10-04T20:20:21Z"
+  }
+}

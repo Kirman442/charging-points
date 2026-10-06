@@ -1,3 +1,6 @@
+import { PathLayer } from '@deck.gl/layers'
+import { PathStyleExtension } from '@deck.gl/extensions'
+import { AUTOBAHNS, A9_STATUS } from '../data/autobahn.js'
 import { useEffect, useMemo, useRef } from 'react'
 import DeckGL from '@deck.gl/react'
 import Map from 'react-map-gl/maplibre'
@@ -11,7 +14,7 @@ import { METRICS } from '../data/analytics.js'
 import { format } from '../utils/format.js'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-export default function ChargingMap({ data, markers, regions, options, viewState, onViewChange, onSite, onCluster, onRegion, onMapError, onDataRendered }) {
+export default function ChargingMap({ data, autobahn, direction, markers, regions, options, viewState, onViewChange, onSite, onCluster, onRegion, onMapError, onDataRendered }) {
   const clustered = useClusters(options, viewState.zoom)
   const markerHover = useRef(false)
   const timing = useRef({ started: null, events: new Set(), packets: new WeakSet() })
@@ -22,7 +25,17 @@ export default function ChargingMap({ data, markers, regions, options, viewState
     trace.events.add(name)
     console.info(`[Charging render] ${name}: ${Math.round(performance.now() - trace.started)} ms с запуска карты`)
   }
-  const { layers } = useMemo(() => createLayers(data, regions, options, markers, clustered), [data, regions, options, markers, clustered])
+  const { layers } = useMemo(() => {
+    const result = createLayers(data, regions, options, markers, clustered)
+    if (autobahn) result.layers.unshift(new PathLayer({
+      id: 'a9-route', data: autobahn.segments.filter(s => s.direction === direction),
+      getPath: s => s.path, getColor: s => A9_STATUS[s.status].color,
+      getWidth: 4, widthUnits: 'pixels', pickable: true,
+      getDashArray: s => A9_STATUS[s.status].dash, dashJustified: false, dashUnits: 'pixels', dashGapPickable: true,
+      extensions: [new PathStyleExtension({ dash: true, dashMode: 'path' })],
+    }))
+    return result
+  }, [data, regions, options, markers, clustered, autobahn, direction])
   const isSite = info => info.layer?.id === 'charging-sites'
   const isMarker = info => info.layer?.id === 'charging-markers'
   return <DeckGL viewState={viewState} onViewStateChange={({ viewState: next }) => onViewChange(next)}
@@ -49,6 +62,7 @@ export default function ChargingMap({ data, markers, regions, options, viewState
       else if (info.object?.properties) onRegion(info.object.properties)
     }}
     getTooltip={info => {
+      if (info.layer?.id === 'a9-route') return { text: `${autobahn.route} · ${AUTOBAHNS[autobahn.route][direction]}\n${A9_STATUS[info.object.status].label}${info.object.status === 'unknown' ? '' : `\n${info.object.gap_km.toFixed(1)} км — предварительный интервал`}` }
       if (isMarker(info) && info.index >= 0) {
         const selection = markerSelection(markers, info.index)
         return { text: selection?.type === 'cluster'

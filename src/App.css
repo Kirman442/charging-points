@@ -160,3 +160,8 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 
 .a9-site-link { background: transparent; border: 0; padding: 0; color: #8edbd0; text-align: left; cursor: pointer; text-decoration: underline; }
 .a9-site-link:focus-visible { outline: 2px solid #8edbd0; outline-offset: 3px; }
+
+.a9-candidate-toggle { display: flex; align-items: flex-start; gap: 8px; margin: 14px 0; font-size: 12px; cursor: pointer; }
+.a9-point { display: inline-block; width: 10px; height: 10px; box-sizing: border-box; border-radius: 50%; background: #44beaa; flex-shrink: 0; }
+.a9-point-eligible { border: 2px solid #377c70; box-shadow: inset 0 0 0 1px #ebfff8; }
+.a9-point-unrouted { background: #b9bfcd; }

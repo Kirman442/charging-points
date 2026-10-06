@@ -45,3 +45,13 @@ test('legend domain follows analytical territories and selected state, regardles
     assert.equal(createLayers(null, regions, { ...options, metric: 'power', state: 'A' }).maximum, 500)
   }
 })
+
+test('Autobahn outlines identify interval sites and radius accessors follow zoom', () => {
+  const data={count:2,positions:new Float64Array(4),colors:new Uint8Array([68,190,170,255,68,190,170,255]),autobahnEligible:new Uint8Array([1,0])}
+  const layerAt = zoom => createLayers(data,null,{metric:'sites',showSites:true,a9Mode:true,autobahnZoom:zoom}).layers[0]
+  const far=layerAt(6), near=layerAt(14)
+  assert.equal(far.props.radiusUnits,'pixels')
+  assert.ok(far.props.getRadius(null,{index:0}) < near.props.getRadius(null,{index:0}))
+  assert.equal(near.props.getLineWidth(null,{index:1}),0)
+  assert.ok(near.props.getLineWidth(null,{index:0}) > 0)
+})

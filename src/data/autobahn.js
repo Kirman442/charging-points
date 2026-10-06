@@ -35,28 +35,33 @@ export function decodeAutobahn(table, sitesHash, siteCount, expectedRoute = 'A9'
 }
 
 // Keep original numeric rows for clicks. Never mutate the regular map's buffers.
-export function autobahnDisplayData(data, pilot, direction, hideOthers, siteMode = 'all', focusedRow = null) {
+export function autobahnDisplayData(data, pilot, direction, hideOthers, siteMode = 'routed', focusedRow = null) {
   if (!data) return data
   if (!pilot) return { ...data, count: 0, colors: data.colors.subarray(0,0), positions: data.positions.subarray(0,0), rowIndices: data.rowIndices.subarray(0,0), powers: data.powers.subarray(0,0), pointCounts: data.pointCounts.subarray(0,0) }
   const memberships = new Map((pilot?.sites || []).filter(site => site.direction === direction).map(site => [site.site_row, site]))
   const indices = []
   for (let i = 0; i < data.count; i++) {
     const site = memberships.get(data.rowIndices[i])
-    const matches = site && (siteMode === 'all' || (site.fast_points > 0 && (siteMode === 'dc' || site.status === 'road_route_found_entrance_unverified')))
+    const matches = site && (siteMode === 'all' || (siteMode === 'routed' && site.status === 'road_route_found_entrance_unverified'))
     if (data.rowIndices[i] === focusedRow || (siteMode !== 'none' && (matches || (!site && !hideOthers)))) indices.push(i)
   }
   const count = indices.length, colors = new Uint8Array(count*4), positions = new Float64Array(count*2)
-  const rowIndices = new Uint32Array(count), powers = new Float32Array(count), pointCounts = new Int32Array(count)
+  const autobahnEligible = new Uint8Array(count), rowIndices = new Uint32Array(count), powers = new Float32Array(count), pointCounts = new Int32Array(count)
   for (let j = 0; j < count; j++) {
-    const i = indices[j], row = data.rowIndices[i], status = memberships.get(row)?.status
+    const i = indices[j], row = data.rowIndices[i], site = memberships.get(row), status = site?.status
+    autobahnEligible[j] = autobahnIntervalSite(site) ? 1 : 0
     colors.set(status === 'road_route_found_entrance_unverified' ? [68,190,170,255] : status === 'unconfirmed' ? [185,191,205,235] : [110,120,135,12], j*4)
     positions.set(data.positions.subarray(i*2,i*2+2),j*2)
     rowIndices[j] = row; powers[j] = data.powers[i]; pointCounts[j] = data.pointCounts[i]
   }
-  return { ...data, count, positions, colors, rowIndices, powers, pointCounts }
+  return { ...data, count, positions, colors, rowIndices, powers, pointCounts, autobahnEligible }
+}
+
+export function autobahnIntervalSite(site) {
+  return site?.status === 'road_route_found_entrance_unverified' && site.power_kw >= 400 && site.fast_points > 0
 }
 
 export function autobahnSiteRadius(zoom, candidate = true) {
-  const radius = Math.max(1, Math.min(4, 1 + (zoom - 6) * 0.5))
+  const radius = Math.max(0.8, Math.min(7, 0.8 + (zoom - 5) * 0.7))
   return candidate ? radius : Math.min(1.2, radius)
 }

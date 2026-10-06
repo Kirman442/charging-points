@@ -1,5 +1,5 @@
 import { AUTOBAHNS } from '../data/autobahn.js'
-export default function ControlPanel({ states, filters, onFilters, options, onOptions, onReset, a9Enabled, a9Direction, hideOthers, a9Available, onA9Enabled, onA9Direction, onHideOthers, autobahnRoute = 'A9', onAutobahnRoute, autobahnSites = 'none', onAutobahnSites }) {
+export default function ControlPanel({ states, filters, onFilters, options, onOptions, onReset, a9Enabled, a9Direction, hideOthers, a9Available, onA9Enabled, onA9Direction, onHideOthers, autobahnRoute = 'A9', onAutobahnRoute }) {
   const change = (key, value) => onFilters({ ...filters, [key]: value })
   return <aside className="panel control-panel" aria-label="Настройки карты">
     <header><div className="eyebrow">ЭЛЕКТРОМОБИЛЬНОСТЬ · ГЕРМАНИЯ</div><h1>Зарядная инфраструктура</h1></header>
@@ -9,9 +9,8 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
         <label className="check"><input type="checkbox" checked={!!a9Enabled} disabled={!a9Available} onChange={event => onA9Enabled(event.target.checked)} />Режим «Автобан {autobahnRoute}»</label>
         {a9Enabled && <>
           <label>Направление<select value={a9Direction} onChange={event => onA9Direction(event.target.value)}><option value="north">{AUTOBAHNS[autobahnRoute].north}</option><option value="south">{AUTOBAHNS[autobahnRoute].south}</option></select></label>
-          <label>Площадки на карте<select value={autobahnSites} onChange={event => onAutobahnSites(event.target.value)}><option value="none">Не показывать — только линия</option><option value="routed">DC ≥150 кВт · маршрут найден</option><option value="dc">Все DC-площадки ≥150 кВт</option><option value="all">Все кандидаты в коридоре</option></select></label>
-          <label className="check"><input type="checkbox" disabled={autobahnSites === 'none'} checked={hideOthers} onChange={event => onHideOthers(event.target.checked)} />Скрыть площадки вне коридора поиска</label>
-          <p className="note">Площадки включаются отдельно. Бирюзовые — маршрут найден, светлые — кандидаты без связи. Реальные въезды требуют проверки. Группировка временно отключена.</p>
+          <label className="check"><input type="checkbox" checked={hideOthers} onChange={event => onHideOthers(event.target.checked)} />Скрыть площадки вне коридора поиска</label>
+          <p className="note">Бирюзовые площадки с найденным маршрутом показаны сразу. Кандидаты без найденного маршрута включаются в правой панели. Реальные въезды требуют проверки. Группировка временно отключена.</p>
         </>}
       </fieldset>
       <fieldset className="controls"><legend>Выборка инфраструктуры</legend>

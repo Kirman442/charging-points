@@ -63,7 +63,7 @@ export function createLayers(data, regions, suppliedOptions, markers = null, clu
     id: 'charging-sites', data: { length: data.count, attributes: {
       getPosition: { value: data.positions, size: 2 }, getFillColor: { value: data.colors, size: 4 },
     } }, getRadius: 45, radiusMinPixels: 4, radiusMaxPixels: 12,
-    ...(options.a9Mode ? { radiusUnits: 'pixels', getRadius: (_, { index }) => autobahnSiteRadius(options.autobahnZoom, data.colors[index*4+3] > 200), radiusMinPixels: 1, updateTriggers: { getRadius: [data.colors, options.autobahnZoom] } } : {}),
+    ...(options.a9Mode ? { radiusUnits: 'pixels', getRadius: (_, { index }) => autobahnSiteRadius(options.autobahnZoom, data.colors[index*4+3] > 200), radiusMinPixels: 0.8, stroked: true, lineWidthUnits: 'pixels', getLineColor: [235,255,248,255], getLineWidth: (_, { index }) => data.autobahnEligible?.[index] ? Math.max(0.5, Math.min(1.5, autobahnSiteRadius(options.autobahnZoom) * 0.2)) : 0, updateTriggers: { getRadius: [data.colors, options.autobahnZoom], getLineWidth: [data.autobahnEligible, options.autobahnZoom] } } : {}),
     opacity: .85, pickable: true, autoHighlight: true, highlightColor: [255,255,255,230],
   }))
   return { layers, maximum }

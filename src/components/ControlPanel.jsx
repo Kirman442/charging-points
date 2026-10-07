@@ -10,7 +10,6 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
         {a9Enabled && <>
           <label>Направление<select value={a9Direction} onChange={event => onA9Direction(event.target.value)}><option value="north">{AUTOBAHNS[autobahnRoute].north}</option><option value="south">{AUTOBAHNS[autobahnRoute].south}</option></select></label>
           <label className="check"><input type="checkbox" checked={hideOthers} onChange={event => onHideOthers(event.target.checked)} />Скрыть площадки вне коридора поиска</label>
-          <p className="note">Бирюзовые площадки с найденным маршрутом показаны сразу. Кандидаты без найденного маршрута включаются в правой панели. Реальные въезды требуют проверки. Группировка временно отключена.</p>
         </>}
       </fieldset>
       <fieldset className="controls"><legend>Выборка инфраструктуры</legend>

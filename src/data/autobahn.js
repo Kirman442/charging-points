@@ -1,4 +1,4 @@
-export const AUTOBAHNS = { A9: { north: 'В сторону Берлина', south: 'В сторону Мюнхена', view: { longitude: 12.1, latitude: 50.3, zoom: 6.2, pitch: 0, bearing: 0 } }, A1: { north: 'В сторону Heiligenhafen', south: 'В сторону Saarbrücken', view: { longitude: 8.5, latitude: 51.8, zoom: 5.7, pitch: 0, bearing: 0 } } }
+export const AUTOBAHNS = { A5: { north: 'В сторону Hattenbacher Dreieck', south: 'В сторону Basel', view: { longitude: 8.2, latitude: 49.5, zoom: 6.3, pitch: 0, bearing: 0 } }, A9: { north: 'В сторону Берлина', south: 'В сторону Мюнхена', view: { longitude: 12.1, latitude: 50.3, zoom: 6.2, pitch: 0, bearing: 0 } }, A1: { north: 'В сторону Heiligenhafen', south: 'В сторону Saarbrücken', view: { longitude: 8.5, latitude: 51.8, zoom: 5.7, pitch: 0, bearing: 0 } } }
 export const A9_STATUS = {
   within: { label: 'Расчётный интервал ≤50 км', color: [68,190,170,255], dash: [0,0] },
   near: { label: 'Расчётный интервал >50–60 км', color: [240,194,70,255], dash: [8,4] },
@@ -8,7 +8,8 @@ export const A9_STATUS = {
 const invalid = () => new Error('Данные автобана не соответствуют площадкам или имеют неверную структуру. Пересоздай пилот.')
 export function decodeAutobahn(table, sitesHash, siteCount, expectedRoute = 'A9') {
   const metadata = table.schema.metadata
-  if (!['a9-pilot-v2','autobahn-pilot-v1'].includes(metadata.get('format')) || (metadata.get('route') || '').replaceAll(' ', '') !== expectedRoute || metadata.get('startup_sites_sha256') !== sitesHash || Number(metadata.get('site_count')) !== siteCount) throw invalid()
+  if (!['autobahn-pilot-v2'].includes(metadata.get('format')) || (metadata.get('route') || '').replaceAll(' ', '') !== expectedRoute || metadata.get('startup_sites_sha256') !== sitesHash || Number(metadata.get('site_count')) !== siteCount) throw invalid()
+  if (metadata.get('routing_policy') !== 'pilot-3km-out-3km-back-v1' || metadata.get('interval_method') !== 'return-road-approach-v1') throw invalid()
   const summary = JSON.parse(metadata.get('directions') || 'null')
   if (!Array.isArray(summary) || summary.length !== 2 || new Set(summary.map(s => s.direction)).size !== 2 || summary.some(s => !['north','south'].includes(s.direction) || !Number.isFinite(s.length_km) || s.length_km <= 0)) throw invalid()
   const sections = JSON.parse(metadata.get('sections') || 'null')
@@ -25,7 +26,7 @@ export function decodeAutobahn(table, sitesHash, siteCount, expectedRoute = 'A9'
     } else if (row.kind === 'site') {
       const key = `${row.direction}:${row.site_row}`
       if (!Number.isInteger(row.site_row) || row.site_row < 0 || row.site_row >= siteCount || !validPoint(coordinates) || seen.has(key) || !['road_route_found_entrance_unverified','unconfirmed'].includes(row.status) || !Number.isFinite(row.power_kw) || row.power_kw < 0 || !Number.isInteger(row.fast_points) || row.fast_points < 0) throw invalid()
-      if (row.status === 'road_route_found_entrance_unverified' && (!Number.isFinite(row.access_m) || row.access_m < 0 || row.access_m > 3000 || !Number.isFinite(row.return_m) || row.return_m < 0 || row.return_m > 10000 || !Number.isFinite(row.snap_m) || row.snap_m < 0 || row.snap_m > 60)) throw invalid()
+      if (row.status === 'road_route_found_entrance_unverified' && (!Number.isFinite(row.access_m) || row.access_m < 0 || row.access_m > 3000 || !Number.isFinite(row.return_m) || row.return_m < 0 || row.return_m > 3000 || !Number.isFinite(row.snap_m) || row.snap_m < 0 || row.snap_m > 60)) throw invalid()
       seen.add(key); sites.push({ ...row, position: coordinates })
     } else throw invalid()
   }

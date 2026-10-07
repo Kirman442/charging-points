@@ -1,0 +1,22 @@
+{
+  "directions": [
+    {
+      "direction": "north",
+      "length_km": 440.276,
+      "way_count": 1143,
+      "nodes": 4837,
+      "added_way_ids_from_regional_network": [],
+      "nodes_missing_from_user_json": 0,
+      "nodes_with_changed_coordinates_since_pbf": 0
+    },
+    {
+      "direction": "south",
+      "length_km": 440.47,
+      "way_count": 1144,
+      "nodes": 4784,
+      "added_way_ids_from_regional_network": [],
+      "nodes_missing_from_user_json": 0,
+      "nodes_with_changed_coordinates_since_pbf": 0
+    }
+  ]
+}

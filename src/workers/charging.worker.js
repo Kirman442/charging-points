@@ -131,7 +131,7 @@ self.onmessage = async ({ data: message }) => {
     if (message.type === 'load-a9') {
       if (!detailContext || !table) throw new Error('Сначала дождись загрузки площадок')
       const route = message.route || 'A9'
-      if (!['A1','A9'].includes(route)) throw new Error('Неизвестный автобан')
+      if (!['A1','A5','A9'].includes(route)) throw new Error('Неизвестный автобан')
       if (!autobahnLoads.has(route)) autobahnLoads.set(route, (async () => {
         const response = await fetch(message.url)
         if (!response.ok) throw new Error(`Загрузка ${route}: HTTP ${response.status}`)

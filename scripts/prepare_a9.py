@@ -26,7 +26,7 @@ def sha(path):
 def read_objects(source):
     objects = {}
     for path in sorted(source.glob('*.json')):
-        if path.name in ('access-network.json', 'access-links.json', 'audit.json'):
+        if path.name.startswith('pilot-') or path.name in ('access-network.json', 'access-links.json', 'audit.json'):
             continue
         for obj in json.loads(path.read_text())['elements']:
             key = (obj['type'], obj['id'])
@@ -149,7 +149,7 @@ def checked_links(source, network_path, routes, objects, ids, sites_path, groups
                     matches.append({'site_row': row, 'direction': route['direction'], **match})
         payload = {'format': 'a9-access-links-v1', 'binding': binding, 'matches': matches,
                    'source': raw.get('source'), 'network_sha256': sha(network_path),
-                   'routing': {'max_access_m': 3000, 'max_return_m': 10000, 'max_snap_m': 60},
+                   'routing': {'max_access_m': 3000, 'max_return_m': 3000, 'max_snap_m': 60},
                    'restrictions': dict(network.restriction_counts)}
         cache.write_text(json.dumps(payload, ensure_ascii=False, indent=2)+'\n')
     links = {}
@@ -275,3 +275,8 @@ if __name__ == '__main__':
     parser.add_argument('--network', type=Path, help='External road extract JSON; recomputes checked links')
     args = parser.parse_args()
     prepare(args.source, args.data, args.network)
+
+# All browser exports must use the shared pilot policy.
+if __name__ == '__main__':
+    from prepare_motorways import prepare as prepare_shared
+    prepare_shared('A9')

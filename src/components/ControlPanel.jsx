@@ -5,7 +5,7 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
     <header><div className="eyebrow">ЭЛЕКТРОМОБИЛЬНОСТЬ · ГЕРМАНИЯ</div><h1>Зарядная инфраструктура</h1></header>
     <div className="control-scroll">
       <fieldset className="controls"><legend>Автобаны · пилот</legend>
-        <label>Автобан<select value={autobahnRoute} onChange={event => onAutobahnRoute(event.target.value)}><option value="A9">A9</option><option value="A1">A1</option></select></label>
+        <label>Автобан<select value={autobahnRoute} onChange={event => onAutobahnRoute(event.target.value)}><option value="A1">A1</option><option value="A5">A5</option><option value="A9">A9</option></select></label>
         <label className="check"><input type="checkbox" checked={!!a9Enabled} disabled={!a9Available} onChange={event => onA9Enabled(event.target.checked)} />Режим «Автобан {autobahnRoute}»</label>
         {a9Enabled && <>
           <label>Направление<select value={a9Direction} onChange={event => onA9Direction(event.target.value)}><option value="north">{AUTOBAHNS[autobahnRoute].north}</option><option value="south">{AUTOBAHNS[autobahnRoute].south}</option></select></label>

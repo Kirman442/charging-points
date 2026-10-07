@@ -1,0 +1,167 @@
+{
+  "route": "A5",
+  "source": {
+    "provider": "Geofabrik",
+    "regions": [
+      "Hessen",
+      "Baden-Wuerttemberg"
+    ],
+    "snapshot": "2026-10-06T20:21:06Z",
+    "corridor": "0.01-degree tiles within 20 tiles of main-route node tiles; approximate 14-22 km envelope"
+  },
+  "input_overpass_date": "2026-10-07T10:10:16Z",
+  "startup_sites_sha256": "00336695cfadd1c46e4d29ab19d2258beabba1406e55db765d702c51670b6db5",
+  "groups_sha256": "d009848ee3be5f9fe4b4383cbed1af707c6f4312fe345aecc212602b3822f1f2",
+  "network_sha256": "1030542a13707b0c90ad5ee7d71979972af2b77cdbcd97f05290970749095815",
+  "main_interchange_links": [
+    1711292,
+    1711293,
+    132979553,
+    252590010,
+    1426070258,
+    1426070259,
+    1426070260,
+    1453167261,
+    1532947738
+  ],
+  "thresholds": {
+    "access_m": 3000,
+    "return_m": 10000,
+    "snap_m": 60,
+    "diagnostic_access_m": 10000,
+    "diagnostic_return_m": 30000,
+    "diagnostic_snap_m": 200
+  },
+  "restrictions": {
+    "simple_node": 15763,
+    "conservatively_excluded_complex": 353
+  },
+  "directions": [
+    {
+      "direction": "north",
+      "length_km": 440.276,
+      "candidates": 1752,
+      "routed": 429,
+      "fast_routed": 123,
+      "eligible_routed": 75,
+      "verified_entrances": 0,
+      "max_preliminary_gap_km": 69.2,
+      "additional_strict_links": 16,
+      "additional_site_rows": [
+        3284,
+        3302,
+        3588,
+        3589,
+        3590,
+        5073,
+        8524,
+        8637,
+        8638,
+        8639,
+        8640,
+        8643,
+        8645,
+        8646,
+        8652,
+        30286
+      ],
+      "flags": {
+        "access_exceeds_3km": 1147,
+        "snap_exceeds_model_60m": 6,
+        "strict_route_found_entrance_unverified": 413,
+        "strict_route_found_opposite_direction": 67,
+        "route_only_when_access_barrier_or_turn_checks_removed": 302,
+        "strict_route_found_after_conditional_scope_refinement": 16,
+        "return_exceeds_model_10km": 9,
+        "no_route_even_in_relaxed_model": 79,
+        "no_driving_road_within_200m_coordinate_or_mapping_review": 2
+      }
+    },
+    {
+      "direction": "south",
+      "length_km": 440.47,
+      "candidates": 1744,
+      "routed": 393,
+      "fast_routed": 118,
+      "eligible_routed": 74,
+      "verified_entrances": 0,
+      "max_preliminary_gap_km": 37.7,
+      "additional_strict_links": 14,
+      "additional_site_rows": [
+        3284,
+        3302,
+        3546,
+        5072,
+        5073,
+        8524,
+        8637,
+        8638,
+        8639,
+        8640,
+        8643,
+        8646,
+        8652,
+        30286
+      ],
+      "flags": {
+        "access_exceeds_3km": 1197,
+        "snap_exceeds_model_60m": 6,
+        "strict_route_found_entrance_unverified": 379,
+        "route_only_when_access_barrier_or_turn_checks_removed": 273,
+        "strict_route_found_opposite_direction": 103,
+        "strict_route_found_after_conditional_scope_refinement": 14,
+        "return_exceeds_model_10km": 10,
+        "no_route_even_in_relaxed_model": 79,
+        "no_driving_road_within_200m_coordinate_or_mapping_review": 2
+      }
+    }
+  ],
+  "assessment": "exploratory-not-AFIR-compliance; no verified entrances",
+  "input_overpass_sha256": "e49c20f4f199dca0f1d1ad22c01fce49769f19f030012d102f0075acc54d59ba",
+  "missing_restriction_member_ways": 6,
+  "baseline_directions": [
+    {
+      "direction": "north",
+      "length_km": 440.276,
+      "candidates": 1752,
+      "routed": 413,
+      "fast_routed": 120,
+      "eligible_routed": 75,
+      "verified_entrances": 0,
+      "max_preliminary_gap_km": 69.2,
+      "flags": {
+        "access_exceeds_3km": 1160,
+        "snap_exceeds_model_60m": 6,
+        "strict_route_found_entrance_unverified": 413,
+        "strict_route_found_opposite_direction": 67,
+        "route_only_when_access_barrier_or_turn_checks_removed": 329,
+        "return_exceeds_model_10km": 10,
+        "no_route_even_in_relaxed_model": 79,
+        "no_driving_road_within_200m_coordinate_or_mapping_review": 2
+      }
+    },
+    {
+      "direction": "south",
+      "length_km": 440.47,
+      "candidates": 1744,
+      "routed": 379,
+      "fast_routed": 115,
+      "eligible_routed": 74,
+      "verified_entrances": 0,
+      "max_preliminary_gap_km": 37.7,
+      "flags": {
+        "access_exceeds_3km": 1208,
+        "snap_exceeds_model_60m": 6,
+        "strict_route_found_entrance_unverified": 379,
+        "strict_route_found_opposite_direction": 101,
+        "route_only_when_access_barrier_or_turn_checks_removed": 302,
+        "return_exceeds_model_10km": 14,
+        "no_route_even_in_relaxed_model": 79,
+        "no_driving_road_within_200m_coordinate_or_mapping_review": 2
+      }
+    }
+  ],
+  "vehicle_mode": "passenger_car",
+  "diagnostic_flags_model": "refined_passenger_car",
+  "refinement": "Non-access conditional tags (including hgv-only and speed conditions) do not prohibit passenger cars; all access conditional tags, gates, private ways, node-turn restrictions and conservative complex restrictions remain applied."
+}

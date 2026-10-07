@@ -14,7 +14,7 @@ def permission(tags):
 
 def forbidden_node(tags):
     if permission(tags) in ('no','private','agricultural','forestry'):return True
-    if any(k.endswith(':conditional') for k in tags):return True
+    if any(k in ('access:conditional','vehicle:conditional','motor_vehicle:conditional','motorcar:conditional') for k in tags):return True
     barrier=tags.get('barrier')
     if barrier and barrier not in ('cattle_grid','toll_booth','border_control','entrance'):
         explicit=any(tags.get(k) in ('yes','permissive','designated') for k in ('motorcar','motor_vehicle','vehicle','access'))
@@ -24,7 +24,6 @@ def forbidden_node(tags):
 
 class Network:
     def __init__(self,data):
-        self.objects={(o['type'],o['id']):o for o in data}
         self.coords={o['id']:PROJECT.transform(o['lon'],o['lat']) for o in data if o['type']=='node'}
         self.blocked_nodes={o['id'] for o in data if o['type']=='node' and forbidden_node(o.get('tags',{}))}
         self.banned=defaultdict(list);self.only=defaultdict(set);self.review_ways=set();self.restriction_counts=Counter()
@@ -54,7 +53,7 @@ class Network:
             if projection.length>0:projection_lines.append(projection)
             if permission(tags) in ('no','private','agricultural','forestry'):
                 self.way_reasons['private_or_prohibited']+=1;continue
-            if any(k.endswith(':conditional') for k in tags) or way['id'] in self.review_ways:
+            if any(k in ('access:conditional','vehicle:conditional','motor_vehicle:conditional','motorcar:conditional') for k in tags) or way['id'] in self.review_ways:
                 self.way_reasons['conditional_or_complex_restriction']+=1;continue
             oneway=tags.get('oneway:motorcar',tags.get('oneway:motor_vehicle',tags.get('oneway')))
             ns=way['nodes'][::-1] if oneway=='-1' else way['nodes']
@@ -83,7 +82,7 @@ class Network:
             return False
         return True
 
-    def search(self,route,route_objects,route_ids):
+    def search(self,route,route_objects,route_ids,max_access=3000,max_return=3000):
         chain=dict(zip(route['nodes'],route['chain']));actual={}
         for wid in set(route_ids):
             way=route_objects['way',wid]
@@ -104,7 +103,7 @@ class Network:
             d,index=heapq.heappop(heap)
             if d!=distances.get(index):continue
             edge=self.edges[index];cost=d+edge['length']
-            if cost>3000:continue
+            if cost>max_access:continue
             for nxt in self.outgoing[edge['v']]:
                 other=self.edges[nxt]
                 if not self.allowed(edge['v'],edge['way'],other['way'],edge['u'],other['v']):continue
@@ -123,7 +122,7 @@ class Network:
             d,index=heapq.heappop(heap)
             if d!=returns.get(index):continue
             edge=self.edges[index];cost=d+edge['length']
-            if cost>3000:continue
+            if cost>max_return:continue
             for prev in self.incoming[edge['u']]:
                 other=self.edges[prev]
                 if not self.allowed(edge['u'],other['way'],edge['way'],other['u'],edge['v']):continue
@@ -131,7 +130,7 @@ class Network:
                     returns[prev]=cost;return_child[prev]=index;return_nodes[prev]=return_nodes[index];heapq.heappush(heap,(cost,prev))
         return {'distances':distances,'origins':origins,'parents':parent,'returns':returns,'return_children':return_child,'return_nodes':return_nodes,'chain':chain,'exit_nodes':len(exit_nodes),'entry_nodes':len(entry_nodes)}
 
-    def match(self,point,context,max_snap=60):
+    def match(self,point,context,max_snap=60,max_access=3000,max_return=3000):
         choices=[]
         nearby=[int(i) for i in self.tree.query(point.buffer(max_snap))]
         closest=self.projection_tree.geometries[int(self.projection_tree.nearest(point))].distance(point)
@@ -141,7 +140,7 @@ class Network:
             along=edge['line'].project(point);access=context['distances'][index]+along
             # Model a pull-in/pull-out to the same oriented road edge. Actual entrances still unknown.
             back=context['returns'][index]+edge['length']-along
-            if access<=3000 and back<=3000:
+            if access<=max_access and back<=max_return:
                 choices.append((snap,access,back,index))
         if not choices:return None
         snap,access,back,index=min(choices)

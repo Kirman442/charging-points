@@ -1,0 +1,57 @@
+{
+  "route": "A5",
+  "routing_policy": "pilot-3km-out-3km-back-v1",
+  "interval_method": "return-road-approach-v1",
+  "directions": [
+    {
+      "direction": "north",
+      "length_km": 440.28,
+      "candidates": 1752,
+      "routed": 408,
+      "fast_routed": 120,
+      "eligible_routed": 75,
+      "unknown_segments": 2,
+      "verified_entrances": 0,
+      "max_gap_km": 70.2
+    },
+    {
+      "direction": "south",
+      "length_km": 440.47,
+      "candidates": 1744,
+      "routed": 375,
+      "fast_routed": 116,
+      "eligible_routed": 74,
+      "unknown_segments": 2,
+      "verified_entrances": 0,
+      "max_gap_km": 41.3
+    }
+  ],
+  "sections": [
+    {
+      "direction": "north",
+      "section": null,
+      "length_km": 440.276,
+      "candidates": 1752,
+      "routed": 408,
+      "fast_routed": 120,
+      "eligible_routed": 75,
+      "max_gap_km": 70.2,
+      "unknown_segments": 2,
+      "verified_entrances": 0
+    },
+    {
+      "direction": "south",
+      "section": null,
+      "length_km": 440.47,
+      "candidates": 1744,
+      "routed": 375,
+      "fast_routed": 116,
+      "eligible_routed": 74,
+      "max_gap_km": 41.3,
+      "unknown_segments": 2,
+      "verified_entrances": 0
+    }
+  ],
+  "cached_link_revalidation": false,
+  "fresh_network_search": true
+}

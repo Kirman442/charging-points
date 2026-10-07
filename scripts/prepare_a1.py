@@ -82,3 +82,8 @@ def prepare(network_path=None):
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--network',type=Path);args=parser.parse_args();prepare(args.network)
+
+# All browser exports must use the shared pilot policy.
+if __name__ == '__main__':
+    from prepare_motorways import prepare as prepare_shared
+    prepare_shared('A1')

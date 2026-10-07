@@ -182,13 +182,16 @@ test('Invalid A9 data fails independently and permits a corrected retry', async 
     await waitFor('regions')
   } finally { await worker.terminate() }
 })
-test('A1 and A9 load independently and cache by route without mixing responses', async () => {
+test('A1, A5 and A9 load independently and cache by route without mixing responses', async () => {
   const {worker,messages,waitFor} = startWorker()
   try {
     await waitFor('ready')
     assert.ok(!messages.some(m => m.type === 'fetch' && m.url.includes('autobahn_a1')))
     worker.postMessage({type:'load-a9',route:'A1',url:'autobahn_a1_zstd10.parquet'})
     worker.postMessage({type:'load-a9',route:'A9',url:'autobahn_a9_zstd10.parquet'})
+    worker.postMessage({type:'load-a9',route:'A5',url:'autobahn_a5_zstd10.parquet'})
+    const a5 = await waitFor('a9-ready',m => m.route === 'A5')
+    assert.equal(a5.pilot.route,'A5'); assert.equal(a5.pilot.summary[0].routed,408)
     const a1 = await waitFor('a9-ready',m => m.route === 'A1')
     const a9 = await waitFor('a9-ready',m => m.route === 'A9')
     assert.equal(a1.pilot.route,'A1'); assert.equal(a1.pilot.sections.length,4)
@@ -196,6 +199,7 @@ test('A1 and A9 load independently and cache by route without mixing responses',
     worker.postMessage({type:'load-a9',route:'A1',url:'autobahn_a1_zstd10.parquet'})
     worker.postMessage({type:'filter',requestId:7,filters:{state:'Schleswig-Holstein'}})
     await waitFor('filtered',m => m.requestId === 7)
+    assert.equal(messages.filter(m => m.type === 'fetch' && m.url.includes('autobahn_a5')).length,1)
     assert.equal(messages.filter(m => m.type === 'fetch' && m.url.includes('autobahn_a1')).length,1)
     assert.equal(messages.filter(m => m.type === 'fetch' && m.url.includes('autobahn_a9')).length,1)
   } finally { await worker.terminate() }

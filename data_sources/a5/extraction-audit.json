@@ -1,0 +1,15 @@
+{
+  "source": {
+    "provider": "Geofabrik",
+    "regions": [
+      "Hessen",
+      "Baden-Wuerttemberg"
+    ],
+    "snapshot": "2026-10-06T20:21:06Z"
+  },
+  "ways": 495938,
+  "nodes": 2117461,
+  "restriction_relations": 16134,
+  "missing_restriction_member_ways": 6,
+  "boundary_note": "Six restriction member ways are not present in the supplied regional extracts; absence reason is unresolved, and no road is fabricated."
+}

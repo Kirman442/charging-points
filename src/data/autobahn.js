@@ -25,14 +25,22 @@ export function decodeAutobahn(table, sitesHash, siteCount, expectedRoute = 'A9'
       segments.push({ ...row, path: coordinates })
     } else if (row.kind === 'site') {
       const key = `${row.direction}:${row.site_row}`
-      if (!Number.isInteger(row.site_row) || row.site_row < 0 || row.site_row >= siteCount || !validPoint(coordinates) || seen.has(key) || !['road_route_found_entrance_unverified','unconfirmed'].includes(row.status) || !Number.isFinite(row.power_kw) || row.power_kw < 0 || !Number.isInteger(row.fast_points) || row.fast_points < 0) throw invalid()
+      if (!Number.isInteger(row.site_row) || row.site_row < 0 || row.site_row >= siteCount || !validPoint(coordinates) || seen.has(key) || !['road_route_found_entrance_unverified','unconfirmed',...(expectedRoute === 'A5' ? ['distance_excluded'] : [])].includes(row.status) || !Number.isFinite(row.power_kw) || row.power_kw < 0 || !Number.isInteger(row.fast_points) || row.fast_points < 0) throw invalid()
       if (row.status === 'road_route_found_entrance_unverified' && (!Number.isFinite(row.access_m) || row.access_m < 0 || row.access_m > 3000 || !Number.isFinite(row.return_m) || row.return_m < 0 || row.return_m > 3000 || !Number.isFinite(row.snap_m) || row.snap_m < 0 || row.snap_m > 60)) throw invalid()
+      if (row.status === 'distance_excluded' && (!Number.isFinite(row.diagnostic_access_m) || row.diagnostic_access_m <= 3000)) throw invalid()
       seen.add(key); sites.push({ ...row, position: coordinates })
     } else throw invalid()
   }
   if (!segments.length || summary.some(s => !segments.some(r => r.direction === s.direction))) throw invalid()
   if (summary.some(s => s.candidates !== sites.filter(r => r.direction === s.direction).length || s.routed !== sites.filter(r => r.direction === s.direction && r.status === 'road_route_found_entrance_unverified').length)) throw invalid()
-  return { route: expectedRoute, sections, segments, sites, summary, accessNetwork: metadata.get('access_network') === 'true', sourceDate: metadata.get('source_date') }
+  const candidateMethod = metadata.get('candidate_method')
+  const exits = JSON.parse(metadata.get('exits') || 'null')
+  if (expectedRoute === 'A5' && (candidateMethod !== 'a5-all-exits-road-zones-v1' || !Array.isArray(exits) || !exits.length || exits.some(e => !['north','south'].includes(e.direction) || !Number.isSafeInteger(e.node) || !Number.isFinite(e.chain_m) || e.chain_m < 0) || summary.some(s => s.distance_excluded !== sites.filter(r => r.direction === s.direction && r.status === 'distance_excluded').length || s.active_candidates !== s.candidates - s.distance_excluded || s.unresolved !== sites.filter(r => r.direction === s.direction && r.status === 'unconfirmed').length))) throw invalid()
+  if (expectedRoute === 'A5') {
+    const exitKeys = new Set(exits.map(e => `${e.direction}:${e.node}`))
+    if (exitKeys.size !== exits.length || sites.some(s => s.status === 'road_route_found_entrance_unverified' && !exitKeys.has(`${s.direction}:${s.exit_node}`))) throw invalid()
+  }
+  return { candidateMethod, exits, route: expectedRoute, sections, segments, sites, summary, accessNetwork: metadata.get('access_network') === 'true', sourceDate: metadata.get('source_date') }
 }
 
 // Keep original numeric rows for clicks. Never mutate the regular map's buffers.
@@ -43,6 +51,7 @@ export function autobahnDisplayData(data, pilot, direction, hideOthers, siteMode
   const indices = []
   for (let i = 0; i < data.count; i++) {
     const site = memberships.get(data.rowIndices[i])
+    if (site?.status === 'distance_excluded') continue
     const matches = site && (siteMode === 'all' || (siteMode === 'routed' && site.status === 'road_route_found_entrance_unverified'))
     if (data.rowIndices[i] === focusedRow || (siteMode !== 'none' && (matches || (!site && !hideOthers)))) indices.push(i)
   }

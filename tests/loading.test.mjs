@@ -191,7 +191,7 @@ test('A1, A5 and A9 load independently and cache by route without mixing respons
     worker.postMessage({type:'load-a9',route:'A9',url:'autobahn_a9_zstd10.parquet'})
     worker.postMessage({type:'load-a9',route:'A5',url:'autobahn_a5_zstd10.parquet'})
     const a5 = await waitFor('a9-ready',m => m.route === 'A5')
-    assert.equal(a5.pilot.route,'A5'); assert.equal(a5.pilot.summary[0].routed,408)
+    assert.equal(a5.pilot.route,'A5'); assert.equal(a5.pilot.summary[0].routed,432)
     const a1 = await waitFor('a9-ready',m => m.route === 'A1')
     const a9 = await waitFor('a9-ready',m => m.route === 'A9')
     assert.equal(a1.pilot.route,'A1'); assert.equal(a1.pilot.sections.length,4)

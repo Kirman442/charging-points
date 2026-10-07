@@ -168,3 +168,15 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 
 .a9-site-status { display: inline-block; margin-top: 4px; font-size: 11px; font-weight: 650; }
 .a9-method { margin-top: 16px; }
+
+.a9-summary-block { margin: 18px 0 0; }
+.a9-summary-block h3 { margin: 0 0 8px; font-size: 13px; }
+.a9-summary-list { margin: 8px 0 0; padding-left: 20px; font-size: 12px; line-height: 1.5; }
+.a9-summary-list li + li { margin-top: 7px; }
+.a9-review-block { margin-top: 20px; }
+.a9-review-block .a9-candidate-toggle { margin: 8px 0 0; }
+.a9-candidate-toggle input { flex-shrink: 0; margin-top: 2px; }
+.a9-gap-summary { margin-top: 20px; }
+.a9-method-list { margin: 8px 0; padding-left: 18px; line-height: 1.5; }
+.a9-method-list li + li { margin-top: 6px; }
+.a9-count-explanation { margin-bottom: 14px; }

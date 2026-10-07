@@ -81,6 +81,11 @@ def prepare(route):
         if new['routing_policy'] != POLICY or new['network_sha256'] != metadata.get('access_network_sha256'):
             raise ValueError('Stale pilot links')
         links.update({(m.get('section'),m['direction'],m['site_row']):m for m in new['matches']})
+    zones_path=source/'exit-zones.json'
+    zones=json.loads(zones_path.read_text()) if route=='A5' and zones_path.exists() else None
+    zone_sites={(r['direction'],r['site_row']):r for r in zones['sites']} if zones else {}
+    if zones and (zones['startup_sha256']!=sha(startup) or zones['network_sha256']!=metadata['access_network_sha256']):
+        raise ValueError('Stale A5 exit zones')
     rows=[]; parts=[]
     for r in routes_for(route):
         direction=r['direction']; section=r.get('section')
@@ -89,14 +94,21 @@ def prepare(route):
         candidates=[s for s in sites if s['direction']==direction and s.get('section')==section]
         for s in candidates:
             s.setdefault('review_detail',None)
-            m=links.get((section,direction,s['site_row']))
+            zone=zone_sites.get((direction,s['site_row']))
+            m=(zone['strict_link'] or zone['extended_link']) if zone else links.get((section,direction,s['site_row']))
             good=bool(m and m['access_m']<=3000 and m['return_m']<=3000 and m['snap_m']<=60)
             s.update(status='road_route_found_entrance_unverified' if good else 'unconfirmed',
                      review_reason='return_exceeds_pilot_3km' if m and m['return_m']>3000 else '' if good else 'route_unconfirmed',
                      end_m=None,gap_km=None,entry_chain_m=None,road_gap_km=None)
+            s.update(exit_name=None,exit_node=None,entry_node=None,diagnostic_access_m=None)
+            if zone:
+                s.update(status=zone['status'],review_reason=zone['review_reason'],review_detail=zone['review_detail'],
+                         exit_name=zone.get('exit_name'),diagnostic_access_m=(zone.get('optimistic_approach') or {}).get('access_m'))
+                good=bool(zone['strict_link'])
             for k in ['access_m','return_m','snap_m']:
                 s[k]=m[k] if m else None
             if m:
+                s.update(exit_node=m['exit_node'],entry_node=m['entry_node'])
                 s['chain_m']=m['chain_m']
                 s['entry_chain_m']=chain[m['entry_node']]
             if good:
@@ -107,20 +119,24 @@ def prepare(route):
                              geometry_json=json.dumps([UNPROJECT.transform(*p) for p in substring(line,a,b).coords]),
                              chain_m=a,end_m=b,status=status,gap_km=gap,road_gap_km=(b-a)/1000,
                              power_kw=None,fast_points=None,eligible_power=None,access_m=None,return_m=None,
-                             snap_m=None,entry_chain_m=None,review_reason=None,review_detail=None))
+                             snap_m=None,entry_chain_m=None,review_reason=None,review_detail=None,
+                             exit_name=None,exit_node=None,entry_node=None,diagnostic_access_m=None))
         rows.extend(candidates)
         routed=[s for s in candidates if s['status']=='road_route_found_entrance_unverified']
         known=[gap for _,_,status,gap in gaps if status!='unknown']
         parts.append(dict(direction=direction,section=section,length_km=round(line.length/1000,3),
                           candidates=len(candidates),routed=len(routed),fast_routed=sum(s['fast_points']>0 for s in routed),
-                          eligible_routed=sum(s['eligible_power'] for s in routed),max_gap_km=round(max(known),1) if known else None,
+                          eligible_routed=sum(s['eligible_power'] for s in routed),
+                          distance_excluded=sum(s['status']=='distance_excluded' for s in candidates),
+                          unresolved=sum(s['status']=='unconfirmed' for s in candidates),max_gap_km=round(max(known),1) if known else None,
                           unknown_segments=sum(status=='unknown' for _,_,status,_ in gaps),verified_entrances=0))
     summaries=[]
     for direction in ['north','south']:
         pp=[p for p in parts if p['direction']==direction]
         summary={'direction':direction}
-        for k in ['length_km','candidates','routed','fast_routed','eligible_routed','unknown_segments','verified_entrances']:
+        for k in ['length_km','candidates','routed','fast_routed','eligible_routed','unknown_segments','verified_entrances','distance_excluded','unresolved']:
             summary[k]=sum(p[k] for p in pp)
+        summary['active_candidates']=summary['candidates']-summary['distance_excluded']
         summary['length_km']=round(summary['length_km'],2)
         summary['max_gap_km']=max((p['max_gap_km'] for p in pp if p['max_gap_km'] is not None),default=None)
         summaries.append(summary)
@@ -128,17 +144,20 @@ def prepare(route):
                     interval_method='return-road-approach-v1',directions=json.dumps(summaries),
                     sections=json.dumps(parts) if route=='A1' else 'null',assessment='exploratory-not-legal-compliance',
                     access_links_sha256=sha(source/'access-links.json'))
+    if zones:
+        metadata.update(candidate_method=zones['method'],exits=json.dumps(zones['exits'],ensure_ascii=False),exit_zones_sha256=sha(zones_path))
     table=pa.Table.from_pylist(rows)
-    types={'site_row':pa.uint32(),'fast_points':pa.uint32()}
+    types={'site_row':pa.uint32(),'fast_points':pa.uint32(),'exit_node':pa.float64(),'entry_node':pa.float64()}
     table=table.cast(pa.schema([(field.name,types.get(field.name,field.type)) for field in table.schema]))
     table=table.replace_schema_metadata({k.encode():v.encode() for k,v in metadata.items()})
     pq.write_table(table,output,compression='zstd',compression_level=10)
     assert pq.read_table(output).equals(table)
     report={'route':route,'routing_policy':POLICY,'interval_method':metadata['interval_method'],
-            'directions':summaries,'sections':parts,'cached_link_revalidation':not refresh.exists(), 'fresh_network_search':refresh.exists()}
+            'directions':summaries,'sections':parts,'cached_link_revalidation':not refresh.exists(), 'fresh_network_search':refresh.exists(), 'candidate_method':zones['method'] if zones else 'corridor-review',
+            'exits':zones['exits'] if zones else None}
     (source/'pilot-3km-audit.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
     with (source/'pilot-3km-site-review.csv').open('w',newline='',encoding='utf-8-sig') as f:
-        fields=['direction','section','site_row','status','review_reason','access_m','return_m','snap_m','power_kw','fast_points','review_detail']
+        fields=['direction','section','site_row','status','review_reason','access_m','return_m','snap_m','power_kw','fast_points','review_detail','exit_name','exit_node','entry_node','diagnostic_access_m']
         writer=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore');writer.writeheader();writer.writerows(sites)
     print(json.dumps(report,ensure_ascii=False),flush=True)
 

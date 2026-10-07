@@ -1,0 +1,22 @@
+{
+  "method": "a5-all-exits-road-zones-v1",
+  "directions": [
+    {
+      "direction": "north",
+      "exits": 130,
+      "rest_area_exits": 25,
+      "routed": 432,
+      "distance_excluded": 1085,
+      "unresolved": 235
+    },
+    {
+      "direction": "south",
+      "exits": 130,
+      "rest_area_exits": 22,
+      "routed": 389,
+      "distance_excluded": 1159,
+      "unresolved": 196
+    }
+  ],
+  "entrances_verified": 0
+}

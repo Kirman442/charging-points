@@ -33,4 +33,5 @@ def refresh(path):
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--network',type=Path,required=True)
-    refresh(parser.parse_args().network)
+    from a5_exit_zones import refresh as refresh_exit_zones
+    refresh_exit_zones(parser.parse_args().network)

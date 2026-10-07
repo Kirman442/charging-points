@@ -1,0 +1,2342 @@
+[
+  {
+    "direction": "north",
+    "start_m": 0,
+    "end_m": 595.1666894968461,
+    "from_node": null,
+    "to_node": 2463361074,
+    "from_name": "Начало маршрута",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 595.1666894968461,
+    "end_m": 900.756812398573,
+    "from_node": 2463361074,
+    "to_node": 624826,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 900.756812398573,
+    "end_m": 1325.708407697306,
+    "from_node": 624826,
+    "to_node": 2619185860,
+    "from_name": "Ответвление без названия",
+    "to_name": "Deutscher Rasthof;Weil am Rhein"
+  },
+  {
+    "direction": "north",
+    "start_m": 1325.708407697306,
+    "end_m": 1380.2937772740895,
+    "from_node": 2619185860,
+    "to_node": 305503211,
+    "from_name": "Deutscher Rasthof;Weil am Rhein",
+    "to_name": "Weil am Rhein / Hüningen"
+  },
+  {
+    "direction": "north",
+    "start_m": 1380.2937772740895,
+    "end_m": 3050.0545308717724,
+    "from_node": 305503211,
+    "to_node": 456189,
+    "from_name": "Weil am Rhein / Hüningen",
+    "to_name": "Parkplatz"
+  },
+  {
+    "direction": "north",
+    "start_m": 3050.0545308717724,
+    "end_m": 3808.572269226208,
+    "from_node": 456189,
+    "to_node": 981120817,
+    "from_name": "Parkplatz",
+    "to_name": "Dreieck Weil am Rhein"
+  },
+  {
+    "direction": "north",
+    "start_m": 3808.572269226208,
+    "end_m": 12483.352045766302,
+    "from_node": 981120817,
+    "to_node": 30415520,
+    "from_name": "Dreieck Weil am Rhein",
+    "to_name": "Efringen-Kirchen"
+  },
+  {
+    "direction": "north",
+    "start_m": 12483.352045766302,
+    "end_m": 15591.348542765614,
+    "from_node": 30415520,
+    "to_node": 247265053,
+    "from_name": "Efringen-Kirchen",
+    "to_name": "Rastplatz Rheinaue"
+  },
+  {
+    "direction": "north",
+    "start_m": 15591.348542765614,
+    "end_m": 20577.206892652965,
+    "from_node": 247265053,
+    "to_node": 268132535,
+    "from_name": "Rastplatz Rheinaue",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 20577.206892652965,
+    "end_m": 24847.042569281028,
+    "from_node": 268132535,
+    "to_node": 30961072,
+    "from_name": "Ответвление без названия",
+    "to_name": "Dreieck Neuenburg"
+  },
+  {
+    "direction": "north",
+    "start_m": 24847.042569281028,
+    "end_m": 25743.978796056712,
+    "from_node": 30961072,
+    "to_node": 268133884,
+    "from_name": "Dreieck Neuenburg",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 25743.978796056712,
+    "end_m": 28898.071975733525,
+    "from_node": 268133884,
+    "to_node": 264884010,
+    "from_name": "Ответвление без названия",
+    "to_name": "Müllheim / Neuenburg"
+  },
+  {
+    "direction": "north",
+    "start_m": 28898.071975733525,
+    "end_m": 30542.14445501169,
+    "from_node": 264884010,
+    "to_node": 456294,
+    "from_name": "Müllheim / Neuenburg",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 30542.14445501169,
+    "end_m": 35606.16443887884,
+    "from_node": 456294,
+    "to_node": 268134889,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 35606.16443887884,
+    "end_m": 39885.850640332166,
+    "from_node": 268134889,
+    "to_node": 456324,
+    "from_name": "Ответвление без названия",
+    "to_name": "Hartheim / Heitersheim"
+  },
+  {
+    "direction": "north",
+    "start_m": 39885.850640332166,
+    "end_m": 41336.219549635236,
+    "from_node": 456324,
+    "to_node": 264404588,
+    "from_name": "Hartheim / Heitersheim",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 41336.219549635236,
+    "end_m": 41709.61253218926,
+    "from_node": 264404588,
+    "to_node": 264404592,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 41709.61253218926,
+    "end_m": 46529.82158798189,
+    "from_node": 264404592,
+    "to_node": 269274900,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 46529.82158798189,
+    "end_m": 46924.069169073846,
+    "from_node": 269274900,
+    "to_node": 269274903,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 46924.069169073846,
+    "end_m": 47686.195161396645,
+    "from_node": 269274903,
+    "to_node": 456351,
+    "from_name": "Ответвление без названия",
+    "to_name": "Bad Krozingen"
+  },
+  {
+    "direction": "north",
+    "start_m": 47686.195161396645,
+    "end_m": 52124.1406586029,
+    "from_node": 456351,
+    "to_node": 456374,
+    "from_name": "Bad Krozingen",
+    "to_name": "Raststätte Breisgau"
+  },
+  {
+    "direction": "north",
+    "start_m": 52124.1406586029,
+    "end_m": 53638.98045575939,
+    "from_node": 456374,
+    "to_node": 456416,
+    "from_name": "Raststätte Breisgau",
+    "to_name": "Freiburg-Süd"
+  },
+  {
+    "direction": "north",
+    "start_m": 53638.98045575939,
+    "end_m": 55053.83318502332,
+    "from_node": 456416,
+    "to_node": 268139021,
+    "from_name": "Freiburg-Süd",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 55053.83318502332,
+    "end_m": 59509.9861921578,
+    "from_node": 268139021,
+    "to_node": 522135910,
+    "from_name": "Ответвление без названия",
+    "to_name": "Freiburg-Mitte"
+  },
+  {
+    "direction": "north",
+    "start_m": 59509.9861921578,
+    "end_m": 64988.51030186458,
+    "from_node": 522135910,
+    "to_node": 2118953559,
+    "from_name": "Freiburg-Mitte",
+    "to_name": "Freiburg-Nord"
+  },
+  {
+    "direction": "north",
+    "start_m": 64988.51030186458,
+    "end_m": 68570.27828741749,
+    "from_node": 2118953559,
+    "to_node": 268139661,
+    "from_name": "Freiburg-Nord",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 68570.27828741749,
+    "end_m": 71315.10195096993,
+    "from_node": 268139661,
+    "to_node": 59669808,
+    "from_name": "Ответвление без названия",
+    "to_name": "Teningen"
+  },
+  {
+    "direction": "north",
+    "start_m": 71315.10195096993,
+    "end_m": 73188.09355808604,
+    "from_node": 59669808,
+    "to_node": 264404593,
+    "from_name": "Teningen",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 73188.09355808604,
+    "end_m": 76070.82058868356,
+    "from_node": 264404593,
+    "to_node": 262526024,
+    "from_name": "Ответвление без названия",
+    "to_name": "Riegel"
+  },
+  {
+    "direction": "north",
+    "start_m": 76070.82058868356,
+    "end_m": 77793.59830357204,
+    "from_node": 262526024,
+    "to_node": 264404599,
+    "from_name": "Riegel",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 77793.59830357204,
+    "end_m": 78232.67634933862,
+    "from_node": 264404599,
+    "to_node": 264404603,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 78232.67634933862,
+    "end_m": 81011.03018110195,
+    "from_node": 264404603,
+    "to_node": 264404604,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 81011.03018110195,
+    "end_m": 84458.1459873048,
+    "from_node": 264404604,
+    "to_node": 15931176,
+    "from_name": "Ответвление без названия",
+    "to_name": "Herbolzheim"
+  },
+  {
+    "direction": "north",
+    "start_m": 84458.1459873048,
+    "end_m": 87296.0927031193,
+    "from_node": 15931176,
+    "to_node": 13875745,
+    "from_name": "Herbolzheim",
+    "to_name": "Rust"
+  },
+  {
+    "direction": "north",
+    "start_m": 87296.0927031193,
+    "end_m": 90539.9459640828,
+    "from_node": 13875745,
+    "to_node": 456538,
+    "from_name": "Rust",
+    "to_name": "Ettenheim"
+  },
+  {
+    "direction": "north",
+    "start_m": 90539.9459640828,
+    "end_m": 93541.57565102923,
+    "from_node": 456538,
+    "to_node": 456549,
+    "from_name": "Ettenheim",
+    "to_name": "Raststätte Mahlberg"
+  },
+  {
+    "direction": "north",
+    "start_m": 93541.57565102923,
+    "end_m": 96787.66091408825,
+    "from_node": 456549,
+    "to_node": 264404943,
+    "from_name": "Raststätte Mahlberg",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 96787.66091408825,
+    "end_m": 99768.10330178954,
+    "from_node": 264404943,
+    "to_node": 265164049,
+    "from_name": "Ответвление без названия",
+    "to_name": "Lahr"
+  },
+  {
+    "direction": "north",
+    "start_m": 99768.10330178954,
+    "end_m": 100569.13257731775,
+    "from_node": 265164049,
+    "to_node": 264576301,
+    "from_name": "Lahr",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 100569.13257731775,
+    "end_m": 106119.97241494281,
+    "from_node": 264576301,
+    "to_node": 264576306,
+    "from_name": "Ответвление без названия",
+    "to_name": "Rastplatz Schutter"
+  },
+  {
+    "direction": "north",
+    "start_m": 106119.97241494281,
+    "end_m": 109537.09011443554,
+    "from_node": 264576306,
+    "to_node": 268140471,
+    "from_name": "Rastplatz Schutter",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 109537.09011443554,
+    "end_m": 114819.51945711926,
+    "from_node": 268140471,
+    "to_node": 456611,
+    "from_name": "Ответвление без названия",
+    "to_name": "Offenburg"
+  },
+  {
+    "direction": "north",
+    "start_m": 114819.51945711926,
+    "end_m": 117975.5618776796,
+    "from_node": 456611,
+    "to_node": 1864132923,
+    "from_name": "Offenburg",
+    "to_name": "Rastplatz Waldmatten"
+  },
+  {
+    "direction": "north",
+    "start_m": 117975.5618776796,
+    "end_m": 122234.49249242707,
+    "from_node": 1864132923,
+    "to_node": 456636,
+    "from_name": "Rastplatz Waldmatten",
+    "to_name": "Appenweier"
+  },
+  {
+    "direction": "north",
+    "start_m": 122234.49249242707,
+    "end_m": 126044.50300473132,
+    "from_node": 456636,
+    "to_node": 456649,
+    "from_name": "Appenweier",
+    "to_name": "Raststätte Renchtal"
+  },
+  {
+    "direction": "north",
+    "start_m": 126044.50300473132,
+    "end_m": 136519.7299898093,
+    "from_node": 456649,
+    "to_node": 456680,
+    "from_name": "Raststätte Renchtal",
+    "to_name": "Achern"
+  },
+  {
+    "direction": "north",
+    "start_m": 136519.7299898093,
+    "end_m": 140510.11185194826,
+    "from_node": 456680,
+    "to_node": 1531912181,
+    "from_name": "Achern",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 140510.11185194826,
+    "end_m": 147719.58925977707,
+    "from_node": 1531912181,
+    "to_node": 503048382,
+    "from_name": "Ответвление без названия",
+    "to_name": "Bühl"
+  },
+  {
+    "direction": "north",
+    "start_m": 147719.58925977707,
+    "end_m": 151027.20838183232,
+    "from_node": 503048382,
+    "to_node": 264582645,
+    "from_name": "Bühl",
+    "to_name": "Raststätte Bühl"
+  },
+  {
+    "direction": "north",
+    "start_m": 151027.20838183232,
+    "end_m": 155659.07149402236,
+    "from_node": 264582645,
+    "to_node": 456759,
+    "from_name": "Raststätte Bühl",
+    "to_name": "Baden-Baden"
+  },
+  {
+    "direction": "north",
+    "start_m": 155659.07149402236,
+    "end_m": 158299.69732327937,
+    "from_node": 456759,
+    "to_node": 122483958,
+    "from_name": "Baden-Baden",
+    "to_name": "Rasthof Baden-Baden"
+  },
+  {
+    "direction": "north",
+    "start_m": 158299.69732327937,
+    "end_m": 161327.34123672164,
+    "from_node": 122483958,
+    "to_node": 260170024,
+    "from_name": "Rasthof Baden-Baden",
+    "to_name": "Rastatt-Süd"
+  },
+  {
+    "direction": "north",
+    "start_m": 161327.34123672164,
+    "end_m": 166437.62052193147,
+    "from_node": 260170024,
+    "to_node": 456800,
+    "from_name": "Rastatt-Süd",
+    "to_name": "Rastatt-Nord"
+  },
+  {
+    "direction": "north",
+    "start_m": 166437.62052193147,
+    "end_m": 170489.06294319886,
+    "from_node": 456800,
+    "to_node": 11251006676,
+    "from_name": "Rastatt-Nord",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 170489.06294319886,
+    "end_m": 181470.900124938,
+    "from_node": 11251006676,
+    "to_node": 456864,
+    "from_name": "Ответвление без названия",
+    "to_name": "Karlsruhe-Süd"
+  },
+  {
+    "direction": "north",
+    "start_m": 181470.900124938,
+    "end_m": 183521.91382490395,
+    "from_node": 456864,
+    "to_node": 25246288,
+    "from_name": "Karlsruhe-Süd",
+    "to_name": "Ettlingen"
+  },
+  {
+    "direction": "north",
+    "start_m": 183521.91382490395,
+    "end_m": 185631.09628954937,
+    "from_node": 25246288,
+    "to_node": 441043,
+    "from_name": "Ettlingen",
+    "to_name": "Dreieck Karlsruhe"
+  },
+  {
+    "direction": "north",
+    "start_m": 185631.09628954937,
+    "end_m": 187723.60398514676,
+    "from_node": 441043,
+    "to_node": 441050,
+    "from_name": "Dreieck Karlsruhe",
+    "to_name": "Karlsruhe-Mitte"
+  },
+  {
+    "direction": "north",
+    "start_m": 187723.60398514676,
+    "end_m": 189410.7686410623,
+    "from_node": 441050,
+    "to_node": 1589236994,
+    "from_name": "Karlsruhe-Mitte",
+    "to_name": "Karlsruhe-Durlach"
+  },
+  {
+    "direction": "north",
+    "start_m": 189410.7686410623,
+    "end_m": 191230.5142453386,
+    "from_node": 1589236994,
+    "to_node": 25973879,
+    "from_name": "Karlsruhe-Durlach",
+    "to_name": "Karlsruhe-Nord"
+  },
+  {
+    "direction": "north",
+    "start_m": 191230.5142453386,
+    "end_m": 194586.71016297519,
+    "from_node": 25973879,
+    "to_node": 456938,
+    "from_name": "Karlsruhe-Nord",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 194586.71016297519,
+    "end_m": 198419.69404591012,
+    "from_node": 456938,
+    "to_node": 456951,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 198419.69404591012,
+    "end_m": 202873.9553944629,
+    "from_node": 456951,
+    "to_node": 456967,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 202873.9553944629,
+    "end_m": 207635.23324916788,
+    "from_node": 456967,
+    "to_node": 456987,
+    "from_name": "Ответвление без названия",
+    "to_name": "Bruchsal"
+  },
+  {
+    "direction": "north",
+    "start_m": 207635.23324916788,
+    "end_m": 209233.19520110986,
+    "from_node": 456987,
+    "to_node": 482557,
+    "from_name": "Bruchsal",
+    "to_name": "Raststätte Bruchsal"
+  },
+  {
+    "direction": "north",
+    "start_m": 209233.19520110986,
+    "end_m": 214140.7621925741,
+    "from_node": 482557,
+    "to_node": 277246029,
+    "from_name": "Raststätte Bruchsal",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 214140.7621925741,
+    "end_m": 217215.7490709467,
+    "from_node": 277246029,
+    "to_node": 457023,
+    "from_name": "Ответвление без названия",
+    "to_name": "Kronau"
+  },
+  {
+    "direction": "north",
+    "start_m": 217215.7490709467,
+    "end_m": 220767.46209407086,
+    "from_node": 457023,
+    "to_node": 1588921931,
+    "from_name": "Kronau",
+    "to_name": "Rastplatz Lußhardt"
+  },
+  {
+    "direction": "north",
+    "start_m": 220767.46209407086,
+    "end_m": 223136.72924498437,
+    "from_node": 1588921931,
+    "to_node": 457046,
+    "from_name": "Rastplatz Lußhardt",
+    "to_name": "Kreuz Walldorf"
+  },
+  {
+    "direction": "north",
+    "start_m": 223136.72924498437,
+    "end_m": 226312.82436059936,
+    "from_node": 457046,
+    "to_node": 1574364324,
+    "from_name": "Kreuz Walldorf",
+    "to_name": "Walldorf / Wiesloch"
+  },
+  {
+    "direction": "north",
+    "start_m": 226312.82436059936,
+    "end_m": 228566.62323232033,
+    "from_node": 1574364324,
+    "to_node": 1574341649,
+    "from_name": "Walldorf / Wiesloch",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 228566.62323232033,
+    "end_m": 231281.93888029375,
+    "from_node": 1574341649,
+    "to_node": 1574341776,
+    "from_name": "Ответвление без названия",
+    "to_name": "Hardtwald"
+  },
+  {
+    "direction": "north",
+    "start_m": 231281.93888029375,
+    "end_m": 233374.0304548216,
+    "from_node": 1574341776,
+    "to_node": 1574280917,
+    "from_name": "Hardtwald",
+    "to_name": "Heidelberg / Schwetzingen"
+  },
+  {
+    "direction": "north",
+    "start_m": 233374.0304548216,
+    "end_m": 238606.58724143764,
+    "from_node": 1574280917,
+    "to_node": 457111,
+    "from_name": "Heidelberg / Schwetzingen",
+    "to_name": "Kreuz Heidelberg"
+  },
+  {
+    "direction": "north",
+    "start_m": 238606.58724143764,
+    "end_m": 242922.59048742414,
+    "from_node": 457111,
+    "to_node": 457130,
+    "from_name": "Kreuz Heidelberg",
+    "to_name": "Dossenheim"
+  },
+  {
+    "direction": "north",
+    "start_m": 242922.59048742414,
+    "end_m": 244378.55921441576,
+    "from_node": 457130,
+    "to_node": 12141896,
+    "from_name": "Dossenheim",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 244378.55921441576,
+    "end_m": 246184.07300397198,
+    "from_node": 12141896,
+    "to_node": 457140,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ladenburg"
+  },
+  {
+    "direction": "north",
+    "start_m": 246184.07300397198,
+    "end_m": 249442.22334707054,
+    "from_node": 457140,
+    "to_node": 1574869925,
+    "from_name": "Ladenburg",
+    "to_name": "Hirschberg"
+  },
+  {
+    "direction": "north",
+    "start_m": 249442.22334707054,
+    "end_m": 251764.3673870056,
+    "from_node": 1574869925,
+    "to_node": 457162,
+    "from_name": "Hirschberg",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 251764.3673870056,
+    "end_m": 253678.16494131065,
+    "from_node": 457162,
+    "to_node": 21497250,
+    "from_name": "Ответвление без названия",
+    "to_name": "Kreuz Weinheim"
+  },
+  {
+    "direction": "north",
+    "start_m": 253678.16494131065,
+    "end_m": 259050.39385289943,
+    "from_node": 21497250,
+    "to_node": 15841692,
+    "from_name": "Kreuz Weinheim",
+    "to_name": "Hemsbach"
+  },
+  {
+    "direction": "north",
+    "start_m": 259050.39385289943,
+    "end_m": 260773.07940981752,
+    "from_node": 15841692,
+    "to_node": 6402161935,
+    "from_name": "Hemsbach",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 260773.07940981752,
+    "end_m": 265527.78851086355,
+    "from_node": 6402161935,
+    "to_node": 11293113,
+    "from_name": "Ответвление без названия",
+    "to_name": "Heppenheim"
+  },
+  {
+    "direction": "north",
+    "start_m": 265527.78851086355,
+    "end_m": 267168.47295829764,
+    "from_node": 11293113,
+    "to_node": 11325154,
+    "from_name": "Heppenheim",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "north",
+    "start_m": 267168.47295829764,
+    "end_m": 268557.32390695746,
+    "from_node": 11325154,
+    "to_node": 10857354,
+    "from_name": "Ответвление без названия",
+    "to_name": "Bensheim"
+  },
+  {
+    "direction": "north",
+    "start_m": 268557.32390695746,
+    "end_m": 270195.5475699193,
+    "from_node": 10857354,
+    "to_node": 482690,
+    "from_name": "Bensheim",
+    "to_name": "Rasthof Bergstraße"
+  },
+  {
+    "direction": "north",
+    "start_m": 270195.5475699193,
+    "end_m": 274191.4256075031,
+    "from_node": 482690,
+    "to_node": 11749333,
+    "from_name": "Rasthof Bergstraße",
+    "to_name": "Zwingenberg"
+  },
+  {
+    "direction": "north",
+    "start_m": 274191.4256075031,
+    "end_m": 275062.7654580878,
+    "from_node": 11749333,
+    "to_node": 30077052,
+    "from_name": "Zwingenberg",
+    "to_name": "Rastplatz Nachtweide"
+  },
+  {
+    "direction": "north",
+    "start_m": 275062.7654580878,
+    "end_m": 279146.0665298635,
+    "from_node": 30077052,
+    "to_node": 457267,
+    "from_name": "Rastplatz Nachtweide",
+    "to_name": "Rastplatz Erlensee"
+  },
+  {
+    "direction": "north",
+    "start_m": 279146.0665298635,
+    "end_m": 280524.3974500518,
+    "from_node": 457267,
+    "to_node": 1673626409,
+    "from_name": "Rastplatz Erlensee",
+    "to_name": "Seeheim-Jugenheim"
+  },
+  {
+    "direction": "north",
+    "start_m": 280524.3974500518,
+    "end_m": 284396.24105843744,
+    "from_node": 1673626409,
+    "to_node": 457292,
+    "from_name": "Seeheim-Jugenheim",
+    "to_name": "Darmstadt-Eberstadt"
+  },
+  {
+    "direction": "north",
+    "start_m": 284396.24105843744,
+    "end_m": 290717.1675114394,
+    "from_node": 457292,
+    "to_node": 457327,
+    "from_name": "Darmstadt-Eberstadt",
+    "to_name": "Darmstädter Kreuz"
+  },
+  {
+    "direction": "north",
+    "start_m": 290717.1675114394,
+    "end_m": 292003.4337964808,
+    "from_node": 457327,
+    "to_node": 501951,
+    "from_name": "Darmstädter Kreuz",
+    "to_name": "Darmstädter Nordkreuz"
+  },
+  {
+    "direction": "north",
+    "start_m": 292003.4337964808,
+    "end_m": 295067.06709884555,
+    "from_node": 501951,
+    "to_node": 480479,
+    "from_name": "Darmstädter Nordkreuz",
+    "to_name": "Weiterstadt"
+  },
+  {
+    "direction": "north",
+    "start_m": 295067.06709884555,
+    "end_m": 296375.8552777191,
+    "from_node": 480479,
+    "to_node": 480496,
+    "from_name": "Weiterstadt",
+    "to_name": "Rastplatz Täubcheshöhle"
+  },
+  {
+    "direction": "north",
+    "start_m": 296375.8552777191,
+    "end_m": 300617.516584049,
+    "from_node": 480496,
+    "to_node": 355268772,
+    "from_name": "Rastplatz Täubcheshöhle",
+    "to_name": "Rasthof Gräfenhausen"
+  },
+  {
+    "direction": "north",
+    "start_m": 300617.516584049,
+    "end_m": 303877.9299336671,
+    "from_node": 355268772,
+    "to_node": 480600,
+    "from_name": "Rasthof Gräfenhausen",
+    "to_name": "Rastplatz Bornbruch"
+  },
+  {
+    "direction": "north",
+    "start_m": 303877.9299336671,
+    "end_m": 304571.57414759195,
+    "from_node": 480600,
+    "to_node": 630747837,
+    "from_name": "Rastplatz Bornbruch",
+    "to_name": "Langen / Mörfelden"
+  },
+  {
+    "direction": "north",
+    "start_m": 304571.57414759195,
+    "end_m": 306877.37566808244,
+    "from_node": 630747837,
+    "to_node": 482455,
+    "from_name": "Langen / Mörfelden",
+    "to_name": "Rastplatz Kaiserstein"
+  },
+  {
+    "direction": "north",
+    "start_m": 306877.37566808244,
+    "end_m": 309477.50159268803,
+    "from_node": 482455,
+    "to_node": 2702292694,
+    "from_name": "Rastplatz Kaiserstein",
+    "to_name": "Zeppelinheim"
+  },
+  {
+    "direction": "north",
+    "start_m": 309477.50159268803,
+    "end_m": 312297.95627281646,
+    "from_node": 2702292694,
+    "to_node": 480638,
+    "from_name": "Zeppelinheim",
+    "to_name": "Frankfurter Kreuz"
+  },
+  {
+    "direction": "north",
+    "start_m": 312297.95627281646,
+    "end_m": 316621.5594900557,
+    "from_node": 480638,
+    "to_node": 663288171,
+    "from_name": "Frankfurter Kreuz",
+    "to_name": "Frankfurt-Niederrad"
+  },
+  {
+    "direction": "north",
+    "start_m": 316621.5594900557,
+    "end_m": 319668.12523097935,
+    "from_node": 663288171,
+    "to_node": 480748,
+    "from_name": "Frankfurt-Niederrad",
+    "to_name": "Westkreuz Frankfurt"
+  },
+  {
+    "direction": "north",
+    "start_m": 319668.12523097935,
+    "end_m": 322375.17421703774,
+    "from_node": 480748,
+    "to_node": 480764,
+    "from_name": "Westkreuz Frankfurt",
+    "to_name": "Nordwestkreuz Frankfurt"
+  },
+  {
+    "direction": "north",
+    "start_m": 322375.17421703774,
+    "end_m": 330717.9474263524,
+    "from_node": 480764,
+    "to_node": 482636,
+    "from_name": "Nordwestkreuz Frankfurt",
+    "to_name": "Bad Homburger Kreuz"
+  },
+  {
+    "direction": "north",
+    "start_m": 330717.9474263524,
+    "end_m": 336884.25701029104,
+    "from_node": 482636,
+    "to_node": 8467857381,
+    "from_name": "Bad Homburger Kreuz",
+    "to_name": "Rastplatz Schäferborn"
+  },
+  {
+    "direction": "north",
+    "start_m": 336884.25701029104,
+    "end_m": 341064.6439779215,
+    "from_node": 8467857381,
+    "to_node": 59969181,
+    "from_name": "Rastplatz Schäferborn",
+    "to_name": "Friedberg"
+  },
+  {
+    "direction": "north",
+    "start_m": 341064.6439779215,
+    "end_m": 349190.0631324167,
+    "from_node": 59969181,
+    "to_node": 480948,
+    "from_name": "Friedberg",
+    "to_name": "Raststätte Wetterau Ost"
+  },
+  {
+    "direction": "north",
+    "start_m": 349190.0631324167,
+    "end_m": 352498.35621913226,
+    "from_node": 480948,
+    "to_node": 480983,
+    "from_name": "Raststätte Wetterau Ost",
+    "to_name": "Ober-Mörlen"
+  },
+  {
+    "direction": "north",
+    "start_m": 352498.35621913226,
+    "end_m": 355149.7162877933,
+    "from_node": 480983,
+    "to_node": 1672843508,
+    "from_name": "Ober-Mörlen",
+    "to_name": "Bad Nauheim"
+  },
+  {
+    "direction": "north",
+    "start_m": 355149.7162877933,
+    "end_m": 358415.1101654331,
+    "from_node": 1672843508,
+    "to_node": 1672843530,
+    "from_name": "Bad Nauheim",
+    "to_name": "Butzbach"
+  },
+  {
+    "direction": "north",
+    "start_m": 358415.1101654331,
+    "end_m": 362295.7449206831,
+    "from_node": 1672843530,
+    "to_node": 481030,
+    "from_name": "Butzbach",
+    "to_name": "Gambacher Kreuz"
+  },
+  {
+    "direction": "north",
+    "start_m": 362295.7449206831,
+    "end_m": 363277.18186655897,
+    "from_node": 481030,
+    "to_node": 317150823,
+    "from_name": "Gambacher Kreuz",
+    "to_name": "Würzburg;Hanau"
+  },
+  {
+    "direction": "north",
+    "start_m": 363277.18186655897,
+    "end_m": 369100.49004865636,
+    "from_node": 317150823,
+    "to_node": 256549579,
+    "from_name": "Würzburg;Hanau",
+    "to_name": "Rastplatz Limes-Ost"
+  },
+  {
+    "direction": "north",
+    "start_m": 369100.49004865636,
+    "end_m": 372470.3362137513,
+    "from_node": 256549579,
+    "to_node": 1574783055,
+    "from_name": "Rastplatz Limes-Ost",
+    "to_name": "Fernwald"
+  },
+  {
+    "direction": "north",
+    "start_m": 372470.3362137513,
+    "end_m": 378707.63770100847,
+    "from_node": 1574783055,
+    "to_node": 1569113473,
+    "from_name": "Fernwald",
+    "to_name": "Reiskirchen"
+  },
+  {
+    "direction": "north",
+    "start_m": 378707.63770100847,
+    "end_m": 380549.6977322347,
+    "from_node": 1569113473,
+    "to_node": 481165,
+    "from_name": "Reiskirchen",
+    "to_name": "Reiskirchener Dreieck"
+  },
+  {
+    "direction": "north",
+    "start_m": 380549.6977322347,
+    "end_m": 385497.4243926987,
+    "from_node": 481165,
+    "to_node": 1559388440,
+    "from_name": "Reiskirchener Dreieck",
+    "to_name": "Reinhardshain Süd"
+  },
+  {
+    "direction": "north",
+    "start_m": 385497.4243926987,
+    "end_m": 387969.2930470965,
+    "from_node": 1559388440,
+    "to_node": 1559388346,
+    "from_name": "Reinhardshain Süd",
+    "to_name": "Grünberg"
+  },
+  {
+    "direction": "north",
+    "start_m": 387969.2930470965,
+    "end_m": 390818.61885559885,
+    "from_node": 1559388346,
+    "to_node": 835137888,
+    "from_name": "Grünberg",
+    "to_name": "Rastplatz Heg-Berg"
+  },
+  {
+    "direction": "north",
+    "start_m": 390818.61885559885,
+    "end_m": 392625.6451448084,
+    "from_node": 835137888,
+    "to_node": 1553823314,
+    "from_name": "Rastplatz Heg-Berg",
+    "to_name": "Homberg (Ohm)"
+  },
+  {
+    "direction": "north",
+    "start_m": 392625.6451448084,
+    "end_m": 402146.48320735653,
+    "from_node": 1553823314,
+    "to_node": 4745367896,
+    "from_name": "Homberg (Ohm)",
+    "to_name": "Ohmtal-Dreieck"
+  },
+  {
+    "direction": "north",
+    "start_m": 402146.48320735653,
+    "end_m": 405229.708258763,
+    "from_node": 4745367896,
+    "to_node": 481397,
+    "from_name": "Ohmtal-Dreieck",
+    "to_name": "Rastplatz Krachgarten"
+  },
+  {
+    "direction": "north",
+    "start_m": 405229.708258763,
+    "end_m": 415621.87974940456,
+    "from_node": 481397,
+    "to_node": 481460,
+    "from_name": "Rastplatz Krachgarten",
+    "to_name": "Alsfeld-West"
+  },
+  {
+    "direction": "north",
+    "start_m": 415621.87974940456,
+    "end_m": 420243.5446737376,
+    "from_node": 481460,
+    "to_node": 1585036888,
+    "from_name": "Alsfeld-West",
+    "to_name": "Alsfeld-Ost"
+  },
+  {
+    "direction": "north",
+    "start_m": 420243.5446737376,
+    "end_m": 424339.0162995731,
+    "from_node": 1585036888,
+    "to_node": 1585037372,
+    "from_name": "Alsfeld-Ost",
+    "to_name": "Rastplatz Eifa"
+  },
+  {
+    "direction": "north",
+    "start_m": 424339.0162995731,
+    "end_m": 434497.16828433017,
+    "from_node": 1585037372,
+    "to_node": 1586387300,
+    "from_name": "Rastplatz Eifa",
+    "to_name": "Raststätte Rimberg"
+  },
+  {
+    "direction": "north",
+    "start_m": 434497.16828433017,
+    "end_m": 436434.63663789217,
+    "from_node": 1586387300,
+    "to_node": 481633,
+    "from_name": "Raststätte Rimberg",
+    "to_name": "Barnholz"
+  },
+  {
+    "direction": "north",
+    "start_m": 436434.63663789217,
+    "end_m": 437811.62003605027,
+    "from_node": 481633,
+    "to_node": 1585064541,
+    "from_name": "Barnholz",
+    "to_name": "Hattenbacher Dreieck"
+  },
+  {
+    "direction": "north",
+    "start_m": 437811.62003605027,
+    "end_m": 440275.88424818125,
+    "from_node": 1585064541,
+    "to_node": 481675,
+    "from_name": "Hattenbacher Dreieck",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 0,
+    "end_m": 5282.711676159428,
+    "from_node": null,
+    "to_node": 1586387413,
+    "from_name": "Начало маршрута",
+    "to_name": "Raststätte Rimberg"
+  },
+  {
+    "direction": "south",
+    "start_m": 5282.711676159428,
+    "end_m": 7929.815676916216,
+    "from_node": 1586387413,
+    "to_node": 1587167323,
+    "from_name": "Raststätte Rimberg",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 7929.815676916216,
+    "end_m": 14833.578846302,
+    "from_node": 1587167323,
+    "to_node": 2721451767,
+    "from_name": "Ответвление без названия",
+    "to_name": "Rasthof Berfa"
+  },
+  {
+    "direction": "south",
+    "start_m": 14833.578846302,
+    "end_m": 19841.725791095014,
+    "from_node": 2721451767,
+    "to_node": 1585036909,
+    "from_name": "Rasthof Berfa",
+    "to_name": "Alsfeld-Ost"
+  },
+  {
+    "direction": "south",
+    "start_m": 19841.725791095014,
+    "end_m": 24081.713902273215,
+    "from_node": 1585036909,
+    "to_node": 463536,
+    "from_name": "Alsfeld-Ost",
+    "to_name": "Alsfeld-West"
+  },
+  {
+    "direction": "south",
+    "start_m": 24081.713902273215,
+    "end_m": 34204.217263559556,
+    "from_node": 463536,
+    "to_node": 1563519573,
+    "from_name": "Alsfeld-West",
+    "to_name": "Rastplatz Dottenberg"
+  },
+  {
+    "direction": "south",
+    "start_m": 34204.217263559556,
+    "end_m": 37589.91325787708,
+    "from_node": 1563519573,
+    "to_node": 8652876115,
+    "from_name": "Rastplatz Dottenberg",
+    "to_name": "Ohmtal-Dreieck"
+  },
+  {
+    "direction": "south",
+    "start_m": 37589.91325787708,
+    "end_m": 47439.450729025855,
+    "from_node": 8652876115,
+    "to_node": 1551986266,
+    "from_name": "Ohmtal-Dreieck",
+    "to_name": "Homberg (Ohm)"
+  },
+  {
+    "direction": "south",
+    "start_m": 47439.450729025855,
+    "end_m": 49161.79832265189,
+    "from_node": 1551986266,
+    "to_node": 1559445838,
+    "from_name": "Homberg (Ohm)",
+    "to_name": "Rastplatz Finkenwald"
+  },
+  {
+    "direction": "south",
+    "start_m": 49161.79832265189,
+    "end_m": 52182.5583289996,
+    "from_node": 1559445838,
+    "to_node": 1559445749,
+    "from_name": "Rastplatz Finkenwald",
+    "to_name": "Grünberg"
+  },
+  {
+    "direction": "south",
+    "start_m": 52182.5583289996,
+    "end_m": 54409.486469761025,
+    "from_node": 1559445749,
+    "to_node": 1559388567,
+    "from_name": "Grünberg",
+    "to_name": "Reinhardshain Nord"
+  },
+  {
+    "direction": "south",
+    "start_m": 54409.486469761025,
+    "end_m": 59649.99519896537,
+    "from_node": 1559388567,
+    "to_node": 1560511470,
+    "from_name": "Reinhardshain Nord",
+    "to_name": "Reiskirchener Dreieck"
+  },
+  {
+    "direction": "south",
+    "start_m": 59649.99519896537,
+    "end_m": 61439.901473856975,
+    "from_node": 1560511470,
+    "to_node": 1574783135,
+    "from_name": "Reiskirchener Dreieck",
+    "to_name": "Reiskirchen"
+  },
+  {
+    "direction": "south",
+    "start_m": 61439.901473856975,
+    "end_m": 67908.09110959838,
+    "from_node": 1574783135,
+    "to_node": 252689637,
+    "from_name": "Reiskirchen",
+    "to_name": "Fernwald"
+  },
+  {
+    "direction": "south",
+    "start_m": 67908.09110959838,
+    "end_m": 70858.89225922413,
+    "from_node": 252689637,
+    "to_node": 466368,
+    "from_name": "Fernwald",
+    "to_name": "Limes-West"
+  },
+  {
+    "direction": "south",
+    "start_m": 70858.89225922413,
+    "end_m": 76226.9623302807,
+    "from_node": 466368,
+    "to_node": 1564363645,
+    "from_name": "Limes-West",
+    "to_name": "Gambacher Kreuz"
+  },
+  {
+    "direction": "south",
+    "start_m": 76226.9623302807,
+    "end_m": 81667.68692515316,
+    "from_node": 1564363645,
+    "to_node": 1672843545,
+    "from_name": "Gambacher Kreuz",
+    "to_name": "Butzbach"
+  },
+  {
+    "direction": "south",
+    "start_m": 81667.68692515316,
+    "end_m": 85077.6764934442,
+    "from_node": 1672843545,
+    "to_node": 1672843514,
+    "from_name": "Butzbach",
+    "to_name": "Bad Nauheim"
+  },
+  {
+    "direction": "south",
+    "start_m": 85077.6764934442,
+    "end_m": 87642.72573700554,
+    "from_node": 1672843514,
+    "to_node": 60013311,
+    "from_name": "Bad Nauheim",
+    "to_name": "Ober-Mörlen"
+  },
+  {
+    "direction": "south",
+    "start_m": 87642.72573700554,
+    "end_m": 90551.77459968426,
+    "from_node": 60013311,
+    "to_node": 466510,
+    "from_name": "Ober-Mörlen",
+    "to_name": "Raststätte Wetterau West"
+  },
+  {
+    "direction": "south",
+    "start_m": 90551.77459968426,
+    "end_m": 98609.61354717525,
+    "from_node": 466510,
+    "to_node": 463648,
+    "from_name": "Raststätte Wetterau West",
+    "to_name": "Friedberg"
+  },
+  {
+    "direction": "south",
+    "start_m": 98609.61354717525,
+    "end_m": 99077.72259601677,
+    "from_node": 463648,
+    "to_node": 466572,
+    "from_name": "Friedberg",
+    "to_name": "Friedberg"
+  },
+  {
+    "direction": "south",
+    "start_m": 99077.72259601677,
+    "end_m": 102644.81893426509,
+    "from_node": 466572,
+    "to_node": 60013734,
+    "from_name": "Friedberg",
+    "to_name": "Rastplatz Spießwald"
+  },
+  {
+    "direction": "south",
+    "start_m": 102644.81893426509,
+    "end_m": 108650.11353822063,
+    "from_node": 60013734,
+    "to_node": 466634,
+    "from_name": "Rastplatz Spießwald",
+    "to_name": "Bad Homburger Kreuz"
+  },
+  {
+    "direction": "south",
+    "start_m": 108650.11353822063,
+    "end_m": 114996.89595838166,
+    "from_node": 466634,
+    "to_node": 3309983928,
+    "from_name": "Bad Homburger Kreuz",
+    "to_name": "Raststätte Taunusblick"
+  },
+  {
+    "direction": "south",
+    "start_m": 114996.89595838166,
+    "end_m": 117216.42299801574,
+    "from_node": 3309983928,
+    "to_node": 544599,
+    "from_name": "Raststätte Taunusblick",
+    "to_name": "Nordwestkreuz Frankfurt"
+  },
+  {
+    "direction": "south",
+    "start_m": 117216.42299801574,
+    "end_m": 119439.83320186267,
+    "from_node": 544599,
+    "to_node": 463085,
+    "from_name": "Nordwestkreuz Frankfurt",
+    "to_name": "Westkreuz Frankfurt"
+  },
+  {
+    "direction": "south",
+    "start_m": 119439.83320186267,
+    "end_m": 122665.73942007402,
+    "from_node": 463085,
+    "to_node": 426433,
+    "from_name": "Westkreuz Frankfurt",
+    "to_name": "Frankfurt-Westhafen"
+  },
+  {
+    "direction": "south",
+    "start_m": 122665.73942007402,
+    "end_m": 124287.30349438146,
+    "from_node": 426433,
+    "to_node": 1446239083,
+    "from_name": "Frankfurt-Westhafen",
+    "to_name": "Frankfurt-Niederrad"
+  },
+  {
+    "direction": "south",
+    "start_m": 124287.30349438146,
+    "end_m": 126193.73818826133,
+    "from_node": 1446239083,
+    "to_node": 13307826438,
+    "from_name": "Frankfurt-Niederrad",
+    "to_name": "Frankfurter Kreuz"
+  },
+  {
+    "direction": "south",
+    "start_m": 126193.73818826133,
+    "end_m": 128880.1533733522,
+    "from_node": 13307826438,
+    "to_node": 466026,
+    "from_name": "Frankfurter Kreuz",
+    "to_name": "Zeppelinheim"
+  },
+  {
+    "direction": "south",
+    "start_m": 128880.1533733522,
+    "end_m": 132879.34993056068,
+    "from_node": 466026,
+    "to_node": 466762,
+    "from_name": "Zeppelinheim",
+    "to_name": "Rastplatz Steingrund"
+  },
+  {
+    "direction": "south",
+    "start_m": 132879.34993056068,
+    "end_m": 134787.645449025,
+    "from_node": 466762,
+    "to_node": 463073,
+    "from_name": "Rastplatz Steingrund",
+    "to_name": "Langen / Mörfelden"
+  },
+  {
+    "direction": "south",
+    "start_m": 134787.645449025,
+    "end_m": 136044.64907613044,
+    "from_node": 463073,
+    "to_node": 482447,
+    "from_name": "Langen / Mörfelden",
+    "to_name": "Rastplatz Bornbruch"
+  },
+  {
+    "direction": "south",
+    "start_m": 136044.64907613044,
+    "end_m": 139078.87695438493,
+    "from_node": 482447,
+    "to_node": 469388,
+    "from_name": "Rastplatz Bornbruch",
+    "to_name": "Rasthof Gräfenhausen"
+  },
+  {
+    "direction": "south",
+    "start_m": 139078.87695438493,
+    "end_m": 143669.28786947147,
+    "from_node": 469388,
+    "to_node": 462472,
+    "from_name": "Rasthof Gräfenhausen",
+    "to_name": "Rastplatz Brühlgraben"
+  },
+  {
+    "direction": "south",
+    "start_m": 143669.28786947147,
+    "end_m": 144327.13761959696,
+    "from_node": 462472,
+    "to_node": 52031796,
+    "from_name": "Rastplatz Brühlgraben",
+    "to_name": "Weiterstadt"
+  },
+  {
+    "direction": "south",
+    "start_m": 144327.13761959696,
+    "end_m": 147408.3084714769,
+    "from_node": 52031796,
+    "to_node": 470417,
+    "from_name": "Weiterstadt",
+    "to_name": "Darmstädter Nordkreuz"
+  },
+  {
+    "direction": "south",
+    "start_m": 147408.3084714769,
+    "end_m": 148995.36944304663,
+    "from_node": 470417,
+    "to_node": 463178,
+    "from_name": "Darmstädter Nordkreuz",
+    "to_name": "Darmstädter Kreuz"
+  },
+  {
+    "direction": "south",
+    "start_m": 148995.36944304663,
+    "end_m": 155899.35329709316,
+    "from_node": 463178,
+    "to_node": 463231,
+    "from_name": "Darmstädter Kreuz",
+    "to_name": "Darmstadt-Eberstadt"
+  },
+  {
+    "direction": "south",
+    "start_m": 155899.35329709316,
+    "end_m": 158070.84298173696,
+    "from_node": 463231,
+    "to_node": 468562,
+    "from_name": "Darmstadt-Eberstadt",
+    "to_name": "Rastplatz Rolandshöhe"
+  },
+  {
+    "direction": "south",
+    "start_m": 158070.84298173696,
+    "end_m": 159970.19879468417,
+    "from_node": 468562,
+    "to_node": 592848,
+    "from_name": "Rastplatz Rolandshöhe",
+    "to_name": "Seeheim-Jugenheim"
+  },
+  {
+    "direction": "south",
+    "start_m": 159970.19879468417,
+    "end_m": 163397.5951392771,
+    "from_node": 592848,
+    "to_node": 467063,
+    "from_name": "Seeheim-Jugenheim",
+    "to_name": "Raststätte Alsbach"
+  },
+  {
+    "direction": "south",
+    "start_m": 163397.5951392771,
+    "end_m": 166321.602135915,
+    "from_node": 467063,
+    "to_node": 459828,
+    "from_name": "Raststätte Alsbach",
+    "to_name": "Zwingenberg"
+  },
+  {
+    "direction": "south",
+    "start_m": 166321.602135915,
+    "end_m": 169064.10689292755,
+    "from_node": 459828,
+    "to_node": 279405943,
+    "from_name": "Zwingenberg",
+    "to_name": "Rastplatz Scheidweg"
+  },
+  {
+    "direction": "south",
+    "start_m": 169064.10689292755,
+    "end_m": 171936.85553345532,
+    "from_node": 279405943,
+    "to_node": 592891,
+    "from_name": "Rastplatz Scheidweg",
+    "to_name": "Bensheim"
+  },
+  {
+    "direction": "south",
+    "start_m": 171936.85553345532,
+    "end_m": 174605.77759334465,
+    "from_node": 592891,
+    "to_node": 359859092,
+    "from_name": "Bensheim",
+    "to_name": "Heppenheim"
+  },
+  {
+    "direction": "south",
+    "start_m": 174605.77759334465,
+    "end_m": 177786.2698709752,
+    "from_node": 359859092,
+    "to_node": 592921,
+    "from_name": "Heppenheim",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 177786.2698709752,
+    "end_m": 181043.00657707747,
+    "from_node": 592921,
+    "to_node": 13917026,
+    "from_name": "Ответвление без названия",
+    "to_name": "Hemsbach"
+  },
+  {
+    "direction": "south",
+    "start_m": 181043.00657707747,
+    "end_m": 182132.73476321585,
+    "from_node": 13917026,
+    "to_node": 11293095,
+    "from_name": "Hemsbach",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 182132.73476321585,
+    "end_m": 185680.85218722778,
+    "from_node": 11293095,
+    "to_node": 459906,
+    "from_name": "Ответвление без названия",
+    "to_name": "Kreuz Weinheim"
+  },
+  {
+    "direction": "south",
+    "start_m": 185680.85218722778,
+    "end_m": 187834.13538014123,
+    "from_node": 459906,
+    "to_node": 1574900249,
+    "from_name": "Kreuz Weinheim",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 187834.13538014123,
+    "end_m": 190597.53527352636,
+    "from_node": 1574900249,
+    "to_node": 1574869929,
+    "from_name": "Ответвление без названия",
+    "to_name": "Hirschberg"
+  },
+  {
+    "direction": "south",
+    "start_m": 190597.53527352636,
+    "end_m": 194239.7257065968,
+    "from_node": 1574869929,
+    "to_node": 25252015,
+    "from_name": "Hirschberg",
+    "to_name": "Ladenburg"
+  },
+  {
+    "direction": "south",
+    "start_m": 194239.7257065968,
+    "end_m": 195337.5106237656,
+    "from_node": 25252015,
+    "to_node": 1574847808,
+    "from_name": "Ladenburg",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 195337.5106237656,
+    "end_m": 197529.8699610933,
+    "from_node": 1574847808,
+    "to_node": 592998,
+    "from_name": "Ответвление без названия",
+    "to_name": "Dossenheim"
+  },
+  {
+    "direction": "south",
+    "start_m": 197529.8699610933,
+    "end_m": 200404.90190295698,
+    "from_node": 592998,
+    "to_node": 1574242868,
+    "from_name": "Dossenheim",
+    "to_name": "Kreuz Heidelberg"
+  },
+  {
+    "direction": "south",
+    "start_m": 200404.90190295698,
+    "end_m": 205871.83635025733,
+    "from_node": 1574242868,
+    "to_node": 468756,
+    "from_name": "Kreuz Heidelberg",
+    "to_name": "Heidelberg / Schwetzingen"
+  },
+  {
+    "direction": "south",
+    "start_m": 205871.83635025733,
+    "end_m": 208415.46810617883,
+    "from_node": 468756,
+    "to_node": 468765,
+    "from_name": "Heidelberg / Schwetzingen",
+    "to_name": "Hardtwald"
+  },
+  {
+    "direction": "south",
+    "start_m": 208415.46810617883,
+    "end_m": 211628.6957736476,
+    "from_node": 468765,
+    "to_node": 2015616752,
+    "from_name": "Hardtwald",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 211628.6957736476,
+    "end_m": 213976.35875587846,
+    "from_node": 2015616752,
+    "to_node": 90636873,
+    "from_name": "Ответвление без названия",
+    "to_name": "Walldorf / Wiesloch"
+  },
+  {
+    "direction": "south",
+    "start_m": 213976.35875587846,
+    "end_m": 215850.24219967052,
+    "from_node": 90636873,
+    "to_node": 589310,
+    "from_name": "Walldorf / Wiesloch",
+    "to_name": "Kreuz Walldorf"
+  },
+  {
+    "direction": "south",
+    "start_m": 215850.24219967052,
+    "end_m": 219212.3796041782,
+    "from_node": 589310,
+    "to_node": 61193459,
+    "from_name": "Kreuz Walldorf",
+    "to_name": "Mönchberg"
+  },
+  {
+    "direction": "south",
+    "start_m": 219212.3796041782,
+    "end_m": 222519.37548037348,
+    "from_node": 61193459,
+    "to_node": 464743,
+    "from_name": "Mönchberg",
+    "to_name": "Kronau"
+  },
+  {
+    "direction": "south",
+    "start_m": 222519.37548037348,
+    "end_m": 226119.59090083945,
+    "from_node": 464743,
+    "to_node": 283808896,
+    "from_name": "Kronau",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 226119.59090083945,
+    "end_m": 230172.70893869517,
+    "from_node": 283808896,
+    "to_node": 468996,
+    "from_name": "Ответвление без названия",
+    "to_name": "Raststätte Bruchsal"
+  },
+  {
+    "direction": "south",
+    "start_m": 230172.70893869517,
+    "end_m": 231799.40604955127,
+    "from_node": 468996,
+    "to_node": 462552,
+    "from_name": "Raststätte Bruchsal",
+    "to_name": "Bruchsal"
+  },
+  {
+    "direction": "south",
+    "start_m": 231799.40604955127,
+    "end_m": 237375.3137397136,
+    "from_node": 462552,
+    "to_node": 357491211,
+    "from_name": "Bruchsal",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 237375.3137397136,
+    "end_m": 241890.98201139946,
+    "from_node": 357491211,
+    "to_node": 271345254,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 241890.98201139946,
+    "end_m": 248231.18365531918,
+    "from_node": 271345254,
+    "to_node": 25973877,
+    "from_name": "Ответвление без названия",
+    "to_name": "Karlsruhe-Nord"
+  },
+  {
+    "direction": "south",
+    "start_m": 248231.18365531918,
+    "end_m": 250142.99667684574,
+    "from_node": 25973877,
+    "to_node": 1482199079,
+    "from_name": "Karlsruhe-Nord",
+    "to_name": "Karlsruhe-Durlach"
+  },
+  {
+    "direction": "south",
+    "start_m": 250142.99667684574,
+    "end_m": 252025.55506594855,
+    "from_node": 1482199079,
+    "to_node": 452534,
+    "from_name": "Karlsruhe-Durlach",
+    "to_name": "Karlsruhe-Mitte"
+  },
+  {
+    "direction": "south",
+    "start_m": 252025.55506594855,
+    "end_m": 253419.77367584765,
+    "from_node": 452534,
+    "to_node": 21286445,
+    "from_name": "Karlsruhe-Mitte",
+    "to_name": "Dreieck Karlsruhe"
+  },
+  {
+    "direction": "south",
+    "start_m": 253419.77367584765,
+    "end_m": 256681.52448332432,
+    "from_node": 21286445,
+    "to_node": 451389,
+    "from_name": "Dreieck Karlsruhe",
+    "to_name": "Ettlingen"
+  },
+  {
+    "direction": "south",
+    "start_m": 256681.52448332432,
+    "end_m": 258457.09833585797,
+    "from_node": 451389,
+    "to_node": 1677677307,
+    "from_name": "Ettlingen",
+    "to_name": "Karlsruhe-Süd"
+  },
+  {
+    "direction": "south",
+    "start_m": 258457.09833585797,
+    "end_m": 269535.2585803667,
+    "from_node": 1677677307,
+    "to_node": 122350812,
+    "from_name": "Karlsruhe-Süd",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 269535.2585803667,
+    "end_m": 273794.64131010283,
+    "from_node": 122350812,
+    "to_node": 452629,
+    "from_name": "Ответвление без названия",
+    "to_name": "Rastatt-Nord"
+  },
+  {
+    "direction": "south",
+    "start_m": 273794.64131010283,
+    "end_m": 279250.72224865534,
+    "from_node": 452629,
+    "to_node": 260170389,
+    "from_name": "Rastatt-Nord",
+    "to_name": "Rastatt-Süd"
+  },
+  {
+    "direction": "south",
+    "start_m": 279250.72224865534,
+    "end_m": 281351.760916685,
+    "from_node": 260170389,
+    "to_node": 25578788,
+    "from_name": "Rastatt-Süd",
+    "to_name": "Rasthof Baden-Baden"
+  },
+  {
+    "direction": "south",
+    "start_m": 281351.760916685,
+    "end_m": 283661.2525849386,
+    "from_node": 25578788,
+    "to_node": 469556,
+    "from_name": "Rasthof Baden-Baden",
+    "to_name": "Baden-Baden"
+  },
+  {
+    "direction": "south",
+    "start_m": 283661.2525849386,
+    "end_m": 290920.3364608549,
+    "from_node": 469556,
+    "to_node": 1107042397,
+    "from_name": "Baden-Baden",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 290920.3364608549,
+    "end_m": 292919.57802118716,
+    "from_node": 1107042397,
+    "to_node": 74978265,
+    "from_name": "Ответвление без названия",
+    "to_name": "Bühl"
+  },
+  {
+    "direction": "south",
+    "start_m": 292919.57802118716,
+    "end_m": 301604.5196631385,
+    "from_node": 74978265,
+    "to_node": 1108845154,
+    "from_name": "Bühl",
+    "to_name": "Feldmatt"
+  },
+  {
+    "direction": "south",
+    "start_m": 301604.5196631385,
+    "end_m": 303266.1308073036,
+    "from_node": 1108845154,
+    "to_node": 452722,
+    "from_name": "Feldmatt",
+    "to_name": "Achern"
+  },
+  {
+    "direction": "south",
+    "start_m": 303266.1308073036,
+    "end_m": 313864.8338193252,
+    "from_node": 452722,
+    "to_node": 13888659,
+    "from_name": "Achern",
+    "to_name": "Raststätte Renchtal"
+  },
+  {
+    "direction": "south",
+    "start_m": 313864.8338193252,
+    "end_m": 317163.1062385526,
+    "from_node": 13888659,
+    "to_node": 2756338846,
+    "from_name": "Raststätte Renchtal",
+    "to_name": "Appenweier"
+  },
+  {
+    "direction": "south",
+    "start_m": 317163.1062385526,
+    "end_m": 322055.1990105488,
+    "from_node": 2756338846,
+    "to_node": 1249931746,
+    "from_name": "Appenweier",
+    "to_name": "Rastplatz Gottswald"
+  },
+  {
+    "direction": "south",
+    "start_m": 322055.1990105488,
+    "end_m": 324967.5695934921,
+    "from_node": 1249931746,
+    "to_node": 14917071,
+    "from_name": "Rastplatz Gottswald",
+    "to_name": "Offenburg"
+  },
+  {
+    "direction": "south",
+    "start_m": 324967.5695934921,
+    "end_m": 330800.9172139269,
+    "from_node": 14917071,
+    "to_node": 269273909,
+    "from_name": "Offenburg",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 330800.9172139269,
+    "end_m": 334026.2639321759,
+    "from_node": 269273909,
+    "to_node": 269273816,
+    "from_name": "Ответвление без названия",
+    "to_name": "Rastplatz Unditz"
+  },
+  {
+    "direction": "south",
+    "start_m": 334026.2639321759,
+    "end_m": 339764.40415282495,
+    "from_node": 269273816,
+    "to_node": 452838,
+    "from_name": "Rastplatz Unditz",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 339764.40415282495,
+    "end_m": 340516.9474823291,
+    "from_node": 452838,
+    "to_node": 32863790,
+    "from_name": "Ответвление без названия",
+    "to_name": "Lahr"
+  },
+  {
+    "direction": "south",
+    "start_m": 340516.9474823291,
+    "end_m": 345944.4683655709,
+    "from_node": 32863790,
+    "to_node": 452859,
+    "from_name": "Lahr",
+    "to_name": "Raststätte Mahlberg"
+  },
+  {
+    "direction": "south",
+    "start_m": 345944.4683655709,
+    "end_m": 349698.63789281144,
+    "from_node": 452859,
+    "to_node": 108291272,
+    "from_name": "Raststätte Mahlberg",
+    "to_name": "Ettenheim"
+  },
+  {
+    "direction": "south",
+    "start_m": 349698.63789281144,
+    "end_m": 352974.7535408006,
+    "from_node": 108291272,
+    "to_node": 61198935,
+    "from_name": "Ettenheim",
+    "to_name": "Rust"
+  },
+  {
+    "direction": "south",
+    "start_m": 352974.7535408006,
+    "end_m": 355820.2041863518,
+    "from_node": 61198935,
+    "to_node": 82721007,
+    "from_name": "Rust",
+    "to_name": "Herbolzheim"
+  },
+  {
+    "direction": "south",
+    "start_m": 355820.2041863518,
+    "end_m": 358757.52167362033,
+    "from_node": 82721007,
+    "to_node": 452898,
+    "from_name": "Herbolzheim",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 358757.52167362033,
+    "end_m": 362453.10070501396,
+    "from_node": 452898,
+    "to_node": 265838872,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 362453.10070501396,
+    "end_m": 362778.08800809167,
+    "from_node": 265838872,
+    "to_node": 265838876,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 362778.08800809167,
+    "end_m": 364183.1336772335,
+    "from_node": 265838876,
+    "to_node": 255327322,
+    "from_name": "Ответвление без названия",
+    "to_name": "Riegel"
+  },
+  {
+    "direction": "south",
+    "start_m": 364183.1336772335,
+    "end_m": 368409.9522000378,
+    "from_node": 255327322,
+    "to_node": 265838972,
+    "from_name": "Riegel",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 368409.9522000378,
+    "end_m": 369391.8642863253,
+    "from_node": 265838972,
+    "to_node": 59672513,
+    "from_name": "Ответвление без названия",
+    "to_name": "Teningen"
+  },
+  {
+    "direction": "south",
+    "start_m": 369391.8642863253,
+    "end_m": 372532.78068456776,
+    "from_node": 59672513,
+    "to_node": 265839027,
+    "from_name": "Teningen",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 372532.78068456776,
+    "end_m": 375270.9945706819,
+    "from_node": 265839027,
+    "to_node": 2118959836,
+    "from_name": "Ответвление без названия",
+    "to_name": "Freiburg-Nord"
+  },
+  {
+    "direction": "south",
+    "start_m": 375270.9945706819,
+    "end_m": 376606.40700347157,
+    "from_node": 2118959836,
+    "to_node": 108284327,
+    "from_name": "Freiburg-Nord",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 376606.40700347157,
+    "end_m": 380041.5370591784,
+    "from_node": 108284327,
+    "to_node": 31448392,
+    "from_name": "Ответвление без названия",
+    "to_name": "Freiburg-Mitte"
+  },
+  {
+    "direction": "south",
+    "start_m": 380041.5370591784,
+    "end_m": 385285.54142630496,
+    "from_node": 31448392,
+    "to_node": 265839228,
+    "from_name": "Freiburg-Mitte",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 385285.54142630496,
+    "end_m": 386387.6242149771,
+    "from_node": 265839228,
+    "to_node": 124565240,
+    "from_name": "Ответвление без названия",
+    "to_name": "Freiburg-Süd"
+  },
+  {
+    "direction": "south",
+    "start_m": 386387.6242149771,
+    "end_m": 392653.5179620819,
+    "from_node": 124565240,
+    "to_node": 2408301622,
+    "from_name": "Freiburg-Süd",
+    "to_name": "Bad Krozingen"
+  },
+  {
+    "direction": "south",
+    "start_m": 392653.5179620819,
+    "end_m": 394614.65561358345,
+    "from_node": 2408301622,
+    "to_node": 263680217,
+    "from_name": "Bad Krozingen",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 394614.65561358345,
+    "end_m": 395036.3587954081,
+    "from_node": 263680217,
+    "to_node": 453033,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 395036.3587954081,
+    "end_m": 398927.33411065064,
+    "from_node": 453033,
+    "to_node": 453046,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 398927.33411065064,
+    "end_m": 400767.78600335505,
+    "from_node": 453046,
+    "to_node": 75733133,
+    "from_name": "Ответвление без названия",
+    "to_name": "Hartheim / Heitersheim"
+  },
+  {
+    "direction": "south",
+    "start_m": 400767.78600335505,
+    "end_m": 404315.0668866345,
+    "from_node": 75733133,
+    "to_node": 301725023,
+    "from_name": "Hartheim / Heitersheim",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 404315.0668866345,
+    "end_m": 404726.04971041874,
+    "from_node": 301725023,
+    "to_node": 981122665,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 404726.04971041874,
+    "end_m": 409526.46772425045,
+    "from_node": 981122665,
+    "to_node": 21307648,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 409526.46772425045,
+    "end_m": 411413.1976477678,
+    "from_node": 21307648,
+    "to_node": 251929836,
+    "from_name": "Ответвление без названия",
+    "to_name": "Müllheim / Neuenburg"
+  },
+  {
+    "direction": "south",
+    "start_m": 411413.1976477678,
+    "end_m": 414509.1515786405,
+    "from_node": 251929836,
+    "to_node": 21307661,
+    "from_name": "Müllheim / Neuenburg",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 414509.1515786405,
+    "end_m": 414860.10719001177,
+    "from_node": 21307661,
+    "to_node": 21307672,
+    "from_name": "Ответвление без названия",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 414860.10719001177,
+    "end_m": 415827.9451581192,
+    "from_node": 21307672,
+    "to_node": 30961144,
+    "from_name": "Ответвление без названия",
+    "to_name": "Dreieck Neuenburg"
+  },
+  {
+    "direction": "south",
+    "start_m": 415827.9451581192,
+    "end_m": 420164.3334930305,
+    "from_node": 30961144,
+    "to_node": 453121,
+    "from_name": "Dreieck Neuenburg",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 420164.3334930305,
+    "end_m": 424517.25788849243,
+    "from_node": 453121,
+    "to_node": 453152,
+    "from_name": "Ответвление без названия",
+    "to_name": "Rastplatz Fischergrund"
+  },
+  {
+    "direction": "south",
+    "start_m": 424517.25788849243,
+    "end_m": 427852.0464600921,
+    "from_node": 453152,
+    "to_node": 243912316,
+    "from_name": "Rastplatz Fischergrund",
+    "to_name": "Efringen-Kirchen"
+  },
+  {
+    "direction": "south",
+    "start_m": 427852.0464600921,
+    "end_m": 435900.67917686055,
+    "from_node": 243912316,
+    "to_node": 453197,
+    "from_name": "Efringen-Kirchen",
+    "to_name": "Dreieck Weil am Rhein"
+  },
+  {
+    "direction": "south",
+    "start_m": 435900.67917686055,
+    "end_m": 438427.1141491827,
+    "from_node": 453197,
+    "to_node": 453208,
+    "from_name": "Dreieck Weil am Rhein",
+    "to_name": "Weil am Rhein / Hüningen"
+  },
+  {
+    "direction": "south",
+    "start_m": 438427.1141491827,
+    "end_m": 438716.64579286164,
+    "from_node": 453208,
+    "to_node": 1067781160,
+    "from_name": "Weil am Rhein / Hüningen",
+    "to_name": "Leer;Transit;NTCS"
+  },
+  {
+    "direction": "south",
+    "start_m": 438716.64579286164,
+    "end_m": 438739.0594464113,
+    "from_node": 1067781160,
+    "to_node": 980654982,
+    "from_name": "Leer;Transit;NTCS",
+    "to_name": "Import"
+  },
+  {
+    "direction": "south",
+    "start_m": 438739.0594464113,
+    "end_m": 439299.85839032585,
+    "from_node": 980654982,
+    "to_node": 761204861,
+    "from_name": "Import",
+    "to_name": "Ответвление без названия"
+  },
+  {
+    "direction": "south",
+    "start_m": 439299.85839032585,
+    "end_m": 439484.4896089928,
+    "from_node": 761204861,
+    "to_node": 3986990220,
+    "from_name": "Ответвление без названия",
+    "to_name": "Raststätte Basel-Weil/Rhein"
+  },
+  {
+    "direction": "south",
+    "start_m": 439484.4896089928,
+    "end_m": 440469.7283998298,
+    "from_node": 3986990220,
+    "to_node": 13424209901,
+    "from_name": "Raststätte Basel-Weil/Rhein",
+    "to_name": "Ответвление без названия"
+  }
+]

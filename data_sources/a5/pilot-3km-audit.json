@@ -7,22 +7,28 @@
       "direction": "north",
       "length_km": 440.28,
       "candidates": 1752,
-      "routed": 408,
-      "fast_routed": 120,
-      "eligible_routed": 75,
+      "routed": 432,
+      "fast_routed": 132,
+      "eligible_routed": 81,
       "unknown_segments": 2,
       "verified_entrances": 0,
-      "max_gap_km": 70.2
+      "distance_excluded": 1085,
+      "unresolved": 235,
+      "active_candidates": 667,
+      "max_gap_km": 49.8
     },
     {
       "direction": "south",
       "length_km": 440.47,
       "candidates": 1744,
-      "routed": 375,
-      "fast_routed": 116,
-      "eligible_routed": 74,
+      "routed": 389,
+      "fast_routed": 123,
+      "eligible_routed": 80,
       "unknown_segments": 2,
       "verified_entrances": 0,
+      "distance_excluded": 1159,
+      "unresolved": 196,
+      "active_candidates": 585,
       "max_gap_km": 41.3
     }
   ],
@@ -32,10 +38,12 @@
       "section": null,
       "length_km": 440.276,
       "candidates": 1752,
-      "routed": 408,
-      "fast_routed": 120,
-      "eligible_routed": 75,
-      "max_gap_km": 70.2,
+      "routed": 432,
+      "fast_routed": 132,
+      "eligible_routed": 81,
+      "distance_excluded": 1085,
+      "unresolved": 235,
+      "max_gap_km": 49.8,
       "unknown_segments": 2,
       "verified_entrances": 0
     },
@@ -44,14 +52,3139 @@
       "section": null,
       "length_km": 440.47,
       "candidates": 1744,
-      "routed": 375,
-      "fast_routed": 116,
-      "eligible_routed": 74,
+      "routed": 389,
+      "fast_routed": 123,
+      "eligible_routed": 80,
+      "distance_excluded": 1159,
+      "unresolved": 196,
       "max_gap_km": 41.3,
       "unknown_segments": 2,
       "verified_entrances": 0
     }
   ],
   "cached_link_revalidation": false,
-  "fresh_network_search": true
+  "fresh_network_search": true,
+  "candidate_method": "a5-all-exits-road-zones-v1",
+  "exits": [
+    {
+      "direction": "north",
+      "node": 2463361074,
+      "chain_m": 595.1666894968461,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        238505277
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 624826,
+      "chain_m": 900.756812398573,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        25665390
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 2619185860,
+      "chain_m": 1325.708407697306,
+      "name": "Deutscher Rasthof;Weil am Rhein",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        256244184
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 305503211,
+      "chain_m": 1380.2937772740895,
+      "name": "Weil am Rhein / Hüningen",
+      "ref": "69",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        22992249
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 456189,
+      "chain_m": 3050.0545308717724,
+      "name": "Parkplatz",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        5217656
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 981120817,
+      "chain_m": 3808.572269226208,
+      "name": "Dreieck Weil am Rhein",
+      "ref": "68",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        4452018
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 30415520,
+      "chain_m": 12483.352045766302,
+      "name": "Efringen-Kirchen",
+      "ref": "67",
+      "kind": "road_exit",
+      "way_ids": [
+        4762547
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 247265053,
+      "chain_m": 15591.348542765614,
+      "name": "Rastplatz Rheinaue",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        1432075396
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 268132535,
+      "chain_m": 20577.206892652965,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24669316
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 30961072,
+      "chain_m": 24847.042569281028,
+      "name": "Dreieck Neuenburg",
+      "ref": "66",
+      "kind": "road_exit",
+      "way_ids": [
+        583344850
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 268133884,
+      "chain_m": 25743.978796056712,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24669431
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 264884010,
+      "chain_m": 28898.071975733525,
+      "name": "Müllheim / Neuenburg",
+      "ref": "65",
+      "kind": "road_exit",
+      "way_ids": [
+        837541066
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 456294,
+      "chain_m": 30542.14445501169,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        23600033
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 268134889,
+      "chain_m": 35606.16443887884,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24669488
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 456324,
+      "chain_m": 39885.850640332166,
+      "name": "Hartheim / Heitersheim",
+      "ref": "64b",
+      "kind": "road_exit",
+      "way_ids": [
+        9662602
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 264404588,
+      "chain_m": 41336.219549635236,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24370333
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 264404592,
+      "chain_m": 41709.61253218926,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24370333
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 269274900,
+      "chain_m": 46529.82158798189,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24782034
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 269274903,
+      "chain_m": 46924.069169073846,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24782034
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 456351,
+      "chain_m": 47686.195161396645,
+      "name": "Bad Krozingen",
+      "ref": "64a",
+      "kind": "road_exit",
+      "way_ids": [
+        144784967
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 456374,
+      "chain_m": 52124.1406586029,
+      "name": "Raststätte Breisgau",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        641515051
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 456416,
+      "chain_m": 53638.98045575939,
+      "name": "Freiburg-Süd",
+      "ref": "63",
+      "kind": "road_exit",
+      "way_ids": [
+        13544417
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 268139021,
+      "chain_m": 55053.83318502332,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24669723
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 522135910,
+      "chain_m": 59509.9861921578,
+      "name": "Freiburg-Mitte",
+      "ref": "62",
+      "kind": "road_exit",
+      "way_ids": [
+        4746914
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 2118953559,
+      "chain_m": 64988.51030186458,
+      "name": "Freiburg-Nord",
+      "ref": "61",
+      "kind": "road_exit",
+      "way_ids": [
+        24373433
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 268139661,
+      "chain_m": 68570.27828741749,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        1155244636
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 59669808,
+      "chain_m": 71315.10195096993,
+      "name": "Teningen",
+      "ref": "60",
+      "kind": "road_exit",
+      "way_ids": [
+        7976670
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 264404593,
+      "chain_m": 73188.09355808604,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24370334
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 262526024,
+      "chain_m": 76070.82058868356,
+      "name": "Riegel",
+      "ref": "59",
+      "kind": "road_exit",
+      "way_ids": [
+        24263648
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 264404599,
+      "chain_m": 77793.59830357204,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24370335
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 264404603,
+      "chain_m": 78232.67634933862,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24370335
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 264404604,
+      "chain_m": 81011.03018110195,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24370336
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 15931176,
+      "chain_m": 84458.1459873048,
+      "name": "Herbolzheim",
+      "ref": "58",
+      "kind": "road_exit",
+      "way_ids": [
+        144189462
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 13875745,
+      "chain_m": 87296.0927031193,
+      "name": "Rust",
+      "ref": "57b",
+      "kind": "road_exit",
+      "way_ids": [
+        1545623337
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 456538,
+      "chain_m": 90539.9459640828,
+      "name": "Ettenheim",
+      "ref": "57a",
+      "kind": "road_exit",
+      "way_ids": [
+        10536947
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 456549,
+      "chain_m": 93541.57565102923,
+      "name": "Raststätte Mahlberg",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        722996262
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 264404943,
+      "chain_m": 96787.66091408825,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        723040399
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 265164049,
+      "chain_m": 99768.10330178954,
+      "name": "Lahr",
+      "ref": "56",
+      "kind": "road_exit",
+      "way_ids": [
+        24800642
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 264576301,
+      "chain_m": 100569.13257731775,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24383509
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 264576306,
+      "chain_m": 106119.97241494281,
+      "name": "Rastplatz Schutter",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        723042432
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 268140471,
+      "chain_m": 109537.09011443554,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24669831
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 456611,
+      "chain_m": 114819.51945711926,
+      "name": "Offenburg",
+      "ref": "55",
+      "kind": "road_exit",
+      "way_ids": [
+        177726265
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1864132923,
+      "chain_m": 117975.5618776796,
+      "name": "Rastplatz Waldmatten",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        175854254
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 456636,
+      "chain_m": 122234.49249242707,
+      "name": "Appenweier",
+      "ref": "54",
+      "kind": "road_exit",
+      "way_ids": [
+        539102566
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 456649,
+      "chain_m": 126044.50300473132,
+      "name": "Raststätte Renchtal",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        539044333
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 456680,
+      "chain_m": 136519.7299898093,
+      "name": "Achern",
+      "ref": "53",
+      "kind": "road_exit",
+      "way_ids": [
+        539104317
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1531912181,
+      "chain_m": 140510.11185194826,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        539190123
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 503048382,
+      "chain_m": 147719.58925977707,
+      "name": "Bühl",
+      "ref": "52",
+      "kind": "road_exit",
+      "way_ids": [
+        539203085
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 264582645,
+      "chain_m": 151027.20838183232,
+      "name": "Raststätte Bühl",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        539228862
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 456759,
+      "chain_m": 155659.07149402236,
+      "name": "Baden-Baden",
+      "ref": "51",
+      "kind": "road_exit",
+      "way_ids": [
+        539233421
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 122483958,
+      "chain_m": 158299.69732327937,
+      "name": "Rasthof Baden-Baden",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        539234386
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 260170024,
+      "chain_m": 161327.34123672164,
+      "name": "Rastatt-Süd",
+      "ref": "50",
+      "kind": "rest_area",
+      "way_ids": [
+        539235762
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 456800,
+      "chain_m": 166437.62052193147,
+      "name": "Rastatt-Nord",
+      "ref": "49",
+      "kind": "rest_area",
+      "way_ids": [
+        539259301
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 11251006676,
+      "chain_m": 170489.06294319886,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        539259297
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 456864,
+      "chain_m": 181470.900124938,
+      "name": "Karlsruhe-Süd",
+      "ref": "48",
+      "kind": "road_exit",
+      "way_ids": [
+        539377452
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 25246288,
+      "chain_m": 183521.91382490395,
+      "name": "Ettlingen",
+      "ref": "47",
+      "kind": "road_exit",
+      "way_ids": [
+        539377444
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 441043,
+      "chain_m": 185631.09628954937,
+      "name": "Dreieck Karlsruhe",
+      "ref": "46",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        400657571
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 441050,
+      "chain_m": 187723.60398514676,
+      "name": "Karlsruhe-Mitte",
+      "ref": "45",
+      "kind": "road_exit",
+      "way_ids": [
+        145513044
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1589236994,
+      "chain_m": 189410.7686410623,
+      "name": "Karlsruhe-Durlach",
+      "ref": "44",
+      "kind": "road_exit",
+      "way_ids": [
+        145482535
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 25973879,
+      "chain_m": 191230.5142453386,
+      "name": "Karlsruhe-Nord",
+      "ref": "43",
+      "kind": "road_exit",
+      "way_ids": [
+        4298296
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 456938,
+      "chain_m": 194586.71016297519,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        1443004933
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 456951,
+      "chain_m": 198419.69404591012,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        8607875
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 456967,
+      "chain_m": 202873.9553944629,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        8607688
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 456987,
+      "chain_m": 207635.23324916788,
+      "name": "Bruchsal",
+      "ref": "42",
+      "kind": "road_exit",
+      "way_ids": [
+        4995760
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 482557,
+      "chain_m": 209233.19520110986,
+      "name": "Raststätte Bruchsal",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        4854781
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 277246029,
+      "chain_m": 214140.7621925741,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        8606209
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 457023,
+      "chain_m": 217215.7490709467,
+      "name": "Kronau",
+      "ref": "41",
+      "kind": "road_exit",
+      "way_ids": [
+        8606016
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1588921931,
+      "chain_m": 220767.46209407086,
+      "name": "Rastplatz Lußhardt",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        641522663
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 457046,
+      "chain_m": 223136.72924498437,
+      "name": "Kreuz Walldorf",
+      "ref": "40",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        3666792
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1574364324,
+      "chain_m": 226312.82436059936,
+      "name": "Walldorf / Wiesloch",
+      "ref": "39",
+      "kind": "road_exit",
+      "way_ids": [
+        192675139
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1574341649,
+      "chain_m": 228566.62323232033,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        143868882
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 1574341776,
+      "chain_m": 231281.93888029375,
+      "name": "Hardtwald",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        143868885
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1574280917,
+      "chain_m": 233374.0304548216,
+      "name": "Heidelberg / Schwetzingen",
+      "ref": "38",
+      "kind": "road_exit",
+      "way_ids": [
+        24223735
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 457111,
+      "chain_m": 238606.58724143764,
+      "name": "Kreuz Heidelberg",
+      "ref": "37",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        143862051
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 457130,
+      "chain_m": 242922.59048742414,
+      "name": "Dossenheim",
+      "ref": "36",
+      "kind": "road_exit",
+      "way_ids": [
+        25017736
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 12141896,
+      "chain_m": 244378.55921441576,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        4060048
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 457140,
+      "chain_m": 246184.07300397198,
+      "name": "Ladenburg",
+      "ref": "35",
+      "kind": "road_exit",
+      "way_ids": [
+        4591334
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1574869925,
+      "chain_m": 249442.22334707054,
+      "name": "Hirschberg",
+      "ref": "34",
+      "kind": "road_exit",
+      "way_ids": [
+        317092045
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 457162,
+      "chain_m": 251764.3673870056,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        143927686
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 21497250,
+      "chain_m": 253678.16494131065,
+      "name": "Kreuz Weinheim",
+      "ref": "33",
+      "kind": "road_exit",
+      "way_ids": [
+        194829627
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 15841692,
+      "chain_m": 259050.39385289943,
+      "name": "Hemsbach",
+      "ref": "32",
+      "kind": "road_exit",
+      "way_ids": [
+        264787386
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 6402161935,
+      "chain_m": 260773.07940981752,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        1075430524
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 11293113,
+      "chain_m": 265527.78851086355,
+      "name": "Heppenheim",
+      "ref": "31",
+      "kind": "road_exit",
+      "way_ids": [
+        3234782
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 11325154,
+      "chain_m": 267168.47295829764,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        1075428378
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 10857354,
+      "chain_m": 268557.32390695746,
+      "name": "Bensheim",
+      "ref": "30",
+      "kind": "road_exit",
+      "way_ids": [
+        8104276
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 482690,
+      "chain_m": 270195.5475699193,
+      "name": "Rasthof Bergstraße",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        1075447019
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 11749333,
+      "chain_m": 274191.4256075031,
+      "name": "Zwingenberg",
+      "ref": "29",
+      "kind": "road_exit",
+      "way_ids": [
+        3235110
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 30077052,
+      "chain_m": 275062.7654580878,
+      "name": "Rastplatz Nachtweide",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        1075446618
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 457267,
+      "chain_m": 279146.0665298635,
+      "name": "Rastplatz Erlensee",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        4722183
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1673626409,
+      "chain_m": 280524.3974500518,
+      "name": "Seeheim-Jugenheim",
+      "ref": "28",
+      "kind": "road_exit",
+      "way_ids": [
+        4010030
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 457292,
+      "chain_m": 284396.24105843744,
+      "name": "Darmstadt-Eberstadt",
+      "ref": "27",
+      "kind": "road_exit",
+      "way_ids": [
+        4042444
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 457327,
+      "chain_m": 290717.1675114394,
+      "name": "Darmstädter Kreuz",
+      "ref": "26",
+      "kind": "road_exit",
+      "way_ids": [
+        1711295
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 501951,
+      "chain_m": 292003.4337964808,
+      "name": "Darmstädter Nordkreuz",
+      "ref": "26",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        3998410
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 480479,
+      "chain_m": 295067.06709884555,
+      "name": "Weiterstadt",
+      "ref": "25",
+      "kind": "road_exit",
+      "way_ids": [
+        5080928
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 480496,
+      "chain_m": 296375.8552777191,
+      "name": "Rastplatz Täubcheshöhle",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        5081142
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 355268772,
+      "chain_m": 300617.516584049,
+      "name": "Rasthof Gräfenhausen",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        5995042
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 480600,
+      "chain_m": 303877.9299336671,
+      "name": "Rastplatz Bornbruch",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        4887697
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 630747837,
+      "chain_m": 304571.57414759195,
+      "name": "Langen / Mörfelden",
+      "ref": "24",
+      "kind": "road_exit",
+      "way_ids": [
+        49602252
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 482455,
+      "chain_m": 306877.37566808244,
+      "name": "Rastplatz Kaiserstein",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        4892154
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 2702292694,
+      "chain_m": 309477.50159268803,
+      "name": "Zeppelinheim",
+      "ref": "23",
+      "kind": "road_exit",
+      "way_ids": [
+        1093775774
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 480638,
+      "chain_m": 312297.95627281646,
+      "name": "Frankfurter Kreuz",
+      "ref": "22",
+      "kind": "road_exit",
+      "way_ids": [
+        4488554
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 663288171,
+      "chain_m": 316621.5594900557,
+      "name": "Frankfurt-Niederrad",
+      "ref": "21",
+      "kind": "road_exit",
+      "way_ids": [
+        1451030465
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 480748,
+      "chain_m": 319668.12523097935,
+      "name": "Westkreuz Frankfurt",
+      "ref": "19",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        481369956
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 480764,
+      "chain_m": 322375.17421703774,
+      "name": "Nordwestkreuz Frankfurt",
+      "ref": "18",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        4274917
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 482636,
+      "chain_m": 330717.9474263524,
+      "name": "Bad Homburger Kreuz",
+      "ref": "17",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        4893756
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 8467857381,
+      "chain_m": 336884.25701029104,
+      "name": "Rastplatz Schäferborn",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        911875446
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 59969181,
+      "chain_m": 341064.6439779215,
+      "name": "Friedberg",
+      "ref": "16",
+      "kind": "road_exit",
+      "way_ids": [
+        8018624
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 480948,
+      "chain_m": 349190.0631324167,
+      "name": "Raststätte Wetterau Ost",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        481432652
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 480983,
+      "chain_m": 352498.35621913226,
+      "name": "Ober-Mörlen",
+      "ref": "14",
+      "kind": "road_exit",
+      "way_ids": [
+        25494240
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1672843508,
+      "chain_m": 355149.7162877933,
+      "name": "Bad Nauheim",
+      "ref": "13",
+      "kind": "road_exit",
+      "way_ids": [
+        154815754
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1672843530,
+      "chain_m": 358415.1101654331,
+      "name": "Butzbach",
+      "ref": "12",
+      "kind": "road_exit",
+      "way_ids": [
+        154815759
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 481030,
+      "chain_m": 362295.7449206831,
+      "name": "Gambacher Kreuz",
+      "ref": "11",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        481432640
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 317150823,
+      "chain_m": 363277.18186655897,
+      "name": "Würzburg;Hanau",
+      "ref": "",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        28846505
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "north",
+      "node": 256549579,
+      "chain_m": 369100.49004865636,
+      "name": "Rastplatz Limes-Ost",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        481432624
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1574783055,
+      "chain_m": 372470.3362137513,
+      "name": "Fernwald",
+      "ref": "10",
+      "kind": "road_exit",
+      "way_ids": [
+        143309903
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1569113473,
+      "chain_m": 378707.63770100847,
+      "name": "Reiskirchen",
+      "ref": "9",
+      "kind": "road_exit",
+      "way_ids": [
+        143309895
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 481165,
+      "chain_m": 380549.6977322347,
+      "name": "Reiskirchener Dreieck",
+      "ref": "8",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        142591995
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1559388440,
+      "chain_m": 385497.4243926987,
+      "name": "Reinhardshain Süd",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        481588896
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1559388346,
+      "chain_m": 387969.2930470965,
+      "name": "Grünberg",
+      "ref": "7",
+      "kind": "road_exit",
+      "way_ids": [
+        142496557
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 835137888,
+      "chain_m": 390818.61885559885,
+      "name": "Rastplatz Heg-Berg",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        69855743
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1553823314,
+      "chain_m": 392625.6451448084,
+      "name": "Homberg (Ohm)",
+      "ref": "6",
+      "kind": "road_exit",
+      "way_ids": [
+        144174666
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 4745367896,
+      "chain_m": 402146.48320735653,
+      "name": "Ohmtal-Dreieck",
+      "ref": "4",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        1532934030
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 481397,
+      "chain_m": 405229.708258763,
+      "name": "Rastplatz Krachgarten",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        8204850
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 481460,
+      "chain_m": 415621.87974940456,
+      "name": "Alsfeld-West",
+      "ref": "3",
+      "kind": "road_exit",
+      "way_ids": [
+        4673481
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1585036888,
+      "chain_m": 420243.5446737376,
+      "name": "Alsfeld-Ost",
+      "ref": "2",
+      "kind": "road_exit",
+      "way_ids": [
+        145037542
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1585037372,
+      "chain_m": 424339.0162995731,
+      "name": "Rastplatz Eifa",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        482052582
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1586387300,
+      "chain_m": 434497.16828433017,
+      "name": "Raststätte Rimberg",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        145208972
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 481633,
+      "chain_m": 436434.63663789217,
+      "name": "Barnholz",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        205946654
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 1585064541,
+      "chain_m": 437811.62003605027,
+      "name": "Hattenbacher Dreieck",
+      "ref": "1",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        145039181
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "north",
+      "node": 481675,
+      "chain_m": 440275.88424818125,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        146291082
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 1586387413,
+      "chain_m": 5282.711676159428,
+      "name": "Raststätte Rimberg",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        145208970
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1587167323,
+      "chain_m": 7929.815676916216,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        482052575
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 2721451767,
+      "chain_m": 14833.578846302,
+      "name": "Rasthof Berfa",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        482052579
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1585036909,
+      "chain_m": 19841.725791095014,
+      "name": "Alsfeld-Ost",
+      "ref": "2",
+      "kind": "road_exit",
+      "way_ids": [
+        145037551
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 463536,
+      "chain_m": 24081.713902273215,
+      "name": "Alsfeld-West",
+      "ref": "3",
+      "kind": "road_exit",
+      "way_ids": [
+        31309577
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1563519573,
+      "chain_m": 34204.217263559556,
+      "name": "Rastplatz Dottenberg",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        457980400
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 8652876115,
+      "chain_m": 37589.91325787708,
+      "name": "Ohmtal-Dreieck",
+      "ref": "4",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        132324509
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1551986266,
+      "chain_m": 47439.450729025855,
+      "name": "Homberg (Ohm)",
+      "ref": "6",
+      "kind": "road_exit",
+      "way_ids": [
+        141791085
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1559445838,
+      "chain_m": 49161.79832265189,
+      "name": "Rastplatz Finkenwald",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        42512447
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1559445749,
+      "chain_m": 52182.5583289996,
+      "name": "Grünberg",
+      "ref": "7",
+      "kind": "road_exit",
+      "way_ids": [
+        142496558
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1559388567,
+      "chain_m": 54409.486469761025,
+      "name": "Reinhardshain Nord",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        481588889
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1560511470,
+      "chain_m": 59649.99519896537,
+      "name": "Reiskirchener Dreieck",
+      "ref": "8",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        142591994
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1574783135,
+      "chain_m": 61439.901473856975,
+      "name": "Reiskirchen",
+      "ref": "9",
+      "kind": "road_exit",
+      "way_ids": [
+        143920241
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 252689637,
+      "chain_m": 67908.09110959838,
+      "name": "Fernwald",
+      "ref": "10",
+      "kind": "road_exit",
+      "way_ids": [
+        143920258
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 466368,
+      "chain_m": 70858.89225922413,
+      "name": "Limes-West",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        481432623
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1564363645,
+      "chain_m": 76226.9623302807,
+      "name": "Gambacher Kreuz",
+      "ref": "11",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        27824824
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1672843545,
+      "chain_m": 81667.68692515316,
+      "name": "Butzbach",
+      "ref": "12",
+      "kind": "road_exit",
+      "way_ids": [
+        154815734
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1672843514,
+      "chain_m": 85077.6764934442,
+      "name": "Bad Nauheim",
+      "ref": "13",
+      "kind": "road_exit",
+      "way_ids": [
+        154815758
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 60013311,
+      "chain_m": 87642.72573700554,
+      "name": "Ober-Mörlen",
+      "ref": "14",
+      "kind": "road_exit",
+      "way_ids": [
+        8028893
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 466510,
+      "chain_m": 90551.77459968426,
+      "name": "Raststätte Wetterau West",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        481432651
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 463648,
+      "chain_m": 98609.61354717525,
+      "name": "Friedberg",
+      "ref": "16",
+      "kind": "road_exit",
+      "way_ids": [
+        8018536
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 466572,
+      "chain_m": 99077.72259601677,
+      "name": "Friedberg",
+      "ref": "16",
+      "kind": "road_exit",
+      "way_ids": [
+        24322752
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 60013734,
+      "chain_m": 102644.81893426509,
+      "name": "Rastplatz Spießwald",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        481432662
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 466634,
+      "chain_m": 108650.11353822063,
+      "name": "Bad Homburger Kreuz",
+      "ref": "17",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        1562527006
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 3309983928,
+      "chain_m": 114996.89595838166,
+      "name": "Raststätte Taunusblick",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        324268013
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 544599,
+      "chain_m": 117216.42299801574,
+      "name": "Nordwestkreuz Frankfurt",
+      "ref": "18",
+      "kind": "road_exit",
+      "way_ids": [
+        4274915
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 463085,
+      "chain_m": 119439.83320186267,
+      "name": "Westkreuz Frankfurt",
+      "ref": "19",
+      "kind": "road_exit",
+      "way_ids": [
+        4000560
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 426433,
+      "chain_m": 122665.73942007402,
+      "name": "Frankfurt-Westhafen",
+      "ref": "20",
+      "kind": "road_exit",
+      "way_ids": [
+        4269211
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1446239083,
+      "chain_m": 124287.30349438146,
+      "name": "Frankfurt-Niederrad",
+      "ref": "21",
+      "kind": "road_exit",
+      "way_ids": [
+        1451030466
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 13307826438,
+      "chain_m": 126193.73818826133,
+      "name": "Frankfurter Kreuz",
+      "ref": "22",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        321554750
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 466026,
+      "chain_m": 128880.1533733522,
+      "name": "Zeppelinheim",
+      "ref": "23",
+      "kind": "road_exit",
+      "way_ids": [
+        4492273
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 466762,
+      "chain_m": 132879.34993056068,
+      "name": "Rastplatz Steingrund",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        4892158
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 463073,
+      "chain_m": 134787.645449025,
+      "name": "Langen / Mörfelden",
+      "ref": "24",
+      "kind": "road_exit",
+      "way_ids": [
+        1145625631
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 482447,
+      "chain_m": 136044.64907613044,
+      "name": "Rastplatz Bornbruch",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        4887698
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 469388,
+      "chain_m": 139078.87695438493,
+      "name": "Rasthof Gräfenhausen",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        5995058
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 462472,
+      "chain_m": 143669.28786947147,
+      "name": "Rastplatz Brühlgraben",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        5081138
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 52031796,
+      "chain_m": 144327.13761959696,
+      "name": "Weiterstadt",
+      "ref": "25",
+      "kind": "road_exit",
+      "way_ids": [
+        10267953
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 470417,
+      "chain_m": 147408.3084714769,
+      "name": "Darmstädter Nordkreuz",
+      "ref": "26",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        3998413
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 463178,
+      "chain_m": 148995.36944304663,
+      "name": "Darmstädter Kreuz",
+      "ref": "26",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        1532947737
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 463231,
+      "chain_m": 155899.35329709316,
+      "name": "Darmstadt-Eberstadt",
+      "ref": "27",
+      "kind": "road_exit",
+      "way_ids": [
+        4042442
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 468562,
+      "chain_m": 158070.84298173696,
+      "name": "Rastplatz Rolandshöhe",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        28439058
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 592848,
+      "chain_m": 159970.19879468417,
+      "name": "Seeheim-Jugenheim",
+      "ref": "28",
+      "kind": "road_exit",
+      "way_ids": [
+        4010029
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 467063,
+      "chain_m": 163397.5951392771,
+      "name": "Raststätte Alsbach",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        8045147
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 459828,
+      "chain_m": 166321.602135915,
+      "name": "Zwingenberg",
+      "ref": "29",
+      "kind": "road_exit",
+      "way_ids": [
+        3062182
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 279405943,
+      "chain_m": 169064.10689292755,
+      "name": "Rastplatz Scheidweg",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        40253400
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 592891,
+      "chain_m": 171936.85553345532,
+      "name": "Bensheim",
+      "ref": "30",
+      "kind": "road_exit",
+      "way_ids": [
+        8104277
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 359859092,
+      "chain_m": 174605.77759334465,
+      "name": "Heppenheim",
+      "ref": "31",
+      "kind": "road_exit",
+      "way_ids": [
+        143775417
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 592921,
+      "chain_m": 177786.2698709752,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        1075430521
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 13917026,
+      "chain_m": 181043.00657707747,
+      "name": "Hemsbach",
+      "ref": "32",
+      "kind": "road_exit",
+      "way_ids": [
+        665408894
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 11293095,
+      "chain_m": 182132.73476321585,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        4442518
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 459906,
+      "chain_m": 185680.85218722778,
+      "name": "Kreuz Weinheim",
+      "ref": "33",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        5073244
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1574900249,
+      "chain_m": 187834.13538014123,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        13500782
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 1574869929,
+      "chain_m": 190597.53527352636,
+      "name": "Hirschberg",
+      "ref": "34",
+      "kind": "road_exit",
+      "way_ids": [
+        4156666
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 25252015,
+      "chain_m": 194239.7257065968,
+      "name": "Ladenburg",
+      "ref": "35",
+      "kind": "road_exit",
+      "way_ids": [
+        4231703
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1574847808,
+      "chain_m": 195337.5106237656,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        143926602
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 592998,
+      "chain_m": 197529.8699610933,
+      "name": "Dossenheim",
+      "ref": "36",
+      "kind": "road_exit",
+      "way_ids": [
+        25017703
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1574242868,
+      "chain_m": 200404.90190295698,
+      "name": "Kreuz Heidelberg",
+      "ref": "37",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        4084006
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 468756,
+      "chain_m": 205871.83635025733,
+      "name": "Heidelberg / Schwetzingen",
+      "ref": "38",
+      "kind": "road_exit",
+      "way_ids": [
+        24560772
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 468765,
+      "chain_m": 208415.46810617883,
+      "name": "Hardtwald",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        5073983
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 2015616752,
+      "chain_m": 211628.6957736476,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        70053053
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 90636873,
+      "chain_m": 213976.35875587846,
+      "name": "Walldorf / Wiesloch",
+      "ref": "39",
+      "kind": "road_exit",
+      "way_ids": [
+        143871074
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 589310,
+      "chain_m": 215850.24219967052,
+      "name": "Kreuz Walldorf",
+      "ref": "40",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        143868866
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 61193459,
+      "chain_m": 219212.3796041782,
+      "name": "Mönchberg",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        641522666
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 464743,
+      "chain_m": 222519.37548037348,
+      "name": "Kronau",
+      "ref": "41",
+      "kind": "road_exit",
+      "way_ids": [
+        4065286
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 283808896,
+      "chain_m": 226119.59090083945,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        1091817400
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 468996,
+      "chain_m": 230172.70893869517,
+      "name": "Raststätte Bruchsal",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        3666791
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 462552,
+      "chain_m": 231799.40604955127,
+      "name": "Bruchsal",
+      "ref": "42",
+      "kind": "road_exit",
+      "way_ids": [
+        4995762
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 357491211,
+      "chain_m": 237375.3137397136,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        31915341
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 271345254,
+      "chain_m": 241890.98201139946,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24970841
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 25973877,
+      "chain_m": 248231.18365531918,
+      "name": "Karlsruhe-Nord",
+      "ref": "43",
+      "kind": "road_exit",
+      "way_ids": [
+        145480956
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1482199079,
+      "chain_m": 250142.99667684574,
+      "name": "Karlsruhe-Durlach",
+      "ref": "44",
+      "kind": "road_exit",
+      "way_ids": [
+        134887461
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 452534,
+      "chain_m": 252025.55506594855,
+      "name": "Karlsruhe-Mitte",
+      "ref": "45",
+      "kind": "road_exit",
+      "way_ids": [
+        1550084002
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 21286445,
+      "chain_m": 253419.77367584765,
+      "name": "Dreieck Karlsruhe",
+      "ref": "46",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        4210185
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 451389,
+      "chain_m": 256681.52448332432,
+      "name": "Ettlingen",
+      "ref": "47",
+      "kind": "road_exit",
+      "way_ids": [
+        539377442
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1677677307,
+      "chain_m": 258457.09833585797,
+      "name": "Karlsruhe-Süd",
+      "ref": "48",
+      "kind": "road_exit",
+      "way_ids": [
+        155363724
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 122350812,
+      "chain_m": 269535.2585803667,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        539259293
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 452629,
+      "chain_m": 273794.64131010283,
+      "name": "Rastatt-Nord",
+      "ref": "49",
+      "kind": "rest_area",
+      "way_ids": [
+        3530535
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 260170389,
+      "chain_m": 279250.72224865534,
+      "name": "Rastatt-Süd",
+      "ref": "50",
+      "kind": "rest_area",
+      "way_ids": [
+        539235763
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 25578788,
+      "chain_m": 281351.760916685,
+      "name": "Rasthof Baden-Baden",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        539235236
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 469556,
+      "chain_m": 283661.2525849386,
+      "name": "Baden-Baden",
+      "ref": "51",
+      "kind": "road_exit",
+      "way_ids": [
+        499318435
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1107042397,
+      "chain_m": 290920.3364608549,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        539228853
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 74978265,
+      "chain_m": 292919.57802118716,
+      "name": "Bühl",
+      "ref": "52",
+      "kind": "road_exit",
+      "way_ids": [
+        539203088
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1108845154,
+      "chain_m": 301604.5196631385,
+      "name": "Feldmatt",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        539185285
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 452722,
+      "chain_m": 303266.1308073036,
+      "name": "Achern",
+      "ref": "53",
+      "kind": "road_exit",
+      "way_ids": [
+        539104313
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 13888659,
+      "chain_m": 313864.8338193252,
+      "name": "Raststätte Renchtal",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        539044346
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 2756338846,
+      "chain_m": 317163.1062385526,
+      "name": "Appenweier",
+      "ref": "54",
+      "kind": "road_exit",
+      "way_ids": [
+        1473298160
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1249931746,
+      "chain_m": 322055.1990105488,
+      "name": "Rastplatz Gottswald",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        959859678
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 14917071,
+      "chain_m": 324967.5695934921,
+      "name": "Offenburg",
+      "ref": "55",
+      "kind": "road_exit",
+      "way_ids": [
+        4760069
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 269273909,
+      "chain_m": 330800.9172139269,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24781905
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 269273816,
+      "chain_m": 334026.2639321759,
+      "name": "Rastplatz Unditz",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        723042430
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 452838,
+      "chain_m": 339764.40415282495,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        4963014
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 32863790,
+      "chain_m": 340516.9474823291,
+      "name": "Lahr",
+      "ref": "56",
+      "kind": "road_exit",
+      "way_ids": [
+        4963015
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 452859,
+      "chain_m": 345944.4683655709,
+      "name": "Raststätte Mahlberg",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        1340560538
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 108291272,
+      "chain_m": 349698.63789281144,
+      "name": "Ettenheim",
+      "ref": "57a",
+      "kind": "road_exit",
+      "way_ids": [
+        11991890
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 61198935,
+      "chain_m": 352974.7535408006,
+      "name": "Rust",
+      "ref": "57b",
+      "kind": "road_exit",
+      "way_ids": [
+        8606294
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 82721007,
+      "chain_m": 355820.2041863518,
+      "name": "Herbolzheim",
+      "ref": "58",
+      "kind": "road_exit",
+      "way_ids": [
+        10065663
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 452898,
+      "chain_m": 358757.52167362033,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        5488423
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 265838872,
+      "chain_m": 362453.10070501396,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24459407
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 265838876,
+      "chain_m": 362778.08800809167,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24459407
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 255327322,
+      "chain_m": 364183.1336772335,
+      "name": "Riegel",
+      "ref": "59",
+      "kind": "road_exit",
+      "way_ids": [
+        23578147
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 265838972,
+      "chain_m": 368409.9522000378,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24459508
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 59672513,
+      "chain_m": 369391.8642863253,
+      "name": "Teningen",
+      "ref": "60",
+      "kind": "road_exit",
+      "way_ids": [
+        7976701
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 265839027,
+      "chain_m": 372532.78068456776,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        546114629
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 2118959836,
+      "chain_m": 375270.9945706819,
+      "name": "Freiburg-Nord",
+      "ref": "61",
+      "kind": "road_exit",
+      "way_ids": [
+        4230571
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 108284327,
+      "chain_m": 376606.40700347157,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        1338932948
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 31448392,
+      "chain_m": 380041.5370591784,
+      "name": "Freiburg-Mitte",
+      "ref": "62",
+      "kind": "road_exit",
+      "way_ids": [
+        33548606
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 265839228,
+      "chain_m": 385285.54142630496,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24459516
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 124565240,
+      "chain_m": 386387.6242149771,
+      "name": "Freiburg-Süd",
+      "ref": "63",
+      "kind": "road_exit",
+      "way_ids": [
+        13546153
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 2408301622,
+      "chain_m": 392653.5179620819,
+      "name": "Bad Krozingen",
+      "ref": "64a",
+      "kind": "road_exit",
+      "way_ids": [
+        84396952
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 263680217,
+      "chain_m": 394614.65561358345,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24317654
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 453033,
+      "chain_m": 395036.3587954081,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24317654
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 453046,
+      "chain_m": 398927.33411065064,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        24317690
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 75733133,
+      "chain_m": 400767.78600335505,
+      "name": "Hartheim / Heitersheim",
+      "ref": "64b",
+      "kind": "road_exit",
+      "way_ids": [
+        9662604
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 301725023,
+      "chain_m": 404315.0668866345,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        132723406
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 981122665,
+      "chain_m": 404726.04971041874,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        144834575
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 21307648,
+      "chain_m": 409526.46772425045,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        4019028
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 251929836,
+      "chain_m": 411413.1976477678,
+      "name": "Müllheim / Neuenburg",
+      "ref": "65",
+      "kind": "road_exit",
+      "way_ids": [
+        23278692
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 21307661,
+      "chain_m": 414509.1515786405,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        4019029
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 21307672,
+      "chain_m": 414860.10719001177,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        4019029
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 30961144,
+      "chain_m": 415827.9451581192,
+      "name": "Dreieck Neuenburg",
+      "ref": "66",
+      "kind": "road_exit",
+      "way_ids": [
+        4818871
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 453121,
+      "chain_m": 420164.3334930305,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        4019031
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 453152,
+      "chain_m": 424517.25788849243,
+      "name": "Rastplatz Fischergrund",
+      "ref": "",
+      "kind": "rest_area",
+      "way_ids": [
+        1432075393
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 243912316,
+      "chain_m": 427852.0464600921,
+      "name": "Efringen-Kirchen",
+      "ref": "67",
+      "kind": "road_exit",
+      "way_ids": [
+        22737446
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 453197,
+      "chain_m": 435900.67917686055,
+      "name": "Dreieck Weil am Rhein",
+      "ref": "68",
+      "kind": "motorway_transfer",
+      "way_ids": [
+        572463648
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 453208,
+      "chain_m": 438427.1141491827,
+      "name": "Weil am Rhein / Hüningen",
+      "ref": "69",
+      "kind": "road_exit",
+      "way_ids": [
+        151269358
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 1067781160,
+      "chain_m": 438716.64579286164,
+      "name": "Leer;Transit;NTCS",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        91892864
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 980654982,
+      "chain_m": 438739.0594464113,
+      "name": "Import",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        91893095
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 761204861,
+      "chain_m": 439299.85839032585,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        395899277
+      ],
+      "motorway_junction_tag": false
+    },
+    {
+      "direction": "south",
+      "node": 3986990220,
+      "chain_m": 439484.4896089928,
+      "name": "Raststätte Basel-Weil/Rhein",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        395899285
+      ],
+      "motorway_junction_tag": true
+    },
+    {
+      "direction": "south",
+      "node": 13424209901,
+      "chain_m": 440469.7283998298,
+      "name": "Ответвление без названия",
+      "ref": "",
+      "kind": "road_exit",
+      "way_ids": [
+        137361916
+      ],
+      "motorway_junction_tag": false
+    }
+  ]
 }

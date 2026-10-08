@@ -13,7 +13,7 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
   const [methodOpen, setMethodOpen] = useState(false)
   const methodId = useId()
   const summary = pilot?.summary.find(s => s.direction === direction)
-  const exitZones = route === 'A5' && pilot?.candidateMethod === 'a5-all-exits-road-zones-v1'
+  const exitZones = pilot?.candidateMethod === 'all-exits-road-zones-v1' || (route === 'A5' && pilot?.candidateMethod === 'a5-all-exits-road-zones-v1')
   const directionSites = pilot?.sites.filter(s => s.direction === direction) || []
   const reviewSites = directionSites.filter(s => s.status === 'unconfirmed')
   const reviewFast = reviewSites.filter(s => s.fast_points > 0).length
@@ -56,7 +56,7 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
             <p className="note">Длина A1 — сумма длин двух раздельных участков направления. Между ними реальный разрыв в Эйфеле. Интервалы считаются внутри каждого участка; через разрыв линия не проводится.</p>
             <ul className="a9-method-list note">{pilot.sections.filter(s => s.direction === direction).map(s => <li key={s.section}>{s.section === 'northern' ? 'Heiligenhafen — Blankenheim' : 'Kelberg — Saarbrücken'}: {number(s.length_km)} км · максимальный расчётный интервал {s.max_gap_km == null ? '—' : number(s.max_gap_km)} км.</li>)}</ul>
           </>}
-          {exitZones && <p className="note">Оба направления проверены отдельно от всех разрешённых ответвлений, включая площадки отдыха. В подъездной сети учитываются другие автобаны. Развязки помогают разбирать участки; отбор идёт по дорожному пути, а не по расстоянию вдоль A5. Длинные подъезды исключены по диагностической сети OSM; это не заключение об отсутствии короткого пути на местности. Диагностическое снятие ограничений не подтверждает доступ.</p>}
+          {exitZones && <p className="note">Оба направления проверены отдельно от всех разрешённых ответвлений, включая площадки отдыха. В подъездной сети учитываются другие автобаны. Развязки помогают разбирать участки; отбор идёт по дорожному пути, а не по расстоянию вдоль {route}. Длинные подъезды исключены по диагностической сети OSM; это не заключение об отсутствии короткого пути на местности. Диагностическое снятие ограничений не подтверждает доступ.</p>}
           <p className="note">Бирюзовые площадки с найденным маршрутом показаны сразу. Площадки, требующие проверки, включаются чекбоксом в правой панели. Реальные въезды требуют проверки. Группировка временно отключена.</p>
           <div className="a9-key a9-point-key"><div><i className="a9-point a9-point-eligible" />Маршрут найден, ≥400 кВт и DC ≥150 кВт</div><div><i className="a9-point" />Маршрут найден, мощности недостаточно для расчёта</div><div><i className="a9-point a9-point-unrouted" />Площадка требует проверки</div></div>
           <p className="note">{pilot.accessNetwork ? 'Маршруты по OSM учитывают одностороннее движение, запреты поворотов и ограничения доступа. Въезды на сами площадки не проверены. Подъезд ≤3 км, возврат на своё направление ≤3 км; привязка к ближайшей дороге ≤60 м. AFIR задаёт подъезд ≤3 км; предел возврата ≤3 км и привязка ≤60 м — дополнительные условия пилота.' : 'Подъездная сеть ещё не проверена. Близость к автобану не подтверждает доступность с выбранного направления.'}</p>

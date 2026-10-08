@@ -35,3 +35,13 @@ data_sources/a9/access-network.json
 offline_sources/
 data_sources/a1/access-network.json
 /data.zip
+
+# Step 27: local Python environment and extracted PBF networks
+/.venv-pbf/
+/data_sources/pbf_networks*/
+pbf-work-*/
+
+# Reproducible spatial indexes and per-tile routing checkpoints
+data_sources/road-analysis-cache/
+data_sources/a1/exit-zone-checkpoints/
+data_sources/a9/exit-zone-checkpoints/

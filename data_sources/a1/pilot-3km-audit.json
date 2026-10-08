@@ -1,28 +1,33 @@
 {
   "route": "A1",
-  "routing_policy": "pilot-3km-out-3km-back-v1",
-  "interval_method": "return-road-approach-v1",
+  "method": "all-exits-road-zones-v1",
   "directions": [
     {
       "direction": "north",
       "length_km": 745.82,
       "candidates": 2062,
-      "routed": 493,
-      "fast_routed": 161,
-      "eligible_routed": 102,
+      "routed": 554,
+      "fast_routed": 180,
+      "eligible_routed": 114,
+      "distance_excluded": 1241,
+      "unresolved": 267,
       "unknown_segments": 4,
       "verified_entrances": 0,
+      "active_candidates": 821,
       "max_gap_km": 56.6
     },
     {
       "direction": "south",
       "length_km": 745.73,
       "candidates": 2066,
-      "routed": 456,
-      "fast_routed": 159,
-      "eligible_routed": 101,
+      "routed": 501,
+      "fast_routed": 172,
+      "eligible_routed": 107,
+      "distance_excluded": 1293,
+      "unresolved": 272,
       "unknown_segments": 4,
       "verified_entrances": 0,
+      "active_candidates": 773,
       "max_gap_km": 56.9
     }
   ],
@@ -32,10 +37,12 @@
       "section": "northern",
       "length_km": 606.394,
       "candidates": 1903,
-      "routed": 462,
-      "fast_routed": 154,
-      "eligible_routed": 98,
-      "max_gap_km": 52.6,
+      "routed": 521,
+      "fast_routed": 173,
+      "eligible_routed": 110,
+      "distance_excluded": 1146,
+      "unresolved": 236,
+      "max_gap_km": 44.8,
       "unknown_segments": 2,
       "verified_entrances": 0
     },
@@ -44,10 +51,12 @@
       "section": "northern",
       "length_km": 606.723,
       "candidates": 1909,
-      "routed": 423,
-      "fast_routed": 152,
-      "eligible_routed": 97,
-      "max_gap_km": 52.3,
+      "routed": 465,
+      "fast_routed": 164,
+      "eligible_routed": 103,
+      "distance_excluded": 1203,
+      "unresolved": 241,
+      "max_gap_km": 45.7,
       "unknown_segments": 2,
       "verified_entrances": 0
     },
@@ -56,9 +65,11 @@
       "section": "southern",
       "length_km": 139.426,
       "candidates": 159,
-      "routed": 31,
+      "routed": 33,
       "fast_routed": 7,
       "eligible_routed": 4,
+      "distance_excluded": 95,
+      "unresolved": 31,
       "max_gap_km": 56.6,
       "unknown_segments": 2,
       "verified_entrances": 0
@@ -68,14 +79,80 @@
       "section": "southern",
       "length_km": 139.004,
       "candidates": 157,
-      "routed": 33,
-      "fast_routed": 7,
+      "routed": 36,
+      "fast_routed": 8,
       "eligible_routed": 4,
+      "distance_excluded": 90,
+      "unresolved": 31,
       "max_gap_km": 56.9,
       "unknown_segments": 2,
       "verified_entrances": 0
     }
   ],
-  "cached_link_revalidation": true,
-  "fresh_network_search": false
+  "topology": {
+    "unused_relation_way_ids_absent": [],
+    "all_main_path_edges_verified_in_pbf": true
+  },
+  "graph_window": {
+    "tile_m": 30000,
+    "margin_m": 16000,
+    "max_diagnostic_path_m": 15000,
+    "window": "candidate_envelope; earlier checkpoints may use whole tile"
+  },
+  "network_sha256": "5938829593026a2df6a0dc793c8b822a78fc66e9e10bfbc88790dd1beb0eaff4",
+  "source_audit": {
+    "provider": "local OSM PBF",
+    "file": "germany-latest.osm.pbf",
+    "bytes": 4855437391,
+    "sha256": "c3e5695a2775537406b841b1d7c1f69c2b2c18190fe098a1b9de7442b0f859b8",
+    "replication_timestamp": "2026-10-06T20:21:06Z",
+    "route": "A1",
+    "seed": "existing pilot geometry",
+    "buffer_km": 20,
+    "buffer_origin": "Step 27 default; not recorded in legacy SQLite",
+    "source_verification": {
+      "matched_objects": 256,
+      "method": "first/last 32 objects per kind and route",
+      "original_source_sha256_available": false
+    },
+    "recovered_from_step27": true,
+    "all_restriction_members_present": false,
+    "incomplete_restrictions": 5,
+    "incomplete_restriction_policy": "block_member_ways",
+    "counts": {
+      "node": 4958571,
+      "relation": 25585,
+      "way": 1071100
+    },
+    "closure_passes": 4,
+    "all_way_nodes_present": true,
+    "routing_performed": false
+  },
+  "restriction_safety": {
+    "incomplete_restriction_ids": [
+      2918738,
+      7343736,
+      7343737,
+      7343738,
+      7343739
+    ],
+    "blocked_member_way_ids": [
+      24669914,
+      95807057,
+      207113230,
+      501804945,
+      501804948,
+      501804952,
+      501804958
+    ],
+    "policy": "block_member_ways_in_strict_graph",
+    "strict_paths_checked_against_blocked_members": 1055
+  },
+  "exit_inventory_scope": "candidate_windows; every route node is a search seed",
+  "entrances_verified": 0,
+  "input_binding": {
+    "startup_sha256": "00336695cfadd1c46e4d29ab19d2258beabba1406e55db765d702c51670b6db5",
+    "groups_sha256": "d009848ee3be5f9fe4b4383cbed1af707c6f4312fe345aecc212602b3822f1f2",
+    "route_paths_sha256": "6dc3abac2b87f8e9f1afbce9e040124b38f5b5e6d78a59f1a000fcd1a6dd63f2"
+  }
 }

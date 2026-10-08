@@ -25,9 +25,10 @@ def sha(path):
 
 def read_objects(source):
     objects = {}
-    for path in sorted(source.glob('*.json')):
-        if path.name.startswith('pilot-') or path.name in ('access-network.json', 'access-links.json', 'audit.json'):
-            continue
+    # Only audited core extracts belong to this topology cache. Routing reports
+    # and extraction audits in the same directory are not raw OSM elements.
+    paths = [p for p in source.glob('*.json') if p.name.startswith(('relation-', 'node-', 'repair-way-'))]
+    for path in sorted(paths):
         for obj in json.loads(path.read_text())['elements']:
             key = (obj['type'], obj['id'])
             if key not in objects or obj.get('version', 0) >= objects[key].get('version', 0):

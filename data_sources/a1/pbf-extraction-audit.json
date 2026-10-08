@@ -1,0 +1,28 @@
+{
+  "provider": "local OSM PBF",
+  "file": "germany-latest.osm.pbf",
+  "bytes": 4855437391,
+  "sha256": "c3e5695a2775537406b841b1d7c1f69c2b2c18190fe098a1b9de7442b0f859b8",
+  "replication_timestamp": "2026-10-06T20:21:06Z",
+  "route": "A1",
+  "seed": "existing pilot geometry",
+  "buffer_km": 20,
+  "buffer_origin": "Step 27 default; not recorded in legacy SQLite",
+  "source_verification": {
+    "matched_objects": 256,
+    "method": "first/last 32 objects per kind and route",
+    "original_source_sha256_available": false
+  },
+  "recovered_from_step27": true,
+  "all_restriction_members_present": false,
+  "incomplete_restrictions": 5,
+  "incomplete_restriction_policy": "block_member_ways",
+  "counts": {
+    "node": 4958571,
+    "relation": 25585,
+    "way": 1071100
+  },
+  "closure_passes": 4,
+  "all_way_nodes_present": true,
+  "routing_performed": false
+}

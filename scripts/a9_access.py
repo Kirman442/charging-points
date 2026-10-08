@@ -30,6 +30,10 @@ class Network:
         self.banned=defaultdict(list);self.only=defaultdict(set);self.review_ways=set();self.restriction_counts=Counter()
         for obj in data:
             if obj['type']!='relation':continue
+            if obj.get('routing_review_required') or obj.get('incomplete_members'):
+                self.review_ways.update(m['ref'] for m in obj.get('members',[]) if m['type']=='way')
+                self.restriction_counts['incomplete_source_restriction']+=1
+                continue
             tags=obj.get('tags',{});kind=tags.get('restriction:motorcar',tags.get('restriction:motor_vehicle',tags.get('restriction')))
             except_modes=set(tags.get('except','').split(';'))
             if except_modes & {'motorcar','motor_vehicle','vehicle'}:continue

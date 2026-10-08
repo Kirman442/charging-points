@@ -13,6 +13,8 @@ export function decodeAutobahn(table, sitesHash, siteCount, expectedRoute = 'A9'
   const summary = JSON.parse(metadata.get('directions') || 'null')
   if (!Array.isArray(summary) || summary.length !== 2 || new Set(summary.map(s => s.direction)).size !== 2 || summary.some(s => !['north','south'].includes(s.direction) || !Number.isFinite(s.length_km) || s.length_km <= 0)) throw invalid()
   const sections = JSON.parse(metadata.get('sections') || 'null')
+  const candidateMethod = metadata.get('candidate_method')
+  const exitZones = candidateMethod === 'all-exits-road-zones-v1' || (expectedRoute === 'A5' && candidateMethod === 'a5-all-exits-road-zones-v1')
   if (expectedRoute === 'A1' && (!Array.isArray(sections) || sections.length !== 4 || new Set(sections.map(s => `${s.section}:${s.direction}`)).size !== 4 || sections.some(s => !['northern','southern'].includes(s.section) || !['north','south'].includes(s.direction) || !Number.isFinite(s.length_km) || s.length_km <= 0))) throw invalid()
   const segments = [], sites = [], seen = new Set()
   for (const record of table) {
@@ -25,20 +27,21 @@ export function decodeAutobahn(table, sitesHash, siteCount, expectedRoute = 'A9'
       segments.push({ ...row, path: coordinates })
     } else if (row.kind === 'site') {
       const key = `${row.direction}:${row.site_row}`
-      if (!Number.isInteger(row.site_row) || row.site_row < 0 || row.site_row >= siteCount || !validPoint(coordinates) || seen.has(key) || !['road_route_found_entrance_unverified','unconfirmed',...(expectedRoute === 'A5' ? ['distance_excluded'] : [])].includes(row.status) || !Number.isFinite(row.power_kw) || row.power_kw < 0 || !Number.isInteger(row.fast_points) || row.fast_points < 0) throw invalid()
+      if (!Number.isInteger(row.site_row) || row.site_row < 0 || row.site_row >= siteCount || !validPoint(coordinates) || seen.has(key) || !['road_route_found_entrance_unverified','unconfirmed',...(exitZones ? ['distance_excluded'] : [])].includes(row.status) || !Number.isFinite(row.power_kw) || row.power_kw < 0 || !Number.isInteger(row.fast_points) || row.fast_points < 0) throw invalid()
       if (row.status === 'road_route_found_entrance_unverified' && (!Number.isFinite(row.access_m) || row.access_m < 0 || row.access_m > 3000 || !Number.isFinite(row.return_m) || row.return_m < 0 || row.return_m > 3000 || !Number.isFinite(row.snap_m) || row.snap_m < 0 || row.snap_m > 60)) throw invalid()
       if (row.status === 'distance_excluded' && (!Number.isFinite(row.diagnostic_access_m) || row.diagnostic_access_m <= 3000)) throw invalid()
+      if (row.eligible_power !== (row.power_kw >= 400 && row.fast_points > 0)) throw invalid()
       seen.add(key); sites.push({ ...row, position: coordinates })
     } else throw invalid()
   }
   if (!segments.length || summary.some(s => !segments.some(r => r.direction === s.direction))) throw invalid()
   if (summary.some(s => s.candidates !== sites.filter(r => r.direction === s.direction).length || s.routed !== sites.filter(r => r.direction === s.direction && r.status === 'road_route_found_entrance_unverified').length)) throw invalid()
-  const candidateMethod = metadata.get('candidate_method')
+  if (summary.some(s => s.fast_routed !== sites.filter(r => r.direction === s.direction && r.status === 'road_route_found_entrance_unverified' && r.fast_points > 0).length || s.eligible_routed !== sites.filter(r => r.direction === s.direction && autobahnIntervalSite(r)).length)) throw invalid()
   const exits = JSON.parse(metadata.get('exits') || 'null')
-  if (expectedRoute === 'A5' && (candidateMethod !== 'a5-all-exits-road-zones-v1' || !Array.isArray(exits) || !exits.length || exits.some(e => !['north','south'].includes(e.direction) || !Number.isSafeInteger(e.node) || !Number.isFinite(e.chain_m) || e.chain_m < 0) || summary.some(s => s.distance_excluded !== sites.filter(r => r.direction === s.direction && r.status === 'distance_excluded').length || s.active_candidates !== s.candidates - s.distance_excluded || s.unresolved !== sites.filter(r => r.direction === s.direction && r.status === 'unconfirmed').length))) throw invalid()
-  if (expectedRoute === 'A5') {
-    const exitKeys = new Set(exits.map(e => `${e.direction}:${e.node}`))
-    if (exitKeys.size !== exits.length || sites.some(s => s.status === 'road_route_found_entrance_unverified' && !exitKeys.has(`${s.direction}:${s.exit_node}`))) throw invalid()
+  if ((expectedRoute === 'A5' || exitZones) && ((!exitZones) || !Array.isArray(exits) || !exits.length || exits.some(e => !['north','south'].includes(e.direction) || !Number.isSafeInteger(e.node) || !Number.isFinite(e.chain_m) || e.chain_m < 0) || summary.some(s => s.distance_excluded !== sites.filter(r => r.direction === s.direction && r.status === 'distance_excluded').length || s.active_candidates !== s.candidates - s.distance_excluded || s.unresolved !== sites.filter(r => r.direction === s.direction && r.status === 'unconfirmed').length))) throw invalid()
+  if (exitZones) {
+    const exitKeys = new Set(exits.map(e => `${e.direction}:${e.section || ''}:${e.node}`))
+    if (exitKeys.size !== exits.length || sites.some(s => s.status === 'road_route_found_entrance_unverified' && !exitKeys.has(`${s.direction}:${s.section || ''}:${s.exit_node}`))) throw invalid()
   }
   return { candidateMethod, exits, route: expectedRoute, sections, segments, sites, summary, accessNetwork: metadata.get('access_network') === 'true', sourceDate: metadata.get('source_date') }
 }

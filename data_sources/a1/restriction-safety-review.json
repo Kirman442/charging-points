@@ -1,0 +1,30 @@
+{
+  "restriction_ids": [
+    2918738,
+    7343736,
+    7343737,
+    7343738,
+    7343739
+  ],
+  "present_blocked_ways": [
+    {
+      "way_id": 24669914,
+      "minimum_distance_to_a1_m": 18154.4
+    },
+    {
+      "way_id": 95807057,
+      "minimum_distance_to_a1_m": 17818.5
+    },
+    {
+      "way_id": 501804952,
+      "minimum_distance_to_a1_m": 17973.7
+    }
+  ],
+  "missing_member_ways": [
+    207113230,
+    501804945,
+    501804948,
+    501804958
+  ],
+  "distance_meaning": "minimum planar distance from full way geometry to either A1 section; not a driving distance"
+}

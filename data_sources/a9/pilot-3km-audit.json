@@ -1,28 +1,33 @@
 {
   "route": "A9",
-  "routing_policy": "pilot-3km-out-3km-back-v1",
-  "interval_method": "return-road-approach-v1",
+  "method": "all-exits-road-zones-v1",
   "directions": [
     {
       "direction": "north",
       "length_km": 529.95,
       "candidates": 974,
-      "routed": 282,
-      "fast_routed": 127,
-      "eligible_routed": 83,
+      "routed": 302,
+      "fast_routed": 132,
+      "eligible_routed": 84,
+      "distance_excluded": 521,
+      "unresolved": 151,
       "unknown_segments": 2,
       "verified_entrances": 0,
+      "active_candidates": 453,
       "max_gap_km": 42.1
     },
     {
       "direction": "south",
       "length_km": 529.3,
       "candidates": 955,
-      "routed": 302,
-      "fast_routed": 137,
-      "eligible_routed": 85,
+      "routed": 314,
+      "fast_routed": 138,
+      "eligible_routed": 86,
+      "distance_excluded": 406,
+      "unresolved": 235,
       "unknown_segments": 2,
       "verified_entrances": 0,
+      "active_candidates": 549,
       "max_gap_km": 42.1
     }
   ],
@@ -32,9 +37,11 @@
       "section": null,
       "length_km": 529.947,
       "candidates": 974,
-      "routed": 282,
-      "fast_routed": 127,
-      "eligible_routed": 83,
+      "routed": 302,
+      "fast_routed": 132,
+      "eligible_routed": 84,
+      "distance_excluded": 521,
+      "unresolved": 151,
       "max_gap_km": 42.1,
       "unknown_segments": 2,
       "verified_entrances": 0
@@ -44,14 +51,66 @@
       "section": null,
       "length_km": 529.3,
       "candidates": 955,
-      "routed": 302,
-      "fast_routed": 137,
-      "eligible_routed": 85,
+      "routed": 314,
+      "fast_routed": 138,
+      "eligible_routed": 86,
+      "distance_excluded": 406,
+      "unresolved": 235,
       "max_gap_km": 42.1,
       "unknown_segments": 2,
       "verified_entrances": 0
     }
   ],
-  "cached_link_revalidation": true,
-  "fresh_network_search": false
+  "topology": {
+    "unused_relation_way_ids_absent": [],
+    "all_main_path_edges_verified_in_pbf": true
+  },
+  "graph_window": {
+    "tile_m": 30000,
+    "margin_m": 16000,
+    "max_diagnostic_path_m": 15000,
+    "window": "candidate_envelope; earlier checkpoints may use whole tile"
+  },
+  "network_sha256": "d1b9232cb5ca3f991eb9107ea568b875ece6f7338168df29b677905bee3bae0d",
+  "source_audit": {
+    "provider": "local OSM PBF",
+    "file": "germany-latest.osm.pbf",
+    "bytes": 4855437391,
+    "sha256": "c3e5695a2775537406b841b1d7c1f69c2b2c18190fe098a1b9de7442b0f859b8",
+    "replication_timestamp": "2026-10-06T20:21:06Z",
+    "route": "A9",
+    "seed": "existing pilot geometry",
+    "buffer_km": 20,
+    "buffer_origin": "Step 27 default; not recorded in legacy SQLite",
+    "source_verification": {
+      "matched_objects": 256,
+      "method": "first/last 32 objects per kind and route",
+      "original_source_sha256_available": false
+    },
+    "recovered_from_step27": true,
+    "all_restriction_members_present": true,
+    "incomplete_restrictions": 0,
+    "incomplete_restriction_policy": "block_member_ways",
+    "counts": {
+      "node": 2552136,
+      "relation": 11605,
+      "way": 585799
+    },
+    "closure_passes": 4,
+    "all_way_nodes_present": true,
+    "routing_performed": false
+  },
+  "restriction_safety": {
+    "incomplete_restriction_ids": [],
+    "blocked_member_way_ids": [],
+    "policy": "block_member_ways_in_strict_graph",
+    "strict_paths_checked_against_blocked_members": 616
+  },
+  "exit_inventory_scope": "candidate_windows; every route node is a search seed",
+  "entrances_verified": 0,
+  "input_binding": {
+    "startup_sha256": "00336695cfadd1c46e4d29ab19d2258beabba1406e55db765d702c51670b6db5",
+    "groups_sha256": "d009848ee3be5f9fe4b4383cbed1af707c6f4312fe345aecc212602b3822f1f2",
+    "route_paths_sha256": "c9c6d3b64cb881eb7a73b6dcd8c036cc5571adadc9000142cca6ab3fe7117c55"
+  }
 }

@@ -1,0 +1,197 @@
+{
+  "route": "A1",
+  "count": 5,
+  "policy": "block member ways until the incomplete restriction is reviewed",
+  "restrictions": [
+    {
+      "type": "relation",
+      "id": 2918738,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "members": [
+        {
+          "type": "way",
+          "ref": 207113230,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 253277672,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 24669914,
+          "role": "to"
+        }
+      ],
+      "incomplete_members": [
+        {
+          "type": "way",
+          "ref": 207113230,
+          "role": "from"
+        }
+      ],
+      "routing_review_required": true,
+      "review_reason": "restriction_member_absent_from_source_pbf",
+      "blocked_member_way_ids": [
+        24669914,
+        207113230
+      ]
+    },
+    {
+      "type": "relation",
+      "id": 7343736,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "members": [
+        {
+          "type": "way",
+          "ref": 501804958,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 95807057,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 1349966126,
+          "role": "via"
+        }
+      ],
+      "incomplete_members": [
+        {
+          "type": "way",
+          "ref": 501804958,
+          "role": "from"
+        }
+      ],
+      "routing_review_required": true,
+      "review_reason": "restriction_member_absent_from_source_pbf",
+      "blocked_member_way_ids": [
+        95807057,
+        501804958
+      ]
+    },
+    {
+      "type": "relation",
+      "id": 7343737,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "members": [
+        {
+          "type": "way",
+          "ref": 501804958,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 501804952,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 4925041593,
+          "role": "via"
+        }
+      ],
+      "incomplete_members": [
+        {
+          "type": "way",
+          "ref": 501804958,
+          "role": "from"
+        }
+      ],
+      "routing_review_required": true,
+      "review_reason": "restriction_member_absent_from_source_pbf",
+      "blocked_member_way_ids": [
+        501804952,
+        501804958
+      ]
+    },
+    {
+      "type": "relation",
+      "id": 7343738,
+      "tags": {
+        "restriction": "only_left_turn",
+        "type": "restriction"
+      },
+      "members": [
+        {
+          "type": "way",
+          "ref": 501804948,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 95807057,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 1349966126,
+          "role": "via"
+        }
+      ],
+      "incomplete_members": [
+        {
+          "type": "way",
+          "ref": 501804948,
+          "role": "from"
+        }
+      ],
+      "routing_review_required": true,
+      "review_reason": "restriction_member_absent_from_source_pbf",
+      "blocked_member_way_ids": [
+        95807057,
+        501804948
+      ]
+    },
+    {
+      "type": "relation",
+      "id": 7343739,
+      "tags": {
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      },
+      "members": [
+        {
+          "type": "way",
+          "ref": 501804945,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 501804952,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 4925041593,
+          "role": "via"
+        }
+      ],
+      "incomplete_members": [
+        {
+          "type": "way",
+          "ref": 501804945,
+          "role": "from"
+        }
+      ],
+      "routing_review_required": true,
+      "review_reason": "restriction_member_absent_from_source_pbf",
+      "blocked_member_way_ids": [
+        501804945,
+        501804952
+      ]
+    }
+  ]
+}

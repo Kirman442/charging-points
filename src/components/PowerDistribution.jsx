@@ -8,7 +8,7 @@ export default function PowerDistribution({ summary, open = false, onOpen }) {
     <div id={id} hidden={!open}>
     {summary.points > 0 ? <ul>{POWER_BANDS.map((band, index) => {
       const share = counts[index] / summary.points * 100
-      return <li key={band.label}><div className="power-distribution-row"><span>{band.label}</span><strong>{format(counts[index])} <small>· {format(share)} %</small></strong></div><div className="operator-bar" aria-hidden="true"><span style={{ width: `${share}%`, background: band.color }} /></div></li>
+      return <li key={band.label}><div className="power-distribution-row"><span>{band.label}</span><strong>{format(counts[index])} <small>· {format(share)} %</small></strong></div><div className="operator-bar" aria-hidden="true"><span style={{ width: `${share}%`, background: `var(--power-${index})` }} /></div></li>
     })}</ul> : <p className="note">Нет точек, соответствующих фильтрам.</p>}
     <p className="note">Максимальная мощность каждой точки. Учитываются только точки текущей выборки.</p>
     </div>

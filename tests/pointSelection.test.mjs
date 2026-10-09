@@ -58,12 +58,12 @@ test('compact selection reconciles with independent raw-point and distinct-equip
     if(filters.minPower>=150)assert.equal(bands[0]+bands[1]+bands[2],0)
   }
 })
-test('selected territory has a separate non-pickable outline and respects hiding boundaries', () => {
+test('selected territory retains its non-pickable outline when general boundaries are hidden', () => {
   const region={level:'districts',district_code:'01',state_code:'01'},feature={type:'Feature',properties:region,geometry:{type:'Polygon',coordinates:[]}}
   const regions={states:[],districts:[feature]},options={metric:'sites',territory:'districts',showSites:false,selectedRegion:region,showBoundaries:true}
   const selected=createLayers(null,regions,options).layers.find(l=>l.id==='selected-territory')
   assert.equal(selected.props.pickable,false)
   assert.equal(selected.props.getLineWidth,3)
   assert.equal(selected.props.data[0],feature)
-  assert.equal(createLayers(null,regions,{...options,showBoundaries:false}).layers.length,0)
+  assert.deepEqual(createLayers(null,regions,{...options,showBoundaries:false}).layers.map(layer => layer.id),['selected-territory'])
 })

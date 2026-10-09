@@ -55,3 +55,19 @@ test('Autobahn outlines identify interval sites and radius accessors follow zoom
   assert.equal(near.props.getLineWidth(null,{index:1}),0)
   assert.ok(near.props.getLineWidth(null,{index:0}) > 0)
 })
+
+test('Access squares preserve color, eligibility and registry click row without mutating buffers', () => {
+  const colors = new Uint8Array([68,190,170,255,68,190,170,255,185,191,205,235])
+  const data = { count: 3, positions: new Float64Array([8,49,9,50,10,51]), rowIndices: new Uint32Array([41,53,67]), colors, autobahnEligible: new Uint8Array([1,0,0]), autobahnAccess: new Uint8Array([1,1,0]) }
+  const { layers } = createLayers(data,null,{ metric:'sites',showSites:true,a9Mode:true,autobahnZoom:14,showBoundaries:false })
+  const circles = layers.find(l => l.id === 'charging-sites')
+  const squares = layers.find(l => l.id === 'charging-access-sites')
+  const outlines = layers.find(l => l.id === 'charging-access-outlines')
+  assert.deepEqual(squares.props.data.map(s => s.rowIndex), [41,53])
+  assert.deepEqual(squares.props.data[0].color, [68,190,170,255])
+  assert.equal(outlines.props.data.length,1)
+  assert.equal(circles.props.data.attributes.getFillColor.value[3],0)
+  assert.equal(circles.props.getLineWidth(null,{index:0}),0)
+  assert.equal(colors[3],255)
+  assert.ok(squares.props.pickable)
+})

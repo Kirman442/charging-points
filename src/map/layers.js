@@ -1,5 +1,5 @@
 import { autobahnSiteRadius } from '../data/autobahn.js'
-import { GeoJsonLayer, ScatterplotLayer, TextLayer } from '@deck.gl/layers'
+import { GeoJsonLayer, ScatterplotLayer, TextLayer, IconLayer } from '@deck.gl/layers'
 import { operatorConcentration } from '../data/concentration.js'
 import { metricValue } from '../data/analytics.js'
 import { normalizeOptions } from './settings.js'
@@ -7,6 +7,13 @@ export function regionValue(feature, metric, basis = 'points') { return metricVa
 export function createLayers(data, regions, suppliedOptions, markers = null, clustered = false) {
   const options = normalizeOptions(suppliedOptions)
   const layers = []
+  const accessSquares = options.a9Mode && data?.autobahnAccess ? Array.from(data.autobahnAccess, (flag, index) => flag ? {
+    position: Array.from(data.positions.subarray(index * 2, index * 2 + 2)),
+    color: Array.from(data.colors.subarray(index * 4, index * 4 + 4)),
+    rowIndex: data.rowIndices[index], eligible: !!data.autobahnEligible?.[index],
+  } : null).filter(Boolean) : []
+  const circleColors = accessSquares.length ? data.colors.slice() : data?.colors
+  if (accessSquares.length) data.autobahnAccess.forEach((flag, index) => { if (flag) circleColors[index * 4 + 3] = 0 })
   const level = options.territory
   const featuresFor = level => regions?.[level]?.filter(feature => !options.state || (
     level === 'states'
@@ -61,10 +68,26 @@ export function createLayers(data, regions, suppliedOptions, markers = null, clu
     }))
   } else if (data && options.showSites && (!clustered || !markers)) layers.push(new ScatterplotLayer({
     id: 'charging-sites', data: { length: data.count, attributes: {
-      getPosition: { value: data.positions, size: 2 }, getFillColor: { value: data.colors, size: 4 },
+      getPosition: { value: data.positions, size: 2 }, getFillColor: { value: circleColors, size: 4 },
     } }, getRadius: 45, radiusMinPixels: 4, radiusMaxPixels: 12,
-    ...(options.a9Mode ? { radiusUnits: 'pixels', getRadius: (_, { index }) => autobahnSiteRadius(options.autobahnZoom, data.colors[index*4+3] > 200), radiusMinPixels: 0.8, stroked: true, lineWidthUnits: 'pixels', getLineColor: [235,255,248,255], getLineWidth: (_, { index }) => data.autobahnEligible?.[index] ? Math.max(0.5, Math.min(1.5, autobahnSiteRadius(options.autobahnZoom) * 0.2)) : 0, updateTriggers: { getRadius: [data.colors, options.autobahnZoom], getLineWidth: [data.autobahnEligible, options.autobahnZoom] } } : {}),
+    ...(options.a9Mode ? { radiusUnits: 'pixels', getRadius: (_, { index }) => autobahnSiteRadius(options.autobahnZoom, data.colors[index*4+3] > 200), radiusMinPixels: 0.8, stroked: true, lineWidthUnits: 'pixels', getLineColor: [235,255,248,255], getLineWidth: (_, { index }) => data.autobahnEligible?.[index] && !data.autobahnAccess?.[index] ? Math.max(0.5, Math.min(1.5, autobahnSiteRadius(options.autobahnZoom) * 0.2)) : 0, updateTriggers: { getRadius: [data.colors, options.autobahnZoom], getLineWidth: [data.autobahnEligible, data.autobahnAccess, options.autobahnZoom] } } : {}),
     opacity: .85, pickable: true, autoHighlight: true, highlightColor: [255,255,255,230],
   }))
+  if (accessSquares.length) {
+    const atlas = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="32"><rect x="2" y="2" width="28" height="28" fill="white"/><rect x="34" y="2" width="28" height="28" fill="none" stroke="white" stroke-width="3"/></svg>')
+    const iconMapping = { square: { x: 0, y: 0, width: 32, height: 32, mask: true }, outline: { x: 32, y: 0, width: 32, height: 32, mask: true } }
+    const size = autobahnSiteRadius(options.autobahnZoom) * 2 * 32 / 28
+    layers.push(new IconLayer({
+      id: 'charging-access-sites', data: accessSquares, iconAtlas: atlas, iconMapping,
+      getIcon: 'square', getPosition: s => s.position, getColor: s => s.color,
+      getSize: size, sizeUnits: 'pixels', opacity: .85, pickable: true,
+      autoHighlight: true, highlightColor: [255,255,255,230],
+    }))
+    layers.push(new IconLayer({
+      id: 'charging-access-outlines', data: accessSquares.filter(s => s.eligible), iconAtlas: atlas, iconMapping,
+      getIcon: 'outline', getPosition: s => s.position, getColor: [235,255,248,255],
+      getSize: size, sizeUnits: 'pixels', pickable: false,
+    }))
+  }
   return { layers, maximum }
 }

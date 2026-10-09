@@ -1,3 +1,4 @@
+import { hasAccessConditions } from '../data/autobahnAccess.js'
 import { useId, useState } from 'react'
 import { AUTOBAHNS, A9_STATUS } from '../data/autobahn.js'
 
@@ -19,7 +20,7 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
   const reviewFast = reviewSites.filter(s => s.fast_points > 0).length
   const excluded = directionSites.filter(s => s.status === 'distance_excluded').length
   const fastTotal = (summary?.fast_routed || 0) + reviewFast
-  const accessConditionSites = directionSites.filter(s => s.status === 'road_route_found_entrance_unverified' && s.accessConditions?.length)
+  const accessConditionSites = directionSites.filter(hasAccessConditions)
 
   return <aside className="panel analytics-panel a9-panel" aria-label={`Анализ автобана ${route}`}>
     <header><div className="eyebrow">ПИЛОТ · АВТОБАН {route}</div><h2>{AUTOBAHNS[route][direction]}</h2></header>
@@ -36,8 +37,9 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
           <li><strong>{number(summary.eligible_routed)}</strong> {siteWord(summary.eligible_routed)} с суммарной мощностью ≥400 кВт и хотя бы одной DC-точкой ≥150 кВт.</li>
         </ul>}
       </section>
+      <div className="a9-key"><div><i className="a9-point a9-point-access" />Есть условия доступа — см. карточку</div></div>
       <section aria-label="Отдельные условия доступа">
-        <p className="note">У {number(accessConditionSites.length)} площадок с найденным маршрутом отмечены отдельные условия доступа. Подробности — в карточке площадки. Эти признаки сами по себе не исключают площадку из интервалов.</p>
+        <p className="note">У {number(accessConditionSites.length)} площадок с найденным маршрутом отмечены отдельные условия доступа. На карте они обозначены квадратами; подробности — в карточке площадки. Эти признаки сами по себе не исключают площадку из интервалов.</p>
       </section>
       <section className="a9-review-block" aria-label="Площадки, требующие проверки">
         <p><strong>{number(reviewSites.length)}</strong> {siteWord(reviewSites.length)} {reviewSites.length % 10 === 1 && reviewSites.length % 100 !== 11 ? 'требует' : 'требуют'} проверки.</p>

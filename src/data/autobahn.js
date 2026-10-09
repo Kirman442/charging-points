@@ -1,3 +1,4 @@
+import { hasAccessConditions } from './autobahnAccess.js'
 export const AUTOBAHNS = { A5: { north: 'В сторону Hattenbacher Dreieck', south: 'В сторону Basel', view: { longitude: 8.2, latitude: 49.5, zoom: 6.3, pitch: 0, bearing: 0 } }, A9: { north: 'В сторону Берлина', south: 'В сторону Мюнхена', view: { longitude: 12.1, latitude: 50.3, zoom: 6.2, pitch: 0, bearing: 0 } }, A1: { north: 'В сторону Heiligenhafen', south: 'В сторону Saarbrücken', view: { longitude: 8.5, latitude: 51.8, zoom: 5.7, pitch: 0, bearing: 0 } } }
 export const A9_STATUS = {
   within: { label: 'Расчётный интервал ≤50 км', color: [68,190,170,255], dash: [0,0] },
@@ -66,15 +67,16 @@ export function autobahnDisplayData(data, pilot, direction, hideOthers, siteMode
     if (data.rowIndices[i] === focusedRow || (siteMode !== 'none' && (matches || (!site && !hideOthers)))) indices.push(i)
   }
   const count = indices.length, colors = new Uint8Array(count*4), positions = new Float64Array(count*2)
-  const autobahnEligible = new Uint8Array(count), rowIndices = new Uint32Array(count), powers = new Float32Array(count), pointCounts = new Int32Array(count)
+  const autobahnAccess = new Uint8Array(count), autobahnEligible = new Uint8Array(count), rowIndices = new Uint32Array(count), powers = new Float32Array(count), pointCounts = new Int32Array(count)
   for (let j = 0; j < count; j++) {
     const i = indices[j], row = data.rowIndices[i], site = memberships.get(row), status = site?.status
+    autobahnAccess[j] = hasAccessConditions(site) ? 1 : 0
     autobahnEligible[j] = autobahnIntervalSite(site) ? 1 : 0
     colors.set(status === 'road_route_found_entrance_unverified' ? [68,190,170,255] : status === 'unconfirmed' ? [185,191,205,235] : [110,120,135,12], j*4)
     positions.set(data.positions.subarray(i*2,i*2+2),j*2)
     rowIndices[j] = row; powers[j] = data.powers[i]; pointCounts[j] = data.pointCounts[i]
   }
-  return { ...data, count, positions, colors, rowIndices, powers, pointCounts, autobahnEligible }
+  return { ...data, count, positions, colors, rowIndices, powers, pointCounts, autobahnEligible, autobahnAccess }
 }
 
 export function autobahnIntervalSite(site) {

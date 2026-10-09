@@ -180,3 +180,6 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 .a9-method-list { margin: 8px 0; padding-left: 18px; line-height: 1.5; }
 .a9-method-list li + li { margin-top: 6px; }
 .a9-count-explanation { margin-bottom: 14px; }
+
+.a9-point-access { border-radius: 0; }
+.controls select:disabled { opacity: .55; cursor: not-allowed; }

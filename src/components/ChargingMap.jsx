@@ -36,7 +36,8 @@ export default function ChargingMap({ data, autobahn, direction, markers, region
     }))
     return result
   }, [data, regions, options, markers, clustered, autobahn, direction])
-  const isSite = info => info.layer?.id === 'charging-sites'
+  const isSquare = info => info.layer?.id === 'charging-access-sites'
+  const isSite = info => info.layer?.id === 'charging-sites' || isSquare(info)
   const isMarker = info => info.layer?.id === 'charging-markers'
   return <DeckGL viewState={viewState} onViewStateChange={({ viewState: next }) => onViewChange(next)}
     controller={{ type: ChargingMapController, doubleClickZoom: true }} layers={layers} eventRecognizerOptions={CLICK_RECOGNIZER_OPTIONS} pickingRadius={6} getCursor={state => mapCursor({ ...state, markerHovered: markerHover.current })}
@@ -58,7 +59,7 @@ export default function ChargingMap({ data, autobahn, direction, markers, region
       }
       if (selection?.type === 'cluster') onCluster(selection)
       else if (selection?.type === 'site') onSite(selection.rowIndex)
-      else if (isSite(info) && info.index >= 0) onSite(data.rowIndices[info.index])
+      else if (isSite(info) && info.index >= 0) onSite(isSquare(info) ? info.object.rowIndex : data.rowIndices[info.index])
       else if (info.object?.properties) onRegion(info.object.properties)
     }}
     getTooltip={info => {
@@ -69,6 +70,7 @@ export default function ChargingMap({ data, autobahn, direction, markers, region
           ? `${format(selection.sites)} площадок · ${format(selection.points)} зарядных точек\nКлик — сводка; двойной клик — приблизить`
           : `${format(markers.pointCounts[info.index])} зарядных точек\nДо ${format(markers.powers[info.index])} kW\nНажми для подробностей` }
       }
+      if (isSquare(info) && info.index >= 0) return { text: 'Маршрут найден · есть условия доступа\nНажми для подробностей' }
       if (isSite(info) && info.index >= 0) return { text: `${format(data.pointCounts[info.index])} зарядных точек\nДо ${format(data.powers[info.index])} kW\nНажми для подробностей` }
       if (info.object?.properties) {
         const p = info.object.properties

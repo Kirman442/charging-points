@@ -39,6 +39,7 @@ test('background cards preserve all original fields including final row and sele
   validateDetails(details.table,startup.table,catalog.table,hashes)
   for (let row=0;row<source.table.numRows;row++) {
     const actual=siteDetail(details.table,row,selected)
+    assert.equal(actual.site_id,source.table.getChild('site_id').get(row))
     for (const name of SITE_DETAIL_COLUMNS) assert.deepEqual(actual[name],source.table.getChild(name).get(row))
     assert.deepEqual(actual.available_power_kw,Array.from(source.table.getChild('available_power_kw').get(row)))
     assert.equal(actual.selected_point_count,selected.points[row])

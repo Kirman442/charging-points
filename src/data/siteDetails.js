@@ -15,6 +15,7 @@ export function validateDetails(details, startup, catalog, hashes) {
 
 export function siteDetail(table, index, selection) {
   const detail = Object.fromEntries(SITE_DETAIL_COLUMNS.map(name => [name, table.getChild(name).get(index)]))
+  detail.site_id = table.getChild('site_id').get(index)
   detail.available_power_kw = Array.from(table.getChild('available_power_kw').get(index) || [])
   detail.selected_point_count = selection.points[index]
   detail.selected_equipment_count = selection.equipmentCounts[index]

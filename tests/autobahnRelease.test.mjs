@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
 import initWasm, { readParquet } from 'parquet-wasm/esm'
 import { tableFromIPC } from 'apache-arrow'
 import { decodeAutobahn, autobahnDisplayData, autobahnIntervalSite } from '../src/data/autobahn.js'
-import { accessConditionLabels } from '../src/data/autobahnAccess.js'
+import { accessConditionLabels, otherRoadConditionLabels, hasAccessConditions } from '../src/data/autobahnAccess.js'
 
 await initWasm(fs.readFileSync('node_modules/parquet-wasm/esm/parquet_wasm_bg.wasm'))
 const hash = createHash('sha256').update(fs.readFileSync('public/data/charging_sites_startup_zstd10.parquet')).digest('hex')
@@ -43,4 +43,15 @@ for (const route of ['A5', 'A1', 'A9']) {
 test('Access conditions retain explanation and respect motorcar permission precedence', () => {
   assert.deepEqual(accessConditionLabels([{ kind: 'barrier', tags: { barrier: 'lift_gate', access: 'permissive' } }]), ['Шлагбаум или ворота на пути', 'Проезд разрешён владельцем территории; условия могут изменяться'])
   assert.deepEqual(accessConditionLabels([{ kind: 'road_restriction', tags: { access: 'customers', motorcar: 'yes' } }]), [])
+})
+
+test('Only car access conditions select squares; parking, speed and HGV tags remain supplementary', () => {
+  const other = [{ tags: { 'parking:right:restriction:conditional': 'loading_only @ (Mo-Fr 06:00-15:00)', 'hgv:conditional': 'no @ (22:00-06:00)', 'maxspeed:conditional': '30 @ (22:00-06:00)' } }]
+  assert.deepEqual(accessConditionLabels(other), [])
+  assert.equal(otherRoadConditionLabels(other).length, 3)
+  assert.equal(hasAccessConditions({ status: 'road_route_found_entrance_unverified', accessConditions: other }), false)
+  const access = [{ tags: { motor_vehicle: 'destination', barrier: 'height_restrictor', maxheight: '2.2' } }]
+  assert.ok(accessConditionLabels(access).includes('Максимальная высота: 2.2 м'))
+  assert.equal(hasAccessConditions({ status: 'road_route_found_entrance_unverified', accessConditions: access }), true)
+  assert.equal(hasAccessConditions({ status: 'unconfirmed', accessConditions: access }), false)
 })

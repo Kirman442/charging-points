@@ -1,9 +1,11 @@
 import { format } from './format.js'
 
 const plurals = new Intl.PluralRules('ru')
+export function countWord(value, forms) {
+  return forms[{ one: 0, few: 1, many: 2, other: 2 }[plurals.select(value)]]
+}
 export function counted(value, forms) {
-  const word = forms[{ one: 0, few: 1, many: 2, other: 2 }[plurals.select(value)]]
-  return `${format(value)} ${word}`
+  return `${format(value)} ${countWord(value, forms)}`
 }
 
 export function siteSelectionText(site) {

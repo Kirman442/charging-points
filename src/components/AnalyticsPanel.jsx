@@ -4,22 +4,22 @@ import { territoryLabel } from '../utils/territory.js'
 import OperatorShares from './OperatorShares.jsx'
 import { memo, useId, useState } from 'react'
 import { format } from '../utils/format.js'
-import { siteSelectionText } from '../utils/siteSelection.js'
+import { siteSelectionText, countWord } from '../utils/siteSelection.js'
 import { METRICS, metricValue, rankStates, summarizeStates } from '../data/analytics.js'
 
 function SiteContent({ site, autobahnSite }) {
   const selectionText = siteSelectionText(site)
   return <><div className="eyebrow">ЗАРЯДНАЯ ПЛОЩАДКА</div><h2>{site.city}</h2><p>{site.street} {site.house_number}</p><p className="muted">{site.postal_code} · {site.state_name}</p>
-    <SelectionStats sites={1} equipment={site.selected_equipment_count ?? site.equipment_count} points={site.selected_point_count ?? site.charging_point_count} showSites />
+    <SelectionStats sites={1} equipment={site.selected_equipment_count ?? site.equipment_count} points={site.selected_point_count ?? site.charging_point_count} showSites inflectLabels />
     {selectionText && <p className="note">{selectionText}</p>}
     <dl><dt>Оператор</dt><dd>{site.operator}</dd><dt>Мощность установок в выборке</dt><dd>{format(site.selected_power_kw ?? site.installed_power_kw)} кВт</dd><dt>Номинальная мощность всей площадки</dt><dd>{format(site.installed_power_kw)} кВт</dd><dt>Доступные мощности всей площадки</dt><dd>{site.available_power_kw.map(format).join(', ')} kW</dd><dt>Часы работы</dt><dd>{site.opening_hours_label}</dd><dt>Статус всех точек площадки</dt><dd>{site.operating_point_count} в эксплуатации; {site.maintenance_point_count} на обслуживании</dd><dt>Район</dt><dd>{site.district_name}</dd></dl>
     <AutobahnAccess site={autobahnSite} /><p className="note">Реестр не показывает текущую занятость или исправность точек.</p></>
 }
-function SelectionStats({ sites, equipment, points, showSites, sitesLabel = 'Площадки' }) {
+function SelectionStats({ sites, equipment, points, showSites, sitesLabel = 'Площадки', inflectLabels = false }) {
   const counters = [
-    { value: sites, label: sitesLabel, description: 'Площадка — сгруппированное место размещения зарядных установок.' },
-    ...(equipment == null ? [] : [{ value: equipment, label: 'Установки', description: 'Ladeeinrichtung — отдельная зарядная установка, у которой может быть несколько зарядных точек.' }]),
-    { value: points, label: 'Точки', description: 'Ladepunkt — зарядная точка для одного автомобиля одновременно.' },
+    { value: sites, label: inflectLabels ? countWord(sites, ['Площадка', 'Площадки', 'Площадок']) : sitesLabel, description: 'Площадка — сгруппированное место размещения зарядных установок.' },
+    ...(equipment == null ? [] : [{ value: equipment, label: inflectLabels ? countWord(equipment, ['Установка', 'Установки', 'Установок']) : 'Установки', description: 'Ladeeinrichtung — отдельная зарядная установка, у которой может быть несколько зарядных точек.' }]),
+    { value: points, label: inflectLabels ? countWord(points, ['Точка', 'Точки', 'Точек']) : 'Точки', description: 'Ladepunkt — зарядная точка для одного автомобиля одновременно.' },
   ]
   return <><div className={`selection-stats${equipment == null ? '' : ' three-counters'}`} aria-label="Зарядная инфраструктура в выборке">{counters.map(counter => <div key={counter.label}><strong>{format(counter.value)}</strong><span><abbr title={counter.description}>{counter.label}</abbr></span></div>)}</div>{!showSites && <p className="note">Маркеры скрыты; выборка сохранена.</p>}</>
 }

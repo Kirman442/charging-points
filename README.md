@@ -1,5 +1,17 @@
 # Charging infrastructure — Germany
 
+Итог дорожного этапа: [доступность по дорожной модели A5/A1/A9](README_38_road_model_release.md).
+Собственные воспроизведённые связи — основа интервалов; спорные сопоставления
+OSM и фактические въезды остаются отдельными проверками. Условия доступа
+показаны отдельно в карточке площадки.
+
+Актуальные дорожные инструкции: [шаг 30](README_a1a9_exit_zones.md),
+[шаг 35](README_35_step.md), [разбор общих кандидатов](README_36_step_shared_review.md).
+Исторический пилот A9 ниже сообщает 309/396 связей; актуальный baseline шага 30
+— 302/314. Для A1 baseline — 554/501. Поздние отчёты имеют приоритет.
+Шаг 35 завершён 8 октября 2026 в 23:12:07 без ошибок за 9937,4 с;
+он создаёт диагностику и не обновляет карту или интервалы.
+
 React + deck.gl + MapLibre + Arrow/Parquet Workers.
 Work on dev; GitHub Actions deploys main. Vite base: /charging-points/.
 Run npm ci, npm run dev. Checks: npm run lint, npm run build,

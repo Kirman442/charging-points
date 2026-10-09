@@ -14,10 +14,11 @@ import { METRICS } from '../data/analytics.js'
 import { format } from '../utils/format.js'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { paletteFor, rgba } from '../map/palette.js'
+import { tooltipPlacement } from '../map/tooltip.js'
 
 export default function ChargingMap({ data, autobahn, direction, markers, regions, options, viewState, onViewChange, onSite, onCluster, onRegion, onMapError, onDataRendered, selectedSite, selectedCluster, selectedSegment, onSegment, mobile }) {
   const clustered = useClusters(options, viewState.zoom)
-  const markerHover = useRef(false)
+  const markerHover = useRef(false), pointer = useRef(null), mapRoot = useRef(null)
   const [hovered, setHovered] = useState(null)
   const [tooltipHidden, setTooltipHidden] = useState(false)
   const timing = useRef({ started: null, events: new Set(), packets: new WeakSet() })
@@ -69,7 +70,8 @@ export default function ChargingMap({ data, autobahn, direction, markers, region
   const isSquare = info => info.layer?.id === 'charging-access-sites'
   const isSite = info => info.layer?.id === 'charging-sites' || isSquare(info)
   const isMarker = info => info.layer?.id === 'charging-markers'
-  return <DeckGL viewState={viewState} onViewStateChange={({ viewState: next }) => onViewChange(next)}
+  const trackPointer = event => { pointer.current = { x: event.clientX, y: event.clientY } }
+  return <div ref={mapRoot} className={`charging-map${tooltipHidden ? ' hide-tooltip' : ''}`} onPointerMoveCapture={trackPointer} onPointerDownCapture={trackPointer} onPointerLeave={() => { pointer.current = null; setHovered(null); setTooltipHidden(true) }}><DeckGL viewState={viewState} onViewStateChange={({ viewState: next }) => onViewChange(next)}
     controller={{ type: ChargingMapController, doubleClickZoom: true }} layers={[...layers, ...interactionLayers]} eventRecognizerOptions={CLICK_RECOGNIZER_OPTIONS} pickingRadius={mobile ? 12 : 6} getCursor={state => mapCursor({ ...state, markerHovered: markerHover.current })}
     onAfterRender={() => {
       reportMapEvent('Первый кадр DeckGL')
@@ -106,8 +108,9 @@ export default function ChargingMap({ data, autobahn, direction, markers, region
       else if (info.object?.properties) onRegion(info.object.properties)
     }}
     getTooltip={info => {
-      if (mobile || tooltipHidden) return null
-      const styled = text => ({ text, style: { backgroundColor: options.style === 'light' ? '#ffffff' : '#182229', color: options.style === 'light' ? '#182b34' : '#f2f6f7', fontSize: '14px', padding: '12px 16px', borderRadius: '12px', border: `1px solid ${options.style === 'light' ? '#b2c1c9' : '#708087'}`, maxWidth: '300px', lineHeight: '1.5' } })
+      if (mobile || tooltipHidden || !pointer.current) return null
+      const analytics = mapRoot.current?.closest('.map-app')?.querySelector('.analytics-shell:not([hidden])')?.getBoundingClientRect()
+      const styled = text => ({ text, style: { ...tooltipPlacement(pointer.current, { width: window.innerWidth, height: window.innerHeight, right: analytics?.left }), backgroundColor: options.style === 'light' ? '#ffffff' : '#182229', color: options.style === 'light' ? '#182b34' : '#f2f6f7', fontSize: '14px', padding: '12px 16px', borderRadius: '12px', border: `1px solid ${options.style === 'light' ? '#b2c1c9' : '#708087'}`, maxWidth: '300px', lineHeight: '1.5' } })
       if (info.layer?.id === 'a9-route') return styled(`${autobahn.route} · ${AUTOBAHNS[autobahn.route][direction]}\n${A9_STATUS[info.object.status].label}${info.object.status === 'unknown' ? '' : `\n${info.object.gap_km.toFixed(1)} км — предварительный интервал`}`)
       if (isMarker(info) && info.index >= 0) {
         const selection = markerSelection(markers, info.index)
@@ -128,5 +131,5 @@ export default function ChargingMap({ data, autobahn, direction, markers, region
       onLoad={() => reportMapEvent('Подложка: load')}
       onIdle={() => reportMapEvent('Подложка: первый idle')}
       onError={event => onMapError(event.error?.message || 'Ошибка подложки')} />
-  </DeckGL>
+  </DeckGL></div>
 }

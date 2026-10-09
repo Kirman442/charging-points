@@ -161,14 +161,14 @@ export default function App() {
         onCluster={value => { setSiteMode(false); setAutobahnFocus(null); selectSite(-1); setCluster(value); revealAnalytics() }}
         onSite={selectMapSite} onRegion={showRegion} onMapError={setMapError} onDataRendered={onDataRendered} />
     </div>
-    <MapChrome options={options} onOptions={onOptions} filters={filters} onFilters={onFilters} controlsOpen={controlsOpen} onControls={openControls}
+    <MapChrome options={options} onOptions={onOptions} filters={filters} onFilters={onFilters} controlsOpen={controlsOpen} controlTab={controlTab} onDirection={value => { setA9Direction(value); setSelectedSegment(null); closeSite() }} onControls={openControls}
       analyticsOpen={analyticsOpen} onAnalytics={() => { setAnalyticsOpen(value => !value); if (window.innerWidth < 1200) closeControls() }}
       listOpen={listOpen} onList={() => { setListCenter(viewState); setListOpen(value => !value); setAnalyticsOpen(true); setSheetState('half'); if (window.innerWidth < 1200) closeControls() }}
       a9Enabled={a9Enabled} route={autobahnRoute} direction={a9Direction} legendOpen={legendOpen} onLegend={() => { if (a9Enabled) revealAnalytics(); else { setLegendOpen(value => !value); closeControls(); if (mobile) setAnalyticsOpen(false) } }} modalOpen={mobile && controlsOpen}
       onHome={() => a9Enabled ? focusRoute() : focusLand(filters.state)} onZoom={delta => setViewState(previous => transitionViewState(previous, { ...previous, zoom: Math.max(3, Math.min(18, previous.zoom + delta)) }))} />
     {mobile && controlsOpen && <div className="dialog-backdrop" onClick={closeControls} />}
     {controlsOpen && <div ref={dialogRef} className="control-shell" role={mobile ? 'dialog' : undefined} aria-modal={mobile || undefined} aria-label="Настройки карты">
-      <ControlPanel key={controlTab} initialTab={controlTab} mobile={mobile} onClose={closeControls} onApply={() => { if (Object.keys(filters).some(key => filters[key] !== draftFilters[key])) onFilters(draftFilters); closeControls() }}
+      <ControlPanel key={controlTab} initialTab={controlTab} onTab={setControlTab} mobile={mobile} onClose={closeControls} onApply={() => { if (Object.keys(filters).some(key => filters[key] !== draftFilters[key])) onFilters(draftFilters); closeControls() }}
         autobahnRoute={autobahnRoute} onAutobahnRoute={route => { setAutobahnRoute(route); setSelectedSegment(null); closeSite(); if (a9Enabled) { loadAutobahn(route); setViewState(previous => transitionViewState(previous, AUTOBAHNS[route].view)) } }}
         a9Enabled={a9Enabled} a9Direction={a9Direction} hideOthers={hideOthers} a9Available={!!data}
         onA9Enabled={enabled => { setA9Enabled(enabled); setSelectedSegment(null); closeSite(); if (enabled) { pendingFocus.current = null; if (!a9 && !a9Pending) loadA9(); setViewState(previous => transitionViewState(previous, AUTOBAHNS[autobahnRoute].view)) } else { focusLand(filters.state) } }}

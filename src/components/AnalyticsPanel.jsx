@@ -11,19 +11,20 @@ import Icon from './Icon.jsx'
 function SiteContent({ site, autobahnSite }) {
   const selectionText = siteSelectionText(site)
   return <><div className="eyebrow">ЗАРЯДНАЯ ПЛОЩАДКА</div><h2>{site.city}</h2><p>{site.street} {site.house_number}</p><p className="muted">{site.postal_code} · {site.state_name}</p>
-    <div className="site-highlights"><span><Icon name="bolt" /><strong>до {format(Math.max(0, ...site.available_power_kw))} кВт</strong><small>Максимум точки на площадке</small></span><span><strong>{site.opening_hours_label}</strong><small>Часы работы площадки</small></span></div>
+    <div className="site-highlights"><span><Icon name="bolt" /><strong>до {format(Math.max(0, ...site.available_power_kw))} кВт</strong><small>Максимум точки</small></span><span><strong>{site.opening_hours_label}</strong><small>Часы работы</small></span></div>
     <SelectionStats sites={1} equipment={site.selected_equipment_count ?? site.equipment_count} points={site.selected_point_count ?? site.charging_point_count} showSites inflectLabels />
     {selectionText && <p className="note">{selectionText}</p>}
     <dl><dt>Оператор</dt><dd>{site.operator}</dd><dt>Мощность установок в выборке</dt><dd>{format(site.selected_power_kw ?? site.installed_power_kw)} кВт</dd><dt>Номинальная мощность всей площадки</dt><dd>{format(site.installed_power_kw)} кВт</dd><dt>Доступные мощности всей площадки</dt><dd>{site.available_power_kw.map(format).join(', ')} kW</dd><dt>Часы работы</dt><dd>{site.opening_hours_label}</dd><dt>Статус всех точек площадки</dt><dd>{site.operating_point_count} в эксплуатации; {site.maintenance_point_count} на обслуживании</dd><dt>Район</dt><dd>{site.district_name}</dd></dl>
     <AutobahnAccess site={autobahnSite} /><p className="note">Реестр не показывает текущую занятость или исправность точек.</p></>
 }
 function SelectionStats({ sites, equipment, points, showSites, sitesLabel = 'Площадки', inflectLabels = false }) {
+  const helpId = useId()
   const counters = [
     { value: sites, label: inflectLabels ? countWord(sites, ['Площадка', 'Площадки', 'Площадок']) : sitesLabel, description: 'Площадка — сгруппированное место размещения зарядных установок.' },
     ...(equipment == null ? [] : [{ value: equipment, label: inflectLabels ? countWord(equipment, ['Установка', 'Установки', 'Установок']) : 'Установки', description: 'Ladeeinrichtung — отдельная зарядная установка, у которой может быть несколько зарядных точек.' }]),
     { value: points, label: inflectLabels ? countWord(points, ['Точка', 'Точки', 'Точек']) : 'Точки', description: 'Ladepunkt — зарядная точка для одного автомобиля одновременно.' },
   ]
-  return <><div className={`selection-stats${equipment == null ? '' : ' three-counters'}`} aria-label="Зарядная инфраструктура в выборке">{counters.map(counter => <div key={counter.label}><strong>{format(counter.value)}</strong><span><details className="term-help"><summary>{counter.label}</summary><p>{counter.description}</p></details></span></div>)}</div>{!showSites && <p className="note">Маркеры скрыты; выборка сохранена.</p>}</>
+  return <><div className={`selection-stats${equipment == null ? '' : ' three-counters'}`} aria-label="Зарядная инфраструктура в выборке">{counters.map((counter, index) => <div key={counter.label}><strong>{format(counter.value)}</strong><span><span className="term-help" tabIndex={0} aria-describedby={`${helpId}-${index}`} onKeyDown={event => { if (event.key === 'Escape') event.currentTarget.blur() }}><span className="term-label">{counter.label}</span><span className="term-tooltip" role="tooltip" id={`${helpId}-${index}`}>{counter.description}</span></span></span></div>)}</div>{!showSites && <p className="note">Маркеры скрыты; выборка сохранена.</p>}</>
 }
 function SummaryGroups({ summary, metric }) {
   const groups = [

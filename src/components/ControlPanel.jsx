@@ -1,14 +1,14 @@
-import { useState } from 'react'
+import { METRIC_CHOICES } from '../map/settings.js'
 import { AUTOBAHNS } from '../data/autobahn.js'
 import Switch from './Switch.jsx'
 import Icon from './Icon.jsx'
-export default function ControlPanel({ states, filters, onFilters, options, onOptions, onReset, a9Enabled, a9Direction, hideOthers, a9Available, onA9Enabled, onA9Direction, onHideOthers, autobahnRoute = 'A9', onAutobahnRoute, onClose, mobile, onApply, initialTab = 'filters' }) {
-  const [tab, setTab] = useState(initialTab)
+export default function ControlPanel({ states, filters, onFilters, options, onOptions, onReset, a9Enabled, a9Direction, hideOthers, a9Available, onA9Enabled, onA9Direction, onHideOthers, autobahnRoute = 'A9', onAutobahnRoute, onClose, mobile, onApply, initialTab = 'filters', onTab }) {
+  const tab = initialTab
   const change = (key, value) => onFilters({ ...filters, [key]: value })
   const tabs = [{ id: 'filters', text: 'Фильтры', icon: 'filter' }, { id: 'layers', text: 'Слои', icon: 'layers' }, { id: 'road', text: 'Автобаны', icon: 'road' }]
   return <aside className="panel control-panel" aria-label="Настройки карты">
     <header className="panel-heading"><div><span className="eyebrow">НАСТРОЙКИ</span><h2>Ваша карта</h2></div><button className="icon-button" onClick={onClose} aria-label="Закрыть настройки"><Icon name="close" /></button></header>
-    <nav className="control-tabs" aria-label="Раздел настроек">{tabs.map(item => <button key={item.id} aria-pressed={tab === item.id} onClick={() => setTab(item.id)}><Icon name={item.icon} />{item.text}</button>)}</nav>
+    <nav className="control-tabs" aria-label="Раздел настроек">{tabs.map(item => <button key={item.id} aria-pressed={tab === item.id} onClick={() => onTab(item.id)}><Icon name={item.icon} />{item.text}</button>)}</nav>
     <div className="control-scroll">
       {tab === 'filters' && <fieldset className="controls"><legend>Выборка инфраструктуры</legend>
         <label>Земля<select value={a9Enabled ? '' : filters.state} disabled={a9Enabled} onChange={event => change('state', event.target.value)}><option value="">Вся Германия</option>{states.map(state => <option key={state}>{state}</option>)}</select></label>
@@ -21,9 +21,9 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
       {tab === 'layers' && <fieldset className="controls"><legend>Отображение карты</legend>
         {!a9Enabled && <Switch checked={options.showSites} onChange={value => onOptions({ ...options, showSites: value })}>Зарядные площадки</Switch>}
         <Switch checked={options.clusterSites && !a9Enabled} disabled={a9Enabled} onChange={value => onOptions({ ...options, clusterSites: value })}>Группировать площадки</Switch>
-        <label>Аналитический слой<select value={options.metric} disabled={a9Enabled} onChange={event => onOptions({ ...options, metric: event.target.value })}><option value="sites">Зарядные площадки</option><option value="bev">Число BEV</option><option value="ratio">Точки на 1 000 BEV</option><option value="power">кВт на 1 000 BEV</option><option value="concentration">Концентрация операторов</option></select></label>
+        <label>Аналитический слой<select value={options.metric} disabled={a9Enabled} onChange={event => onOptions({ ...options, metric: event.target.value })}>{METRIC_CHOICES.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
         {options.metric === 'concentration' && !a9Enabled && <label>Доля лидера по<select value={options.operatorBasis} onChange={event => onOptions({ ...options, operatorBasis: event.target.value })}><option value="points">Числу зарядных точек</option><option value="power">Номинальной мощности</option></select></label>}
-        {options.metric !== 'sites' && options.metric !== 'concentration' && !a9Enabled && <label>Шкала сравнения<select value={options.scaleMode} onChange={event => onOptions({ ...options, scaleMode: event.target.value })}><option value="fixed">Общая, без изменения при фильтрах</option><option value="selection">По текущей выборке</option></select></label>}
+        {options.metric !== 'sites' && options.metric !== 'concentration' && !a9Enabled && <label>Шкала сравнения<select value={options.scaleMode} onChange={event => onOptions({ ...options, scaleMode: event.target.value })}><option value="fixed">Фиксированная</option><option value="selection">По текущей выборке</option></select><span className="note scale-explanation">{options.scaleMode === 'fixed' ? 'Одинаковое значение сохраняет свой цвет при изменении фильтров. Удобно сравнивать разные выборки.' : 'Цвета растягиваются от нуля до максимума среди выбранных территорий. Удобно видеть различия внутри выборки. После изменения фильтров цвет того же значения может измениться.'} Меняется только раскраска, числа остаются прежними.</span></label>}
         <label>Территории<select value={a9Enabled ? 'states' : options.territory} disabled={a9Enabled} onChange={event => onOptions({ ...options, territory: event.target.value })}><option value="states">Земли</option><option value="districts">Районы KBA</option></select></label>
         <Switch checked={options.showBoundaries} onChange={value => onOptions({ ...options, showBoundaries: value })}>Показать границы</Switch>
       </fieldset>}

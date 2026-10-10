@@ -90,14 +90,36 @@ function OverviewContent({ states, metric, data, showSites, onSelect, operatorBa
     />
   </>
 }
-function AnalyticsPanel({ closeSiteLabel = 'К аналитике', navigationRevision = 0, cluster, selectedState, states, site, autobahnSite, region, metric, pending, data, operatorBasis = 'points', onOperatorBasis, showSites, status, error, onRetry, onCloseSite, onAllTerritories, onOverview, onSelectRegion, onZoomCluster }) {
+function AnalyticsPanel({ visible = true, closeSiteLabel = 'К аналитике', navigationRevision = 0, cluster, selectedState, states, site, autobahnSite, region, metric, pending, data, operatorBasis = 'points', onOperatorBasis, showSites, status, error, onRetry, onCloseSite, onAllTerritories, onOverview, onSelectRegion, onZoomCluster }) {
   const [activeTab, setActiveTab] = useState('states')
+  const [tabMetric, setTabMetric] = useState(metric)
+  if (tabMetric !== metric) {
+    setTabMetric(metric)
+    if (metric === 'concentration') setActiveTab('operators')
+  }
   const [distributionOpen, setDistributionOpen] = useState(false)
   const scrollRef = useRef(null), overviewScroll = useRef(0)
+  const previousMetric = useRef(metric), metricScrollPending = useRef(false)
   const contentKey = cluster ? `cluster:${cluster.id}` : site ? `site:${site.site_id}` : region ? `${region.level}:${region.district_code || region.state_code}` : 'overview'
   useLayoutEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = contentKey === 'overview' ? overviewScroll.current : 0
   }, [contentKey, navigationRevision])
+  useLayoutEffect(() => {
+    if (previousMetric.current !== metric) {
+      previousMetric.current = metric
+      metricScrollPending.current = !site && !cluster
+    }
+    // A mobile legend or compact sheet can hide the panel. Defer until visible.
+    if (!metricScrollPending.current || !visible || site || cluster) return
+    const container = scrollRef.current
+    const target = metric === 'concentration' ? container?.querySelector('.operator-shares') : container
+    if (!container || !target) return
+    container.scrollTop = metric === 'concentration'
+      ? container.scrollTop + target.getBoundingClientRect().top - container.getBoundingClientRect().top
+      : 0
+    if (contentKey === 'overview') overviewScroll.current = container.scrollTop
+    metricScrollPending.current = false
+  }, [metric, visible, site, cluster, contentKey, states, activeTab])
   return <aside className="panel analytics-panel" aria-label="Региональная аналитика" aria-busy={pending}>
     <header className="analytics-toolbar"><span>АНАЛИТИКА</span>{cluster || site || pending ? <button onClick={onCloseSite}>{closeSiteLabel}</button> : region ? <button onClick={region.level === 'districts' && selectedState ? onAllTerritories : onOverview}>{region.level === 'districts' && selectedState ? 'Все территории' : 'Все земли'}</button> : <span className="muted">Текущая выборка</span>}</header>
     <div className="pending-line" role="status">{pending ? 'Загрузка новой площадки…' : ''}</div>

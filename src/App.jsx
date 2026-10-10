@@ -231,7 +231,7 @@ export default function App() {
         onCluster={value => { setSiteMode(false); setAutobahnFocus(null); selectSite(-1); setCluster(value); revealAnalytics() }}
         onSite={selectMapSite} onRegion={showRegion} onMapError={setMapError} onDataRendered={onDataRendered} />
     </div>
-    <MapChrome options={options} onOptions={onOptions} filters={filters} onFilters={onFilters} controlsOpen={controlsVisible} controlTab={controlTab} onDirection={value => { setA9Direction(value); setSelectedSegment(null); closeSite() }} onControls={openControls}
+    <MapChrome options={options} onOptions={onOptions} onQuickMetric={metric => { onOptions({ ...options, metric }); if (!controlsVisible && !legendOpen) toggleLegend() }} filters={filters} onFilters={onFilters} controlsOpen={controlsVisible} controlTab={controlTab} onDirection={value => { setA9Direction(value); setSelectedSegment(null); closeSite() }} onControls={openControls}
       analyticsOpen={analyticsOpen} onAnalytics={() => { setAnalyticsOpen(value => !value); if (window.innerWidth < 1200) closeControls() }}
       listOpen={listOpen} onList={() => { setListReturn(null); listScroll.current = 0; setListCenter(viewState); setListOpen(value => !value); setAnalyticsOpen(true); setSheetState('half'); if (window.innerWidth < 1200) closeControls() }}
       a9Enabled={a9Enabled} route={autobahnRoute} direction={a9Direction} legendOpen={legendOpen} onLegend={() => { if (a9Enabled) revealAnalytics(); else toggleLegend() }} modalOpen={mobile && controlsVisible}

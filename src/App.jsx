@@ -39,6 +39,7 @@ export default function App() {
   const [listCenter, setListCenter] = useState(GERMANY), [draftFilters, setDraftFilters] = useState(DEFAULT_FILTERS)
   const [selectedSegment, setSelectedSegment] = useState(null)
   const controlsVisible = controlsOpen && !legendOpen
+  const dismissLegendClick = useRef(false)
   const legendAnalytics = useRef(null)
   const closeLegend = useCallback(() => {
     setLegendOpen(false)
@@ -64,7 +65,7 @@ export default function App() {
   }, [legendOpen, closeLegend])
   const closeControls = useCallback(() => setControlsOpen(false), [])
   useDialogFocus(dialogRef, mobile && controlsVisible, closeControls)
-  useDialogFocus(legendRef, mobile && legendOpen, closeLegend)
+  useDialogFocus(legendRef, mobile && legendOpen && controlsOpen, closeLegend)
   useEffect(() => { try { localStorage.setItem('charging-map-theme', options.style) } catch { /* Storage is optional. */ } }, [options.style])
   const revealAnalytics = useCallback(() => { setAnalyticsOpen(true); setListOpen(false); setSheetState('half'); setLegendOpen(false); if (window.innerWidth < 1200) setControlsOpen(false) }, [])
   const [viewState, setViewState] = useState(GERMANY)
@@ -197,7 +198,22 @@ export default function App() {
   const title = listOpen ? 'Площадки рядом' : siteMode ? (detail?.city || 'Зарядная площадка') : cluster ? 'Группа площадок' : a9Enabled ? `${autobahnRoute} · ${AUTOBAHNS[autobahnRoute][a9Direction]}` : activeRegion?.display_name || activeRegion?.district_name || activeRegion?.state_name || 'Германия'
   const routeSummary = a9?.summary.find(item => item.direction === a9Direction)
   const summary = cluster || activeRegion || {}
-  return <main className={`map-app theme-${options.style}`} data-theme={options.style} ref={mapContainer}>
+  return <main className={`map-app theme-${options.style}`} data-theme={options.style} ref={mapContainer}
+    onPointerDownCapture={event => {
+      dismissLegendClick.current = false
+      if (!legendOpen || event.target.closest('.map-legend, .quick-layer')) return
+      if (controlsOpen) {
+        // Restoring settings consumes this gesture; a standalone legend lets it reach the map.
+        event.preventDefault(); event.stopPropagation()
+        dismissLegendClick.current = true
+      }
+      closeLegend()
+    }}
+    onClickCapture={event => {
+      if (!dismissLegendClick.current) return
+      event.preventDefault(); event.stopPropagation(); dismissLegendClick.current = false
+    }}
+    onPointerUpCapture={() => { if (dismissLegendClick.current) requestAnimationFrame(() => { dismissLegendClick.current = false }) }}>
     <div className="map-surface" inert={mobile && controlsVisible || undefined}>
       <ChargingMap data={displayData} autobahn={a9Enabled ? a9 : null} direction={a9Direction} markers={markers} regions={regions} options={mapOptions} viewState={viewState} onViewChange={onViewChange}
         selectedSite={autobahnFocus} selectedCluster={cluster} selectedSegment={selectedSegment} mobile={mobile}
@@ -218,7 +234,6 @@ export default function App() {
         onA9Enabled={enabled => { setA9Enabled(enabled); setSelectedSegment(null); closeSite(); if (enabled) { pendingFocus.current = null; if (!a9 && !a9Pending) loadA9(); setViewState(previous => transitionViewState(previous, AUTOBAHNS[autobahnRoute].view)) } else { focusLand(filters.state) } }}
         onA9Direction={value => { setA9Direction(value); setSelectedSegment(null); closeSite() }} onHideOthers={setHideOthers} states={states} filters={mobile ? draftFilters : filters} onFilters={mobile ? setDraftFilters : onFilters} options={options} onOptions={onOptions} onReset={() => { resetSettings(); setDraftFilters(DEFAULT_FILTERS) }} />
     </div>}
-    {legendOpen && <div className="legend-dismiss-backdrop" onClick={closeLegend} aria-hidden="true" />}
     {!a9Enabled && <div ref={legendRef} inert={mobile && controlsVisible || undefined}><MapLegend regions={regions} options={mapOptions} open={legendOpen} onToggle={toggleLegend} /></div>}
     <div inert={mobile && controlsVisible || undefined}>
       <PanelShell mobile={mobile} state={sheetState} onState={setSheetState} onClose={() => setAnalyticsOpen(false)} hidden={!analyticsOpen} title={title}

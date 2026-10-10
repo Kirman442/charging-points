@@ -431,7 +431,6 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 @media (min-width:768px) and (max-width:1199px) { .map-hover-info { max-width: calc(100% - var(--left) - 60px); width: 250px; } }
 @media (max-width:767px) { .map-hover-info { display: none; } }
 
-.legend-dismiss-backdrop { position: absolute; inset: 0; z-index: 4; }
 .map-legend.is-open { z-index: 5; }
 .map-app:has(.map-legend.is-open) .map-hover-info { display: none; }
 @media (min-width:768px) and (max-width:959px) { .map-hover-info { left: 20px; bottom: 108px; width: var(--left); max-width: calc(100% - 40px); } }
@@ -451,7 +450,6 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
   .quick-layer select { flex: 1; width: 0; }
   .filter-chips { flex-wrap: nowrap; width: 100%; overflow-x: auto; padding-bottom: 3px; }
   .filter-chips button { flex-shrink: 0; white-space: nowrap; }
-  .map-app:has(.filter-chips) { --controls-top: 294px; }
   .control-panel { top: var(--controls-top); width: var(--left); }
 }
 .analytics-scroll > .analytics-method { max-height: none; overflow: visible; border-top: 1px solid var(--border); margin-top: 16px; padding: 12px 0; }
@@ -482,4 +480,19 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
   .control-tabs button { min-height: 36px; padding: 5px; }
   .control-footer { grid-template-columns: repeat(2,minmax(0,1fr)); margin-top: 8px; padding-top: 8px; gap: 6px; }
   .control-footer button { min-height: 36px; padding: 5px; font-size: 12px; }
+}
+
+/* Filters remain independent of the settings panel's position. */
+.map-app .panel-heading h2, .map-app .app-brand h1 { font-weight: 400; }
+.panel-heading { min-height: 40px; }
+@media (min-width:960px) {
+  .map-context .filter-chips { position: absolute; top: 56px; left: calc(var(--left) + 12px); width: min(220px, calc(100vw - var(--left) - var(--right) - 72px)); min-width: 140px; display: flex; flex-direction: column; align-items: flex-start; overflow: visible; }
+  .filter-chips button { max-width: 100%; white-space: normal; text-align: left; overflow-wrap: anywhere; }
+  .filter-chips button svg { flex-shrink: 0; }
+}
+@media (min-width:768px) and (max-width:959px) {
+  .map-app:has(.control-shell:not([hidden])) .filter-chips { display: none; }
+}
+@media (min-width:960px) and (max-height:600px) {
+  .map-app:has(.control-shell:not([hidden])) .map-context .filter-chips { top: -174px; }
 }

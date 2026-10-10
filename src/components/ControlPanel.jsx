@@ -7,7 +7,7 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
   const change = (key, value) => onFilters({ ...filters, [key]: value })
   const tabs = [{ id: 'filters', text: 'Фильтры', icon: 'filter' }, { id: 'layers', text: 'Слои', icon: 'layers' }, { id: 'road', text: 'Автобаны', icon: 'road' }]
   return <aside className="panel control-panel" aria-label="Настройки карты">
-    <header className="panel-heading"><div><span className="eyebrow">НАСТРОЙКИ</span><h2>Ваша карта</h2></div><button className="icon-button" onClick={onClose} aria-label="Закрыть настройки"><Icon name="close" /></button></header>
+    <header className="panel-heading"><span className="eyebrow">НАСТРОЙКИ</span><button className="icon-button" onClick={onClose} aria-label="Закрыть настройки"><Icon name="close" /></button></header>
     <nav className="control-tabs" aria-label="Раздел настроек">{tabs.map(item => <button key={item.id} aria-pressed={tab === item.id} onClick={() => onTab(item.id)}><Icon name={item.icon} />{item.text}</button>)}</nav>
     <div className="control-scroll">
       {tab === 'filters' && <fieldset className="controls"><legend>Выборка инфраструктуры</legend>

@@ -12,6 +12,7 @@ import { MAP_STYLES } from '../config/map.js'
 import { operatorConcentration } from '../data/concentration.js'
 import { METRICS } from '../data/analytics.js'
 import { format } from '../utils/format.js'
+import { counted } from '../utils/siteSelection.js'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { paletteFor, rgba } from '../map/palette.js'
 
@@ -82,10 +83,10 @@ export default function ChargingMap({ data, autobahn, direction, markers, region
     if (isMarker(info) && info.index >= 0) {
       const selection = markerSelection(markers, info.index)
       return selection?.type === 'cluster'
-        ? `${format(selection.sites)} площадок · ${format(selection.points)} зарядных точек\nКлик — сводка; двойной клик — приблизить`
-        : `${format(markers.pointCounts[info.index])} зарядных точек\nДо ${format(markers.powers[info.index])} кВт\nНажми для подробностей`
+        ? `${counted(selection.sites, ['площадка', 'площадки', 'площадок'])} · ${counted(selection.points, ['зарядная точка', 'зарядные точки', 'зарядных точек'])}\nКлик — сводка; двойной клик — приблизить`
+        : `${counted(markers.pointCounts[info.index], ['зарядная точка', 'зарядные точки', 'зарядных точек'])}\nДо ${format(markers.powers[info.index])} кВт\nНажми для подробностей`
     }
-    if (isSite(info) && info.index >= 0) return `${format(data.pointCounts[info.index])} зарядных точек\nДо ${format(data.powers[info.index])} кВт\nНажми для подробностей`
+    if (isSite(info) && info.index >= 0) return `${counted(data.pointCounts[info.index], ['зарядная точка', 'зарядные точки', 'зарядных точек'])}\nДо ${format(data.powers[info.index])} кВт\nНажми для подробностей`
     if (info.object?.properties) {
       const p = info.object.properties
       const concentration = options.metric === 'concentration' ? operatorConcentration(p.operators, options.operatorBasis) : null

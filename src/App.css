@@ -498,3 +498,5 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 }
 
 .map-app .results-panel .secondary-button:hover { background: color-mix(in srgb, var(--accent) 18%, var(--surface)); border-color: var(--accent); color: var(--text); }
+
+.sheet-content { display: flex; flex-direction: column; flex: 1; min-height: 0; }

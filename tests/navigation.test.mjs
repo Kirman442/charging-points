@@ -6,6 +6,7 @@ import { tableFromIPC } from 'apache-arrow'
 import { WebMercatorViewport } from '@deck.gl/core'
 import { decodeRegions } from '../src/data/regions.js'
 import { geometryBounds, fitRegionViewState, mapPadding, returnRegionFeature } from '../src/map/navigation.js'
+import { MOBILE_MAX_WIDTH, isMobileWidth } from '../src/config/layout.js'
 import { GERMANY } from '../src/config/map.js'
 const { readParquet } = createRequire(import.meta.url)('parquet-wasm/node')
 const table = tableFromIPC(readParquet(new Uint8Array(fs.readFileSync(new URL('../public/data/states_bev_display_100m_string.parquet', import.meta.url)))).intoIPCStream())
@@ -36,6 +37,33 @@ test('multipart bounds include every component and are cached; missing geometry 
 test('mobile padding always leaves a usable vertical map area', () => {
   const p=mapPadding({width:400,height:600,left:0,right:400,top:0,bottom:600},{bottom:300},{top:250})
   assert.ok(p.top+p.bottom <= 420+.01)
+})
+
+test('layout boundary 760/761/767/768 fits a bottom sheet without negative map space', () => {
+  const css = fs.readFileSync(new URL('../src/App.css', import.meta.url), 'utf8')
+  assert.ok(css.includes(`@media (max-width:${MOBILE_MAX_WIDTH}px)`))
+  for (const width of [760,761,767,768]) {
+    const size = {width,height:900,left:0,top:0,right:width,bottom:900}
+    const analytics = isMobileWidth(width) ? {left:0,top:432} : {left:width-360,top:108}
+    const padding = mapPadding(size, null, analytics)
+    assert.ok(padding.left + padding.right < width)
+    assert.ok(padding.top + padding.bottom < size.height)
+    if (width <= 767) assert.equal(padding.right, 12)
+    const target = fitRegionViewState(states[0], size, GERMANY, padding)
+    for (const key of ['longitude','latitude','zoom']) assert.ok(Number.isFinite(target[key]))
+  }
+})
+
+test('fit remains finite with overlapping panels, excessive padding and very short screens', () => {
+  for (const [width,height] of [[320,180],[768,180],[20,20]]) {
+    const size={width,height,left:0,top:0,right:width,bottom:height}
+    const padding=mapPadding(size,{right:700,bottom:900},{left:0,top:0})
+    const target=fitRegionViewState(states[0],size,GERMANY,padding)
+    assert.ok(Number.isFinite(target.zoom))
+    const guarded=fitRegionViewState(states[0],size,GERMANY,{left:2000,right:2000,top:900,bottom:900})
+    assert.ok(Number.isFinite(guarded.zoom))
+  }
+  assert.equal(fitRegionViewState(states[0],{width:-1,height:900},GERMANY,{}),GERMANY)
 })
 
 test('return navigation focuses the retained district or state only with a manual state filter', () => {

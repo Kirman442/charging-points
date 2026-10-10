@@ -17,6 +17,7 @@ import ResultsPanel from './components/ResultsPanel.jsx'
 import useResponsive from './hooks/useResponsive.js'
 import useDialogFocus from './hooks/useDialogFocus.js'
 import { zoomViewState } from './map/interaction.js'
+import { isMobileWidth } from './config/layout.js'
 import './App.css'
 const COUNTRY = { geometry: { type: 'Polygon', coordinates: [[[5.86,47.27],[15.05,47.27],[15.05,55.1],[5.86,55.1],[5.86,47.27]]] } }
 function initialOptions() {
@@ -88,7 +89,7 @@ export default function App() {
     const container = mapContainer.current
     if (!feature || !container) return
     const rect = container.getBoundingClientRect()
-    const controls = rect.width > 767 ? container.querySelector('.control-panel')?.getBoundingClientRect() : null
+    const controls = !isMobileWidth(rect.width) ? container.querySelector('.control-panel')?.getBoundingClientRect() : null
     const analytics = container.querySelector('.analytics-shell:not([hidden])')?.getBoundingClientRect()
     setViewState(previous => fitRegionViewState(feature, rect, previous, mapPadding(rect, controls, analytics), maxZoom))
   }, [])

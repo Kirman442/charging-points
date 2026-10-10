@@ -37,6 +37,6 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
         </> : <p className="note">Исследуйте интервалы между зарядными площадками вдоль A1, A5 и A9. Подъезд и возврат оцениваются по дорожной модели.</p>}
       </fieldset>}
     </div>
-    <footer className="control-footer">{onLegend && <button className="settings-legend" onClick={onLegend}><Icon name="layers" />Легенда карты</button>}{mobile && tab !== 'filters' && <p className="note">Изменения отображения применяются сразу.</p>}{mobile && <button className="primary-button" onClick={onApply}>{tab === 'filters' ? 'Применить фильтры' : 'Готово'}</button>}<button className="reset" onClick={onReset}>Сбросить настройки</button></footer>
+    <footer className="control-footer">{onLegend && <button className="settings-legend" onClick={onLegend}><Icon name="layers" />Легенда карты</button>}{mobile && tab !== 'filters' && <p className="note">Изменения отображения применяются сразу.</p>}{mobile && <button className="primary-button" onClick={tab === 'filters' ? onApply : onClose}>{tab === 'filters' ? 'Применить фильтры' : 'Готово'}</button>}<button className="reset" onClick={onReset}>Сбросить настройки</button></footer>
   </aside>
 }

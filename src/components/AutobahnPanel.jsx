@@ -2,14 +2,10 @@ import { hasAccessConditions } from '../data/autobahnAccess.js'
 import { useId, useState } from 'react'
 import { AUTOBAHNS, A9_STATUS } from '../data/autobahn.js'
 import Switch from './Switch.jsx'
+import { countWord } from '../utils/siteSelection.js'
 
 const number = value => value.toLocaleString('ru-RU')
-const siteWord = count => {
-  const lastTwo = count % 100
-  if (lastTwo >= 11 && lastTwo <= 14) return 'площадок'
-  const last = count % 10
-  return last === 1 ? 'площадка' : last >= 2 && last <= 4 ? 'площадки' : 'площадок'
-}
+const siteWord = count => countWord(count, ['площадка', 'площадки', 'площадок'])
 
 export default function AutobahnPanel({ pilot, direction, pending, error, onRetry, route = 'A9', showUnrouted, onShowUnrouted, selectedSegment }) {
   const [methodOpen, setMethodOpen] = useState(false)
@@ -41,7 +37,7 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
       </section>
       <div className="a9-key"><div><i className="a9-point a9-point-access" />Есть условия доступа — см. карточку</div></div>
       <section aria-label="Отдельные условия доступа">
-        <p className="note">У {number(accessConditionSites.length)} площадок с найденным маршрутом отмечены отдельные условия доступа. На карте они обозначены квадратами; подробности — в карточке площадки. Эти признаки сами по себе не исключают площадку из интервалов.</p>
+        <p className="note">У {number(accessConditionSites.length)} {countWord(accessConditionSites.length, ['площадки', 'площадок', 'площадок'])} с найденным маршрутом отмечены отдельные условия доступа. На карте они обозначены квадратами; подробности — в карточке площадки. Эти признаки сами по себе не исключают площадку из интервалов.</p>
       </section>
       <section className="a9-review-block" aria-label="Площадки, требующие проверки">
         <p><strong>{number(reviewSites.length)}</strong> {siteWord(reviewSites.length)} {reviewSites.length % 10 === 1 && reviewSites.length % 100 !== 11 ? 'требует' : 'требуют'} проверки.</p>

@@ -3,6 +3,14 @@ import assert from 'node:assert/strict'
 import { counted, siteSelectionText, sitePowerRows } from '../src/utils/siteSelection.js'
 
 const forms = ['точка', 'точки', 'точек']
+test('counts support compact labels and the genitive case after У', () => {
+  for (const [value, point, site, afterU] of [[0,'точек','площадок','площадок'],[1,'точка','площадка','площадки'],[2,'точки','площадки','площадок'],[11,'точек','площадок','площадок'],[21,'точка','площадка','площадки'],[81,'точка','площадка','площадки'],[242,'точки','площадки','площадок']]) {
+    assert.ok(counted(value, forms).endsWith(` ${point}`))
+    assert.ok(counted(value, ['площадка','площадки','площадок']).endsWith(` ${site}`))
+    assert.ok(counted(value, ['площадки','площадок','площадок']).endsWith(` ${afterU}`))
+    assert.ok(counted(value, ['точки','точек','точек']).endsWith(` ${afterU === 'площадки' ? 'точки' : 'точек'}`))
+  }
+})
 test('Russian counts cover all endings, teens, hundreds and thousands', () => {
   const groups = [
     ['точка', [1,21,31,101,121,1001]],

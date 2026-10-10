@@ -1,10 +1,11 @@
 import { CONCENTRATION_THRESHOLD, operatorConcentration } from '../data/concentration.js'
 import { format } from '../utils/format.js'
+import { counted } from '../utils/siteSelection.js'
 
 export default function OperatorShares({ operators, basis, onBasis }) {
   const distribution = operators?.[basis]
   const concentration = operatorConcentration(operators, basis)
-  const valueLabel = value => basis === 'points' ? `${format(value)} точек` : `${format(value / 1000)} МВт`
+  const valueLabel = (value, genitive = false) => basis === 'points' ? counted(value, genitive ? ['точки', 'точек', 'точек'] : ['точка', 'точки', 'точек']) : `${format(value / 1000)} МВт`
   const row = (name, value, share) => <li key={name}>
     <div className="operator-row"><span className="operator-name">{name}</span><strong>{share == null ? '—' : `${format(share)} %`}</strong></div>
     <div className="operator-bar" aria-hidden="true"><span style={{ width: `${share ?? 0}%` }} /></div>
@@ -18,7 +19,7 @@ export default function OperatorShares({ operators, basis, onBasis }) {
       {concentration && <div className={`concentration-card${concentration.high ? ' high-concentration' : ''}`}>
         <span className="concentration-status">{concentration.high ? 'Высокая концентрация инфраструктуры' : `Доля лидера не превышает ${CONCENTRATION_THRESHOLD}%`}</span>
         <p className="concentration-leader">{concentration.name}</p><strong>{format(concentration.share)} %</strong><small>доля крупнейшего оператора</small>
-        <p className="note">{valueLabel(concentration.value)} из {valueLabel(concentration.total)}</p>
+        <p className="note">{valueLabel(concentration.value)} из {valueLabel(concentration.total, true)}</p>
         <p className="note">При малом объёме выборки высокая доля может относиться лишь к нескольким установкам. Порог &gt;{CONCENTRATION_THRESHOLD}% не определяет цены или нарушение конкуренции.</p>
       </div>}
       {distribution.total === 0 ? <p className="note">Суммарная мощность равна нулю; доли не рассчитываются.</p> : <ol className="operator-ranking">

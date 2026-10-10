@@ -15,3 +15,15 @@ export function siteSelectionText(site) {
   const describe = (p, e) => `${counted(p, ['точка', 'точки', 'точек'])} и ${counted(e, ['установка', 'установки', 'установок'])}`
   return `В выборке: ${describe(points, equipment)}. Всего на площадке: ${describe(site.charging_point_count, site.equipment_count)}.`
 }
+
+// Selection is a subset of the registry equipment; each selected installation
+// is counted once by selectPoints. Equal cardinalities mean all installations
+// are included, even when only some of their points match the filters.
+export function sitePowerRows(site) {
+  const equipment = site.selected_equipment_count ?? site.equipment_count
+  const complete = equipment === site.equipment_count
+  const rows = [{ label: 'Номинальная мощность всей площадки', value: `${format(site.installed_power_kw)} кВт` }]
+  if (!complete) rows.push({ label: 'Мощность установок в выборке', value: `${format(site.selected_power_kw ?? site.installed_power_kw)} кВт` })
+  rows.push({ label: 'Мощность точек', value: `${site.available_power_kw.map(format).join(', ')} кВт` })
+  return rows
+}

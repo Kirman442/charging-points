@@ -37,6 +37,8 @@ export default function App() {
   const [analyticsOpen, setAnalyticsOpen] = useState(true), [sheetState, setSheetState] = useState('peek')
   const [legendOpen, setLegendOpen] = useState(false), [listOpen, setListOpen] = useState(false)
   const [listCenter, setListCenter] = useState(GERMANY), [draftFilters, setDraftFilters] = useState(DEFAULT_FILTERS)
+  const [listReturn, setListReturn] = useState(null)
+  const listScroll = useRef(0)
   const [selectedSegment, setSelectedSegment] = useState(null)
   const controlsVisible = controlsOpen && !legendOpen
   const dismissLegendClick = useRef(false)
@@ -67,7 +69,7 @@ export default function App() {
   useDialogFocus(dialogRef, mobile && controlsVisible, closeControls)
   useDialogFocus(legendRef, mobile && legendOpen && controlsOpen, closeLegend)
   useEffect(() => { try { localStorage.setItem('charging-map-theme', options.style) } catch { /* Storage is optional. */ } }, [options.style])
-  const revealAnalytics = useCallback(() => { setAnalyticsOpen(true); setListOpen(false); setSheetState('half'); setLegendOpen(false); if (window.innerWidth < 1200) setControlsOpen(false) }, [])
+  const revealAnalytics = useCallback(() => { setListReturn(null); setAnalyticsOpen(true); setListOpen(false); setSheetState('half'); setLegendOpen(false); if (window.innerWidth < 1200) setControlsOpen(false) }, [])
   const [viewState, setViewState] = useState(GERMANY)
   const [clickedRegion, setClickedRegion] = useState(null), [mapError, setMapError] = useState('')
   const rankingView = useRef(null)
@@ -81,7 +83,7 @@ export default function App() {
     : regions?.states.find(feature => feature.properties.state_name === filters.state)?.properties || null
   const displayData = useMemo(() => a9Enabled ? autobahnDisplayData(data, a9, a9Direction, hideOthers, showUnrouted ? 'all' : 'routed', autobahnFocus) : data, [data, a9Enabled, a9, a9Direction, hideOthers, showUnrouted, autobahnFocus])
   const mapOptions = useMemo(() => ({ ...options, a9Mode: a9Enabled, showSites: a9Enabled || options.showSites, autobahnZoom: viewState.zoom, clusterSites: options.clusterSites && !a9Enabled, metric: a9Enabled ? 'sites' : options.metric, territory: a9Enabled ? 'states' : options.territory, state: a9Enabled ? '' : filters.state, selectedRegion: a9Enabled ? null : activeRegion }), [options, filters.state, activeRegion, a9Enabled, viewState.zoom])
-  const closeSite = useCallback(() => { setAutobahnFocus(null); setCluster(null); setSiteMode(false); selectSite(-1) }, [selectSite])
+  const closeSite = useCallback(() => { setListReturn(null); setAutobahnFocus(null); setCluster(null); setSiteMode(false); selectSite(-1) }, [selectSite])
   const focusFeature = useCallback((feature, maxZoom = 11) => {
     const container = mapContainer.current
     if (!feature || !container) return
@@ -102,19 +104,26 @@ export default function App() {
     focusFeature(feature)
   }, [regions, focusFeature])
   const returnToAnalytics = useCallback(() => {
+    const savedList = listReturn
     closeSite()
+    if (savedList) {
+      setViewState(previous => transitionViewState(previous, savedList.view))
+      setListOpen(true); setAnalyticsOpen(true); setSheetState(savedList.sheet)
+      return
+    }
     if (!a9Enabled && filters.state) {
       const feature = returnRegionFeature(regions, filters.state, activeRegion)
       if (feature) focusFeature(feature)
       else focusLand(filters.state)
     }
-  }, [closeSite, filters.state, regions, activeRegion, focusFeature, focusLand, a9Enabled])
+  }, [closeSite, filters.state, regions, activeRegion, focusFeature, focusLand, a9Enabled, listReturn])
   useEffect(() => {
     if (!pendingFocus.current) return
     const frame = requestAnimationFrame(() => { if (pendingFocus.current) focusLand(pendingFocus.current) })
     return () => cancelAnimationFrame(frame)
   }, [focusLand])
   const onFilters = useCallback(next => {
+    setListReturn(null)
     rankingView.current = null
     setCluster(null); setAutobahnFocus(null); setSelectedSegment(null)
     setFilters(next)
@@ -126,6 +135,7 @@ export default function App() {
     setOptions(normalized)
     if (!normalized.showSites || normalized.clusterSites !== options.clusterSites) setCluster(null)
     if (normalized.metric !== options.metric || normalized.territory !== options.territory) {
+      setListReturn(null)
       setCluster(null); setAutobahnFocus(null); setSiteMode(false); selectSite(-1)
       setClickedRegion(previous => reconcileRegion(previous, normalized, regions))
     }
@@ -223,7 +233,7 @@ export default function App() {
     </div>
     <MapChrome options={options} onOptions={onOptions} filters={filters} onFilters={onFilters} controlsOpen={controlsVisible} controlTab={controlTab} onDirection={value => { setA9Direction(value); setSelectedSegment(null); closeSite() }} onControls={openControls}
       analyticsOpen={analyticsOpen} onAnalytics={() => { setAnalyticsOpen(value => !value); if (window.innerWidth < 1200) closeControls() }}
-      listOpen={listOpen} onList={() => { setListCenter(viewState); setListOpen(value => !value); setAnalyticsOpen(true); setSheetState('half'); if (window.innerWidth < 1200) closeControls() }}
+      listOpen={listOpen} onList={() => { setListReturn(null); listScroll.current = 0; setListCenter(viewState); setListOpen(value => !value); setAnalyticsOpen(true); setSheetState('half'); if (window.innerWidth < 1200) closeControls() }}
       a9Enabled={a9Enabled} route={autobahnRoute} direction={a9Direction} legendOpen={legendOpen} onLegend={() => { if (a9Enabled) revealAnalytics(); else toggleLegend() }} modalOpen={mobile && controlsVisible}
       onHome={() => a9Enabled ? focusRoute() : focusLand(filters.state)} onZoom={delta => setViewState(previous => transitionViewState(previous, { ...previous, zoom: Math.max(3, Math.min(18, previous.zoom + delta)) }))} />
     {mobile && controlsVisible && <div className="dialog-backdrop" onClick={closeControls} />}
@@ -238,8 +248,8 @@ export default function App() {
     <div inert={mobile && controlsVisible || undefined}>
       <PanelShell mobile={mobile} state={sheetState} onState={setSheetState} onClose={() => setAnalyticsOpen(false)} hidden={!analyticsOpen} title={title}
         sites={siteMode ? 1 : summary.sites ?? data?.count ?? 0} points={siteMode ? detail?.selected_point_count ?? 0 : summary.points ?? data?.totalPoints ?? 0} routeSummary={a9Enabled && !siteMode && !listOpen ? routeSummary : null} pending={!data || siteMode && detailPending || a9Enabled && a9Pending} error={error || (a9Enabled ? a9Error : '') || mapError}>
-        {listOpen ? <ResultsPanel data={displayData} center={listCenter} onRefresh={() => setListCenter(viewState)} onSelect={row => focusSite(row.rowIndex, [row.longitude, row.latitude])} /> : a9Enabled && !siteMode ? <AutobahnPanel showUnrouted={showUnrouted} onShowUnrouted={setShowUnrouted} route={autobahnRoute} pilot={a9} selectedSegment={selectedSegment} direction={a9Direction} pending={a9Pending} error={a9Error} onRetry={loadA9} onSite={focusSite} /> :
-          <AnalyticsPanel navigationRevision={analyticsRevision} autobahnSite={a9Enabled ? a9?.sites.find(s => s.site_row === autobahnFocus && s.direction === a9Direction && s.registry_site_id === detail?.site_id) : null} cluster={cluster} onZoomCluster={() => { setViewState(previous => zoomViewState(previous, cluster)); setCluster(null) }} selectedState={filters.state} states={regions?.states} site={siteMode ? detail : null} region={activeRegion} metric={options.metric} pending={siteMode && detailPending}
+        {listOpen ? <ResultsPanel data={displayData} center={listCenter} scrollMemory={listScroll} onScroll={value => { listScroll.current = value }} onRefresh={() => { listScroll.current = 0; setListCenter(viewState) }} onSelect={row => { const saved = { view: { ...viewState }, sheet: sheetState }; focusSite(row.rowIndex, [row.longitude, row.latitude]); setListReturn(saved) }} /> : a9Enabled && !siteMode ? <AutobahnPanel showUnrouted={showUnrouted} onShowUnrouted={setShowUnrouted} route={autobahnRoute} pilot={a9} selectedSegment={selectedSegment} direction={a9Direction} pending={a9Pending} error={a9Error} onRetry={loadA9} onSite={focusSite} /> :
+          <AnalyticsPanel closeSiteLabel={listReturn ? 'К списку' : 'К аналитике'} navigationRevision={analyticsRevision} autobahnSite={a9Enabled ? a9?.sites.find(s => s.site_row === autobahnFocus && s.direction === a9Direction && s.registry_site_id === detail?.site_id) : null} cluster={cluster} onZoomCluster={() => { setViewState(previous => zoomViewState(previous, cluster)); setCluster(null) }} selectedState={filters.state} states={regions?.states} site={siteMode ? detail : null} region={activeRegion} metric={options.metric} pending={siteMode && detailPending}
             data={data} operatorBasis={options.operatorBasis} onOperatorBasis={value => onOptions({ ...options, operatorBasis: value })} showSites={options.showSites} status={status} error={error || mapError} onRetry={() => { closeSite(); setClickedRegion(null); reload() }} onCloseSite={returnToAnalytics} onAllTerritories={allTerritories} onOverview={overview} onSelectRegion={showRankedRegion} />}
       </PanelShell>
     </div>

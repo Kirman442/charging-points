@@ -90,7 +90,7 @@ function OverviewContent({ states, metric, data, showSites, onSelect, operatorBa
     />
   </>
 }
-function AnalyticsPanel({ navigationRevision = 0, cluster, selectedState, states, site, autobahnSite, region, metric, pending, data, operatorBasis = 'points', onOperatorBasis, showSites, status, error, onRetry, onCloseSite, onAllTerritories, onOverview, onSelectRegion, onZoomCluster }) {
+function AnalyticsPanel({ closeSiteLabel = 'К аналитике', navigationRevision = 0, cluster, selectedState, states, site, autobahnSite, region, metric, pending, data, operatorBasis = 'points', onOperatorBasis, showSites, status, error, onRetry, onCloseSite, onAllTerritories, onOverview, onSelectRegion, onZoomCluster }) {
   const [activeTab, setActiveTab] = useState('states')
   const [distributionOpen, setDistributionOpen] = useState(false)
   const scrollRef = useRef(null), overviewScroll = useRef(0)
@@ -99,7 +99,7 @@ function AnalyticsPanel({ navigationRevision = 0, cluster, selectedState, states
     if (scrollRef.current) scrollRef.current.scrollTop = contentKey === 'overview' ? overviewScroll.current : 0
   }, [contentKey, navigationRevision])
   return <aside className="panel analytics-panel" aria-label="Региональная аналитика" aria-busy={pending}>
-    <header className="analytics-toolbar"><span>АНАЛИТИКА</span>{cluster || site || pending ? <button onClick={onCloseSite}>К аналитике</button> : region ? <button onClick={region.level === 'districts' && selectedState ? onAllTerritories : onOverview}>{region.level === 'districts' && selectedState ? 'Все территории' : 'Все земли'}</button> : <span className="muted">Текущая выборка</span>}</header>
+    <header className="analytics-toolbar"><span>АНАЛИТИКА</span>{cluster || site || pending ? <button onClick={onCloseSite}>{closeSiteLabel}</button> : region ? <button onClick={region.level === 'districts' && selectedState ? onAllTerritories : onOverview}>{region.level === 'districts' && selectedState ? 'Все территории' : 'Все земли'}</button> : <span className="muted">Текущая выборка</span>}</header>
     <div className="pending-line" role="status">{pending ? 'Загрузка новой площадки…' : ''}</div>
     <div className="analytics-scroll" ref={scrollRef} onScroll={event => { if (contentKey === 'overview') overviewScroll.current = event.currentTarget.scrollTop }}>
       {status && status !== 'Готово' && <p role="status">{status}</p>}

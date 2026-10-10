@@ -1,6 +1,7 @@
 import { hasAccessConditions } from '../data/autobahnAccess.js'
 import { useId, useState } from 'react'
 import { AUTOBAHNS, A9_STATUS } from '../data/autobahn.js'
+import Switch from './Switch.jsx'
 
 const number = value => value.toLocaleString('ru-RU')
 const siteWord = count => {
@@ -10,7 +11,7 @@ const siteWord = count => {
   return last === 1 ? 'площадка' : last >= 2 && last <= 4 ? 'площадки' : 'площадок'
 }
 
-export default function AutobahnPanel({ pilot, direction, pending, error, onRetry, route = 'A9', showUnrouted, onShowUnrouted }) {
+export default function AutobahnPanel({ pilot, direction, pending, error, onRetry, route = 'A9', showUnrouted, onShowUnrouted, selectedSegment }) {
   const [methodOpen, setMethodOpen] = useState(false)
   const methodId = useId()
   const summary = pilot?.summary.find(s => s.direction === direction)
@@ -26,6 +27,7 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
     <header><div className="eyebrow">ПИЛОТ · АВТОБАН {route}</div><h2>{AUTOBAHNS[route][direction]}</h2></header>
     {pending && <p role="status">Загрузка маршрута {route}…</p>}
     {error && <div role="alert"><p>{error}</p><button onClick={onRetry}>Повторить загрузку {route}</button></div>}
+    {selectedSegment && <section className="metric-card"><span>Выбранный участок</span><strong>{selectedSegment.status === 'unknown' ? 'Нет расчёта' : `${number(selectedSegment.gap_km)} км`}</strong><small>{A9_STATUS[selectedSegment.status].label}</small><p className="note">Предварительная оценка интервала по дорожной модели.</p></section>}
     {summary && <>
       <p><strong>{number(summary.length_km)} км</strong> · расчётная длина направления</p>
       <p className="note">Доступность по дорожной модели · OSM · 3 км / 3 км / 60 м</p>
@@ -43,7 +45,7 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
       </section>
       <section className="a9-review-block" aria-label="Площадки, требующие проверки">
         <p><strong>{number(reviewSites.length)}</strong> {siteWord(reviewSites.length)} {reviewSites.length % 10 === 1 && reviewSites.length % 100 !== 11 ? 'требует' : 'требуют'} проверки.</p>
-        <label className="check a9-candidate-toggle"><input type="checkbox" checked={showUnrouted} onChange={event => onShowUnrouted(event.target.checked)} />Показать площадки, требующие проверки</label>
+        <Switch checked={showUnrouted} onChange={onShowUnrouted} className="a9-candidate-toggle">Показать площадки, требующие проверки</Switch>
         <p className="note">Здесь проверяется дорожная связь. Фактические въезды отдельно не подтверждены и у площадок с найденным маршрутом.</p>
       </section>
       {summary.max_gap_km != null && <p className="a9-gap-summary">Максимальный расчётный интервал: <strong>{number(summary.max_gap_km)} км</strong>.</p>}
@@ -65,13 +67,13 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
             <ul className="a9-method-list note">{pilot.sections.filter(s => s.direction === direction).map(s => <li key={s.section}>{s.section === 'northern' ? 'Heiligenhafen — Blankenheim' : 'Kelberg — Saarbrücken'}: {number(s.length_km)} км · максимальный расчётный интервал {s.max_gap_km == null ? '—' : number(s.max_gap_km)} км.</li>)}</ul>
           </>}
           {exitZones && <p className="note">Оба направления проверены отдельно от всех разрешённых ответвлений, включая площадки отдыха. В подъездной сети учитываются другие автобаны. Развязки помогают разбирать участки; отбор идёт по дорожному пути, а не по расстоянию вдоль {route}. Длинные подъезды исключены по диагностической сети OSM; это не заключение об отсутствии короткого пути на местности. Диагностическое снятие ограничений не подтверждает доступ.</p>}
-          <p className="note">Бирюзовые площадки с найденным маршрутом показаны сразу. Площадки, требующие проверки, включаются чекбоксом в правой панели. Реальные въезды требуют проверки. Группировка временно отключена.</p>
+          <p className="note">Бирюзовые площадки с найденным маршрутом показаны сразу. Площадки, требующие проверки, включаются переключателем в правой панели. Реальные въезды требуют проверки. Группировка временно отключена.</p>
           <div className="a9-key a9-point-key"><div><i className="a9-point a9-point-eligible" />Маршрут найден, ≥400 кВт и DC ≥150 кВт</div><div><i className="a9-point" />Маршрут найден, мощности недостаточно для расчёта</div><div><i className="a9-point a9-point-unrouted" />Площадка требует проверки</div></div>
           <p className="note">{pilot.accessNetwork ? 'Маршруты по OSM учитывают одностороннее движение, запреты поворотов и ограничения доступа. Подъезд ≤3 км, возврат на своё направление ≤3 км; привязка к ближайшей дороге ≤60 м. Это доступность по дорожной модели, а не подтверждение фактического въезда.' : 'Подъездная сеть ещё не проверена. Близость к автобану не подтверждает доступность с выбранного направления.'}</p>
           <p className="note">Шлагбаум, доступ для клиентов или разрешение владельца территории показываются отдельно. Неизвестные фактические условия не считаются автоматически запретом. Соседние зарядки OSM — дополнительные сведения: они не добавляют площадку в интервалы, а отклонённое сопоставление не отменяет её собственный маршрут.</p>
           <p className="note">Срез зарядок: {pilot.sourceDate}. Это исследовательская оценка, не заключение о соответствии AFIR. Порог 50 км — наше предупреждение.</p>
           <p className="note">Базовые показатели относятся к полному исходному набору. Фильтры карты меняют только показ площадок.</p>
-          <p className="note">Интервал включает возврат предыдущей площадки, участок автобана и подъезд следующей. При несовместимых съезде и возврате интервал не рассчитан. Цветные интервалы рассчитаны между площадками с найденным маршрутом, ≥400 кВт и DC-точкой ≥150 кВт. Это не подтверждение доступности зарядки или соответствия AFIR. Бирюзовые точки — маршрут найден, въезд не проверен. Обводка выделяет площадки, участвующие в расчёте интервалов. Чекбокс меняет только показ точек, интервалы не пересчитываются.</p>
+          <p className="note">Интервал включает возврат предыдущей площадки, участок автобана и подъезд следующей. При несовместимых съезде и возврате интервал не рассчитан. Цветные интервалы рассчитаны между площадками с найденным маршрутом, ≥400 кВт и DC-точкой ≥150 кВт. Это не подтверждение доступности зарядки или соответствия AFIR. Бирюзовые точки — маршрут найден, въезд не проверен. Обводка выделяет площадки, участвующие в расчёте интервалов. Переключатель меняет только показ точек, интервалы не пересчитываются.</p>
         </div>
       </section>
     </>}

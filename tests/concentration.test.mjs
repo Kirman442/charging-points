@@ -29,8 +29,10 @@ test('map, ranking and territory defaults use the same operator basis and thresh
     assert.equal(result.maximum,100)
     assert.equal(result.layers.length,1)
     const fill=result.layers[0].props.getFillColor
-    assert.deepEqual(fill(missing),[110,110,110,100])
-    assert.deepEqual(fill(a),basis==='points'?[65,155,140,145]:[205,90,65,160])
+    assert.deepEqual(fill(missing),[154,168,178,200])
+    assert.equal(result.layers[0].props.getFillPattern(missing),'missing')
+    assert.equal(result.layers[0].props.getFillPattern(a),null)
+    assert.deepEqual(fill(a),basis==='points'?[101,127,153,220]:[233,164,93,220])
     assert.equal(metricValue(a.properties,'concentration',basis),basis==='points'?60:90)
     assert.equal(rankStates(regions.states,'concentration',basis)[0].state_name,basis==='points'?'B':'A')
   }

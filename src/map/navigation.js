@@ -24,21 +24,21 @@ export function mapPadding(container, controls, analytics) {
   if (width > 760) return {
     left: controls ? controls.right - container.left + 18 : 24,
     right: analytics ? container.right - analytics.left + 18 : 24,
-    top: 24, bottom: 48,
+    top: 156, bottom: 48,
   }
   // On short/mobile screens the panels may leave too little vertical space.
-  let top = controls ? controls.bottom - container.top + 12 : 24
+  let top = controls ? controls.bottom - container.top + 12 : 180
   let bottom = analytics ? container.bottom - analytics.top + 12 : 48
   const scale = Math.min(1, height * .7 / (top + bottom))
   top *= scale; bottom *= scale
   return { left: 12, right: 12, top, bottom }
 }
 
-export function fitRegionViewState(feature, size, previous, padding) {
+export function fitRegionViewState(feature, size, previous, padding, maxZoom = 11) {
   const bounds = geometryBounds(feature?.geometry)
   if (!bounds || !size?.width || !size?.height) return previous
   const fitted = new WebMercatorViewport({ width: size.width, height: size.height })
-    .fitBounds(bounds, { padding, maxZoom: 11 })
+    .fitBounds(bounds, { padding, maxZoom })
   return transitionViewState(previous, { longitude: fitted.longitude, latitude: fitted.latitude, zoom: fitted.zoom, pitch: 0, bearing: 0 })
 }
 

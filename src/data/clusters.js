@@ -34,7 +34,7 @@ export function clusterMarkers(index, zoom) {
     powers[i] = p.maxPower; pointCounts[i] = p.chargingPoints
     colors.set(powerColor(p.maxPower), i * 4)
     siteCounts[i] = p.cluster ? p.point_count : 1
-    radii[i] = p.cluster ? Math.min(27, 14 + Math.log2(p.point_count) * 1.3) : 4
+    radii[i] = p.cluster ? Math.min(20, 12 + Math.log2(p.point_count) * 0.7) : 4.5
     if (p.cluster) {
       clusterIds[i] = p.cluster_id
       expansionZooms[i] = Math.min(CLUSTER_MAX_ZOOM, index.getClusterExpansionZoom(p.cluster_id))

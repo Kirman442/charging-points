@@ -32,14 +32,39 @@ export default function App() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [options, setOptions] = useState(initialOptions)
   const mobile = useResponsive()
-  const dialogRef = useRef(null), initialFit = useRef(false)
+  const dialogRef = useRef(null), legendRef = useRef(null), initialFit = useRef(false)
   const [controlsOpen, setControlsOpen] = useState(false), [controlTab, setControlTab] = useState('filters')
   const [analyticsOpen, setAnalyticsOpen] = useState(true), [sheetState, setSheetState] = useState('peek')
   const [legendOpen, setLegendOpen] = useState(false), [listOpen, setListOpen] = useState(false)
   const [listCenter, setListCenter] = useState(GERMANY), [draftFilters, setDraftFilters] = useState(DEFAULT_FILTERS)
   const [selectedSegment, setSelectedSegment] = useState(null)
+  const controlsVisible = controlsOpen && !legendOpen
+  const legendAnalytics = useRef(null)
+  const closeLegend = useCallback(() => {
+    setLegendOpen(false)
+    if (legendAnalytics.current !== null) setAnalyticsOpen(legendAnalytics.current)
+    legendAnalytics.current = null
+  }, [])
+  const toggleLegend = () => {
+    if (legendOpen) { closeLegend(); return }
+    legendAnalytics.current = mobile ? analyticsOpen : null
+    setLegendOpen(true)
+    if (mobile) setAnalyticsOpen(false)
+  }
+  useEffect(() => {
+    if (!legendOpen) return
+    const dismiss = event => {
+      if (event.key !== 'Escape') return
+      event.preventDefault()
+      event.stopPropagation()
+      closeLegend()
+    }
+    document.addEventListener('keydown', dismiss, true)
+    return () => document.removeEventListener('keydown', dismiss, true)
+  }, [legendOpen, closeLegend])
   const closeControls = useCallback(() => setControlsOpen(false), [])
-  useDialogFocus(dialogRef, mobile && controlsOpen, closeControls)
+  useDialogFocus(dialogRef, mobile && controlsVisible, closeControls)
+  useDialogFocus(legendRef, mobile && legendOpen, closeLegend)
   useEffect(() => { try { localStorage.setItem('charging-map-theme', options.style) } catch { /* Storage is optional. */ } }, [options.style])
   const revealAnalytics = useCallback(() => { setAnalyticsOpen(true); setListOpen(false); setSheetState('half'); setLegendOpen(false); if (window.innerWidth < 1200) setControlsOpen(false) }, [])
   const [viewState, setViewState] = useState(GERMANY)
@@ -154,28 +179,29 @@ export default function App() {
   const routeSummary = a9?.summary.find(item => item.direction === a9Direction)
   const summary = cluster || activeRegion || {}
   return <main className={`map-app theme-${options.style}`} data-theme={options.style} ref={mapContainer}>
-    <div className="map-surface" inert={mobile && controlsOpen || undefined}>
+    <div className="map-surface" inert={mobile && controlsVisible || undefined}>
       <ChargingMap data={displayData} autobahn={a9Enabled ? a9 : null} direction={a9Direction} markers={markers} regions={regions} options={mapOptions} viewState={viewState} onViewChange={onViewChange}
         selectedSite={autobahnFocus} selectedCluster={cluster} selectedSegment={selectedSegment} mobile={mobile}
         onSegment={segment => { setSelectedSegment(segment); revealAnalytics() }}
         onCluster={value => { setSiteMode(false); setAutobahnFocus(null); selectSite(-1); setCluster(value); revealAnalytics() }}
         onSite={selectMapSite} onRegion={showRegion} onMapError={setMapError} onDataRendered={onDataRendered} />
     </div>
-    <MapChrome options={options} onOptions={onOptions} filters={filters} onFilters={onFilters} controlsOpen={controlsOpen} controlTab={controlTab} onDirection={value => { setA9Direction(value); setSelectedSegment(null); closeSite() }} onControls={openControls}
+    <MapChrome options={options} onOptions={onOptions} filters={filters} onFilters={onFilters} controlsOpen={controlsVisible} controlTab={controlTab} onDirection={value => { setA9Direction(value); setSelectedSegment(null); closeSite() }} onControls={openControls}
       analyticsOpen={analyticsOpen} onAnalytics={() => { setAnalyticsOpen(value => !value); if (window.innerWidth < 1200) closeControls() }}
       listOpen={listOpen} onList={() => { setListCenter(viewState); setListOpen(value => !value); setAnalyticsOpen(true); setSheetState('half'); if (window.innerWidth < 1200) closeControls() }}
-      a9Enabled={a9Enabled} route={autobahnRoute} direction={a9Direction} legendOpen={legendOpen} onLegend={() => { if (a9Enabled) revealAnalytics(); else { setLegendOpen(value => !value); closeControls(); if (mobile) setAnalyticsOpen(false) } }} modalOpen={mobile && controlsOpen}
+      a9Enabled={a9Enabled} route={autobahnRoute} direction={a9Direction} legendOpen={legendOpen} onLegend={() => { if (a9Enabled) revealAnalytics(); else toggleLegend() }} modalOpen={mobile && controlsVisible}
       onHome={() => a9Enabled ? focusRoute() : focusLand(filters.state)} onZoom={delta => setViewState(previous => transitionViewState(previous, { ...previous, zoom: Math.max(3, Math.min(18, previous.zoom + delta)) }))} />
-    {mobile && controlsOpen && <div className="dialog-backdrop" onClick={closeControls} />}
-    {controlsOpen && <div ref={dialogRef} className="control-shell" role={mobile ? 'dialog' : undefined} aria-modal={mobile || undefined} aria-label="Настройки карты">
-      <ControlPanel key={controlTab} initialTab={controlTab} onTab={setControlTab} mobile={mobile} onClose={closeControls} onApply={() => { if (Object.keys(filters).some(key => filters[key] !== draftFilters[key])) onFilters(draftFilters); closeControls() }}
+    {mobile && controlsVisible && <div className="dialog-backdrop" onClick={closeControls} />}
+    {controlsOpen && <div ref={dialogRef} hidden={!controlsVisible} className="control-shell" role={mobile ? 'dialog' : undefined} aria-modal={mobile || undefined} aria-label="Настройки карты">
+      <ControlPanel key={controlTab} initialTab={controlTab} onTab={setControlTab} mobile={mobile} onClose={closeControls} onLegend={a9Enabled ? undefined : toggleLegend} onApply={() => { if (Object.keys(filters).some(key => filters[key] !== draftFilters[key])) onFilters(draftFilters); closeControls() }}
         autobahnRoute={autobahnRoute} onAutobahnRoute={route => { setAutobahnRoute(route); setSelectedSegment(null); closeSite(); if (a9Enabled) { loadAutobahn(route); setViewState(previous => transitionViewState(previous, AUTOBAHNS[route].view)) } }}
         a9Enabled={a9Enabled} a9Direction={a9Direction} hideOthers={hideOthers} a9Available={!!data}
         onA9Enabled={enabled => { setA9Enabled(enabled); setSelectedSegment(null); closeSite(); if (enabled) { pendingFocus.current = null; if (!a9 && !a9Pending) loadA9(); setViewState(previous => transitionViewState(previous, AUTOBAHNS[autobahnRoute].view)) } else { focusLand(filters.state) } }}
         onA9Direction={value => { setA9Direction(value); setSelectedSegment(null); closeSite() }} onHideOthers={setHideOthers} states={states} filters={mobile ? draftFilters : filters} onFilters={mobile ? setDraftFilters : onFilters} options={options} onOptions={onOptions} onReset={() => { resetSettings(); setDraftFilters(DEFAULT_FILTERS) }} />
     </div>}
-    {!a9Enabled && <div inert={mobile && controlsOpen || undefined}><MapLegend regions={regions} options={mapOptions} open={legendOpen} onToggle={() => { setLegendOpen(value => !value); closeControls() }} /></div>}
-    <div inert={mobile && controlsOpen || undefined}>
+    {legendOpen && <div className="legend-dismiss-backdrop" onClick={closeLegend} aria-hidden="true" />}
+    {!a9Enabled && <div ref={legendRef} inert={mobile && controlsVisible || undefined}><MapLegend regions={regions} options={mapOptions} open={legendOpen} onToggle={toggleLegend} /></div>}
+    <div inert={mobile && controlsVisible || undefined}>
       <PanelShell mobile={mobile} state={sheetState} onState={setSheetState} onClose={() => setAnalyticsOpen(false)} hidden={!analyticsOpen} title={title}
         sites={siteMode ? 1 : summary.sites ?? data?.count ?? 0} points={siteMode ? detail?.selected_point_count ?? 0 : summary.points ?? data?.totalPoints ?? 0} routeSummary={a9Enabled && !siteMode && !listOpen ? routeSummary : null} pending={!data || siteMode && detailPending || a9Enabled && a9Pending} error={error || (a9Enabled ? a9Error : '') || mapError}>
         {listOpen ? <ResultsPanel data={displayData} center={listCenter} onRefresh={() => setListCenter(viewState)} onSelect={row => focusSite(row.rowIndex, [row.longitude, row.latitude])} /> : a9Enabled && !siteMode ? <AutobahnPanel showUnrouted={showUnrouted} onShowUnrouted={setShowUnrouted} route={autobahnRoute} pilot={a9} selectedSegment={selectedSegment} direction={a9Direction} pending={a9Pending} error={a9Error} onRetry={loadA9} onSite={focusSite} /> :

@@ -43,16 +43,16 @@ export function createLayers(data, regions, suppliedOptions, markers = null, clu
   if (options.showBoundaries) layers.push(new GeoJsonLayer({
     id: `boundaries-${level}`, data: featuresFor(level),
     // Keep region clicks in marker mode without adding a visible fill.
-    pickable: true, stroked: true, filled: options.metric === 'sites',
+    pickable: !options.a9Mode, stroked: true, filled: !options.a9Mode && options.metric === 'sites',
     getFillColor: [0,0,0,0],
-    getLineColor: palette.boundary, getLineWidth: 0.8, lineWidthUnits: 'pixels',
+    getLineColor: palette.boundary, getLineWidth: 0.6, lineWidthUnits: 'pixels',
   }))
-  if (options.selectedRegion) {
+  if (options.selectedRegion && !options.a9Mode) {
     const selected = options.selectedRegion
     const feature = regions?.[selected.level]?.find(feature => (feature.properties.district_code || feature.properties.state_code) === (selected.district_code || selected.state_code))
     if (feature) layers.push(new GeoJsonLayer({
       id: 'selected-territory', data: [feature], pickable: false, filled: false, stroked: true,
-      getLineColor: rgba(palette.outline), getLineWidth: 3, lineWidthUnits: 'pixels',
+      getLineColor: rgba(palette.territorySelected, 185), getLineWidth: 1.4, lineWidthUnits: 'pixels',
     }))
   }
   if (options.showSites && clustered && markers) {

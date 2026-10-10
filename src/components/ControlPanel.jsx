@@ -2,7 +2,7 @@ import { METRIC_CHOICES } from '../map/settings.js'
 import { AUTOBAHNS } from '../data/autobahn.js'
 import Switch from './Switch.jsx'
 import Icon from './Icon.jsx'
-export default function ControlPanel({ states, filters, onFilters, options, onOptions, onReset, a9Enabled, a9Direction, hideOthers, a9Available, onA9Enabled, onA9Direction, onHideOthers, autobahnRoute = 'A9', onAutobahnRoute, onClose, mobile, onApply, initialTab = 'filters', onTab }) {
+export default function ControlPanel({ states, filters, onFilters, options, onOptions, onReset, a9Enabled, a9Direction, hideOthers, a9Available, onA9Enabled, onA9Direction, onHideOthers, autobahnRoute = 'A9', onAutobahnRoute, onClose, onLegend, mobile, onApply, initialTab = 'filters', onTab }) {
   const tab = initialTab
   const change = (key, value) => onFilters({ ...filters, [key]: value })
   const tabs = [{ id: 'filters', text: 'Фильтры', icon: 'filter' }, { id: 'layers', text: 'Слои', icon: 'layers' }, { id: 'road', text: 'Автобаны', icon: 'road' }]
@@ -37,6 +37,6 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
         </> : <p className="note">Исследуйте интервалы между зарядными площадками вдоль A1, A5 и A9. Подъезд и возврат оцениваются по дорожной модели.</p>}
       </fieldset>}
     </div>
-    <footer className="control-footer">{mobile && tab !== 'filters' && <p className="note">Изменения отображения применяются сразу.</p>}{mobile && <button className="primary-button" onClick={onApply}>{tab === 'filters' ? 'Применить фильтры' : 'Готово'}</button>}<button className="reset" onClick={onReset}>Сбросить настройки</button></footer>
+    <footer className="control-footer">{onLegend && <button className="settings-legend" onClick={onLegend}><Icon name="info" />Легенда карты</button>}{mobile && tab !== 'filters' && <p className="note">Изменения отображения применяются сразу.</p>}{mobile && <button className="primary-button" onClick={onApply}>{tab === 'filters' ? 'Применить фильтры' : 'Готово'}</button>}<button className="reset" onClick={onReset}>Сбросить настройки</button></footer>
   </aside>
 }

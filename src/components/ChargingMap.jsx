@@ -1,6 +1,6 @@
 import { PathLayer, ScatterplotLayer, GeoJsonLayer } from '@deck.gl/layers'
 import { PathStyleExtension } from '@deck.gl/extensions'
-import { AUTOBAHNS, A9_STATUS } from '../data/autobahn.js'
+import { A9_STATUS } from '../data/autobahn.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import DeckGL from '@deck.gl/react'
 import Map from 'react-map-gl/maplibre'
@@ -14,17 +14,21 @@ import { METRICS } from '../data/analytics.js'
 import { format } from '../utils/format.js'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { paletteFor, rgba } from '../map/palette.js'
-import { tooltipPlacement } from '../map/tooltip.js'
 
 export default function ChargingMap({ data, autobahn, direction, markers, regions, options, viewState, onViewChange, onSite, onCluster, onRegion, onMapError, onDataRendered, selectedSite, selectedCluster, selectedSegment, onSegment, mobile }) {
   const clustered = useClusters(options, viewState.zoom)
-  const markerHover = useRef(false), pointer = useRef(null), mapRoot = useRef(null)
+  const markerHover = useRef(false)
   const [hovered, setHovered] = useState(null)
-  const [tooltipHidden, setTooltipHidden] = useState(false)
+  const [hoverInfo, setHoverInfo] = useState(null)
+  useEffect(() => {
+    if (!hovered?.text || mobile || options.a9Mode) return
+    const timer = setTimeout(() => setHoverInfo(hovered), 350)
+    return () => clearTimeout(timer)
+  }, [hovered, mobile, options.a9Mode])
   const timing = useRef({ started: null, events: new Set(), packets: new WeakSet() })
   useEffect(() => { timing.current.started = performance.now() }, [])
   useEffect(() => {
-    const dismiss = event => { if (event.key === 'Escape') { setHovered(null); setTooltipHidden(true) } }
+    const dismiss = event => { if (event.key === 'Escape') { setHovered(null); setHoverInfo(null) } }
     window.addEventListener('keydown', dismiss)
     return () => window.removeEventListener('keydown', dismiss)
   }, [])
@@ -54,7 +58,7 @@ export default function ChargingMap({ data, autobahn, direction, markers, region
     const palette = paletteFor(options.style), overlays = []
     const ring = (id, position, radius, color, width) => overlays.push(new ScatterplotLayer({ id, data: [{ position }], getPosition: d => d.position, radiusUnits: 'pixels', getRadius: radius, stroked: true, filled: false, getLineColor: rgba(color), getLineWidth: width, lineWidthUnits: 'pixels', pickable: false }))
     if (hovered?.position && hovered.source === (hovered.clustered ? markers : data)) ring('hover-ring', hovered.position, hovered.radius + 2, palette.outline, 2)
-    if (hovered?.region && regions?.[options.territory]?.includes(hovered.region)) overlays.push(new GeoJsonLayer({ id: 'hover-region', data: [hovered.region], filled: false, stroked: true, getLineColor: rgba(palette.outline, 210), getLineWidth: 2, lineWidthUnits: 'pixels', pickable: false }))
+    if (!options.a9Mode && hovered?.region && regions?.[options.territory]?.includes(hovered.region)) overlays.push(new GeoJsonLayer({ id: 'hover-region', data: [hovered.region], filled: false, stroked: true, getLineColor: rgba(palette.territoryHover, 150), getLineWidth: 1, lineWidthUnits: 'pixels', pickable: false }))
     const index = selectedSite == null ? -1 : data?.rowIndices?.indexOf(selectedSite) ?? -1
     if (index >= 0 && options.showSites) {
       const position = Array.from(data.positions.subarray(index * 2, index * 2 + 2))
@@ -70,8 +74,26 @@ export default function ChargingMap({ data, autobahn, direction, markers, region
   const isSquare = info => info.layer?.id === 'charging-access-sites'
   const isSite = info => info.layer?.id === 'charging-sites' || isSquare(info)
   const isMarker = info => info.layer?.id === 'charging-markers'
-  const trackPointer = event => { pointer.current = { x: event.clientX, y: event.clientY } }
-  return <div ref={mapRoot} className={`charging-map${tooltipHidden ? ' hide-tooltip' : ''}`} onPointerMoveCapture={trackPointer} onPointerDownCapture={trackPointer} onPointerLeave={() => { pointer.current = null; setHovered(null); setTooltipHidden(true) }}><DeckGL viewState={viewState} onViewStateChange={({ viewState: next }) => onViewChange(next)}
+  const hoverContext = `${viewState.longitude}:${viewState.latitude}:${viewState.zoom}:${options.metric}:${options.territory}`
+  const hoverCurrent = hovered?.region
+    ? regions?.[options.territory]?.includes(hovered.region)
+    : hovered?.source === (hovered?.clustered ? markers : data)
+  const hoverText = info => {
+    if (isMarker(info) && info.index >= 0) {
+      const selection = markerSelection(markers, info.index)
+      return selection?.type === 'cluster'
+        ? `${format(selection.sites)} площадок · ${format(selection.points)} зарядных точек\nКлик — сводка; двойной клик — приблизить`
+        : `${format(markers.pointCounts[info.index])} зарядных точек\nДо ${format(markers.powers[info.index])} кВт\nНажми для подробностей`
+    }
+    if (isSite(info) && info.index >= 0) return `${format(data.pointCounts[info.index])} зарядных точек\nДо ${format(data.powers[info.index])} кВт\nНажми для подробностей`
+    if (info.object?.properties) {
+      const p = info.object.properties
+      const concentration = options.metric === 'concentration' ? operatorConcentration(p.operators, options.operatorBasis) : null
+      return `${p.display_name || p.district_name || p.state_name}\n${METRICS[options.metric].title}: ${format(regionValue(info.object, options.metric, options.operatorBasis))}${options.metric === 'concentration' ? ' %' : ''}${concentration ? `\n${concentration.name}\n${options.operatorBasis === 'power' ? 'По номинальной мощности' : 'По числу точек'}` : ''}`
+    }
+    return null
+  }
+  return <div className="charging-map" onPointerLeave={() => { markerHover.current = false; setHovered(null); setHoverInfo(null) }}><DeckGL viewState={viewState} onViewStateChange={({ viewState: next }) => onViewChange(next)}
     controller={{ type: ChargingMapController, doubleClickZoom: true }} layers={[...layers, ...interactionLayers]} eventRecognizerOptions={CLICK_RECOGNIZER_OPTIONS} pickingRadius={mobile ? 12 : 6} getCursor={state => mapCursor({ ...state, markerHovered: markerHover.current })}
     onAfterRender={() => {
       reportMapEvent('Первый кадр DeckGL')
@@ -84,15 +106,16 @@ export default function ChargingMap({ data, autobahn, direction, markers, region
     onHover={info => {
       markerHover.current = (isSite(info) || isMarker(info)) && info.index >= 0
       if (mobile) return
-      setTooltipHidden(false)
       let next = null
       if (markerHover.current) {
         const packet = isMarker(info) ? markers : data
         const position = isSquare(info) ? info.object.position : Array.from(packet.positions.subarray(info.index * 2, info.index * 2 + 2))
         next = { position, radius: isMarker(info) ? markers.radii[info.index] : options.a9Mode ? Math.max(3.5, Math.min(7, 0.8 + (viewState.zoom - 5) * .7)) : 7, source: packet, clustered: isMarker(info), id: `${info.layer.id}:${info.index}` }
-      } else if (info.object?.properties) next = { region: info.object, id: info.object }
+      } else if (!options.a9Mode && info.object?.properties) next = { region: info.object, id: info.object }
       else if (info.layer?.id === 'a9-route') next = { segment: info.object, id: info.object }
-      setHovered(previous => previous?.id === next?.id && previous?.source === next?.source ? previous : next)
+      if (next && !options.a9Mode) { next.text = hoverText(info); next.context = hoverContext }
+      if (!next) setHoverInfo(null)
+      setHovered(previous => previous?.id === next?.id && previous?.source === next?.source && previous?.text === next?.text && previous?.context === next?.context ? previous : next)
     }}
     onClick={(info, event) => {
       const selection = isMarker(info) ? markerSelection(markers, info.index) : null
@@ -105,31 +128,12 @@ export default function ChargingMap({ data, autobahn, direction, markers, region
       else if (selection?.type === 'cluster') onCluster(selection)
       else if (selection?.type === 'site') onSite(selection.rowIndex)
       else if (isSite(info) && info.index >= 0) onSite(isSquare(info) ? info.object.rowIndex : data.rowIndices[info.index])
-      else if (info.object?.properties) onRegion(info.object.properties)
+      else if (!options.a9Mode && info.object?.properties) onRegion(info.object.properties)
     }}
-    getTooltip={info => {
-      if (mobile || tooltipHidden || !pointer.current) return null
-      const analytics = mapRoot.current?.closest('.map-app')?.querySelector('.analytics-shell:not([hidden])')?.getBoundingClientRect()
-      const styled = text => ({ text, style: { ...tooltipPlacement(pointer.current, { width: window.innerWidth, height: window.innerHeight, right: analytics?.left }), backgroundColor: options.style === 'light' ? '#ffffff' : '#182229', color: options.style === 'light' ? '#182b34' : '#f2f6f7', fontSize: '14px', padding: '12px 16px', borderRadius: '12px', border: `1px solid ${options.style === 'light' ? '#b2c1c9' : '#708087'}`, maxWidth: '300px', lineHeight: '1.5' } })
-      if (info.layer?.id === 'a9-route') return styled(`${autobahn.route} · ${AUTOBAHNS[autobahn.route][direction]}\n${A9_STATUS[info.object.status].label}${info.object.status === 'unknown' ? '' : `\n${info.object.gap_km.toFixed(1)} км — предварительный интервал`}`)
-      if (isMarker(info) && info.index >= 0) {
-        const selection = markerSelection(markers, info.index)
-        return styled(selection?.type === 'cluster'
-          ? `${format(selection.sites)} площадок · ${format(selection.points)} зарядных точек\nКлик — сводка; двойной клик — приблизить`
-          : `${format(markers.pointCounts[info.index])} зарядных точек\nДо ${format(markers.powers[info.index])} кВт\nНажми для подробностей`)
-      }
-      if (isSquare(info) && info.index >= 0) return styled('Маршрут найден · есть условия доступа\nНажми для подробностей')
-      if (isSite(info) && info.index >= 0) return styled(`${format(data.pointCounts[info.index])} зарядных точек\nДо ${format(data.powers[info.index])} кВт\nНажми для подробностей`)
-      if (info.object?.properties) {
-        const p = info.object.properties
-        const concentration = options.metric === 'concentration' ? operatorConcentration(p.operators, options.operatorBasis) : null
-        return styled(`${p.display_name || p.district_name || p.state_name}\n${METRICS[options.metric].title}: ${format(regionValue(info.object, options.metric, options.operatorBasis))}${options.metric === 'concentration' ? ' %' : ''}${concentration ? `\n${concentration.name}\n${options.operatorBasis === 'power' ? 'По номинальной мощности' : 'По числу точек'}` : ''}`)
-      }
-      return null
-    }}>
+    getTooltip={null}>
     <Map mapLib={maplibre} mapStyle={MAP_STYLES[options.style]}
       onLoad={() => reportMapEvent('Подложка: load')}
       onIdle={() => reportMapEvent('Подложка: первый idle')}
       onError={event => onMapError(event.error?.message || 'Ошибка подложки')} />
-  </DeckGL></div>
+  </DeckGL>{!mobile && !options.a9Mode && hovered && hoverCurrent && hoverInfo?.context === hoverContext && hoverInfo?.id === hovered.id && hoverInfo?.source === hovered.source && <aside className="map-hover-info panel" aria-label="Информация при наведении">{hoverInfo.text}</aside>}</div>
 }

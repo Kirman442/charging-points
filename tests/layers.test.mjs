@@ -7,6 +7,27 @@ const regions = {
   districts: [feature({ state_code: '01', bev_count: 10, points_per_1000_bev: 15, kw_per_1000_bev: 500 }), feature({ state_code: '02', bev_count: 30, points_per_1000_bev: 25, kw_per_1000_bev: 800 })],
 }
 const options = { metric: 'bev', territory: 'districts', showBoundaries: true, showSites: false }
+
+test('motorway boundaries cannot pick territories or show a stale selected region', () => {
+  const { layers } = createLayers(null, regions, { ...options, metric: 'sites', territory: 'states', a9Mode: true, selectedRegion: { level: 'states', state_code: '01' } })
+  const boundaries = layers.find(layer => layer.id === 'boundaries-states')
+  assert.equal(boundaries.props.pickable, false)
+  assert.equal(boundaries.props.filled, false)
+  assert.equal(layers.some(layer => layer.id === 'selected-territory'), false)
+})
+
+test('selected territory uses a thin neutral outline in both themes and territory levels', () => {
+  for (const style of ['dark', 'light']) {
+    for (const territory of ['states', 'districts']) {
+      const { layers } = createLayers(null, regions, { ...options, style, territory, selectedRegion: { level: territory, state_code: '01' } })
+      const selected = layers.find(layer => layer.id === 'selected-territory')
+      assert.equal(selected.props.filled, false)
+      assert.ok(selected.props.getLineWidth <= 1.5)
+      assert.ok(selected.props.getLineColor[3] < 200)
+      assert.equal(layers.find(layer => layer.id.startsWith('boundaries-')).props.pickable, true)
+    }
+  }
+})
 test('hiding contours preserves analytical fill in both metrics', () => {
   for (const metric of ['bev', 'ratio', 'power']) {
     const { layers } = createLayers(null, regions, { ...options, metric, showBoundaries: false })

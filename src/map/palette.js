@@ -3,7 +3,7 @@ export const MAP_PALETTES = {
   dark: {
     power: ['#45c1b0', '#68b2f5', '#e9bd55', '#f08a70'],
     cluster: '#36515d', clusterText: '#f2f6f7', casing: '#10181e', outline: '#d9e7ed', selected: '#52c7b6',
-    boundary: [146,170,183,110], missing: '#9aa8b2',
+    territoryHover: '#a1adb3', territorySelected: '#b2bcc1', boundary: [146,170,183,90], missing: '#9aa8b2',
     sequential: ['#2c254f', '#493c8a', '#795abf', '#b091e8', '#e6d5fa'],
     concentration: ['#657f99', '#e9a45d'],
     route: { within: '#44beaa', near: '#f0c246', gap: '#e8687e', unknown: '#96a2b3' },
@@ -11,7 +11,7 @@ export const MAP_PALETTES = {
   light: {
     power: ['#087f72', '#246eb9', '#a76a08', '#bd5139'],
     cluster: '#d9e5eb', clusterText: '#182b34', casing: '#ffffff', outline: '#182b34', selected: '#146b61',
-    boundary: [82,103,117,135], missing: '#667680',
+    territoryHover: '#77838a', territorySelected: '#66747c', boundary: [82,103,117,110], missing: '#667680',
     sequential: ['#f0ebf7', '#d4c2e7', '#ad90d2', '#7845b0', '#4b1e80'],
     concentration: ['#6a8299', '#b96624'],
     route: { within: '#087f72', near: '#986308', gap: '#b33d58', unknown: '#667680' },

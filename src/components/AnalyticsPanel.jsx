@@ -10,8 +10,8 @@ import Icon from './Icon.jsx'
 
 function SiteContent({ site, autobahnSite }) {
   const selectionText = siteSelectionText(site)
-  return <><div className="eyebrow">ЗАРЯДНАЯ ПЛОЩАДКА</div><h2>{site.city}</h2><p>{site.street} {site.house_number}</p><p className="muted">{site.postal_code} · {site.state_name}</p>
-    <div className="site-highlights"><span><Icon name="bolt" /><strong>до {format(Math.max(0, ...site.available_power_kw))} кВт</strong><small>Максимум точки</small></span><span><strong>{site.opening_hours_label}</strong><small>Часы работы</small></span></div>
+  return <><div className="eyebrow">ЗАРЯДНАЯ ПЛОЩАДКА</div><h2>{site.city}</h2><div className="site-address"><span>{site.street} {site.house_number}</span><span className="muted">{site.postal_code} · {site.state_name}</span></div>
+    <div className="site-highlights"><span><span className="highlight-icon" tabIndex={0} aria-label="Максимальная мощность одной зарядной точки" title="Максимальная мощность одной зарядной точки"><Icon name="bolt" />Max</span><strong>до {format(Math.max(0, ...site.available_power_kw))} кВт</strong></span><span><span className="highlight-icon" tabIndex={0} aria-label="Часы работы" title="Часы работы"><Icon name="clock" /></span><strong>{site.opening_hours_label}</strong></span></div>
     <SelectionStats sites={1} equipment={site.selected_equipment_count ?? site.equipment_count} points={site.selected_point_count ?? site.charging_point_count} showSites inflectLabels />
     {selectionText && <p className="note">{selectionText}</p>}
     <dl><dt>Оператор</dt><dd>{site.operator}</dd><dt>Мощность установок в выборке</dt><dd>{format(site.selected_power_kw ?? site.installed_power_kw)} кВт</dd><dt>Номинальная мощность всей площадки</dt><dd>{format(site.installed_power_kw)} кВт</dd><dt>Доступные мощности всей площадки</dt><dd>{site.available_power_kw.map(format).join(', ')} kW</dd><dt>Часы работы</dt><dd>{site.opening_hours_label}</dd><dt>Статус всех точек площадки</dt><dd>{site.operating_point_count} в эксплуатации; {site.maintenance_point_count} на обслуживании</dd><dt>Район</dt><dd>{site.district_name}</dd></dl>

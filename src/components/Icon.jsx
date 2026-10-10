@@ -10,6 +10,7 @@ const paths = {
   minus: <path d="M5 12h14"/>,
   target: <><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></>,
   list: <><path d="M9 6h12M9 12h12M9 18h12M3 6h1M3 12h1M3 18h1"/></>,
+  clock: <><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,
   bolt: <path d="m13 2-9 12h7l-1 8 10-13h-7Z"/>,
   info: <><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></>,
   road: <><path d="m8 2-3 20M16 2l3 20M12 3v4m0 4v3m0 4v3"/></>,

@@ -63,7 +63,7 @@ test('selected territory retains its non-pickable outline when general boundarie
   const regions={states:[],districts:[feature]},options={metric:'sites',territory:'districts',showSites:false,selectedRegion:region,showBoundaries:true}
   const selected=createLayers(null,regions,options).layers.find(l=>l.id==='selected-territory')
   assert.equal(selected.props.pickable,false)
-  assert.equal(selected.props.getLineWidth,3)
+  assert.equal(selected.props.getLineWidth,1.4)
   assert.equal(selected.props.data[0],feature)
   assert.deepEqual(createLayers(null,regions,{...options,showBoundaries:false}).layers.map(layer => layer.id),['selected-territory'])
 })

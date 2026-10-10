@@ -2,7 +2,7 @@ import PowerDistribution from './PowerDistribution.jsx'
 import AutobahnAccess from './AutobahnAccess.jsx'
 import { territoryLabel } from '../utils/territory.js'
 import OperatorShares from './OperatorShares.jsx'
-import { Fragment, memo, useId, useState } from 'react'
+import { Fragment, memo, useId, useState, useRef, useLayoutEffect } from 'react'
 import { format } from '../utils/format.js'
 import { siteSelectionText, countWord, sitePowerRows } from '../utils/siteSelection.js'
 import { METRICS, metricValue, rankStates, summarizeStates } from '../data/analytics.js'
@@ -93,10 +93,15 @@ function OverviewContent({ states, metric, data, showSites, onSelect, operatorBa
 function AnalyticsPanel({ cluster, selectedState, states, site, autobahnSite, region, metric, pending, data, operatorBasis = 'points', onOperatorBasis, showSites, status, error, onRetry, onCloseSite, onAllTerritories, onOverview, onSelectRegion, onZoomCluster }) {
   const [activeTab, setActiveTab] = useState('states')
   const [distributionOpen, setDistributionOpen] = useState(false)
+  const scrollRef = useRef(null), overviewScroll = useRef(0)
+  const contentKey = cluster ? `cluster:${cluster.id}` : site ? `site:${site.site_id}` : region ? `${region.level}:${region.district_code || region.state_code}` : 'overview'
+  useLayoutEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = contentKey === 'overview' ? overviewScroll.current : 0
+  }, [contentKey])
   return <aside className="panel analytics-panel" aria-label="Региональная аналитика" aria-busy={pending}>
     <header className="analytics-toolbar"><span>АНАЛИТИКА</span>{cluster || site || pending ? <button onClick={onCloseSite}>К аналитике</button> : region ? <button onClick={region.level === 'districts' && selectedState ? onAllTerritories : onOverview}>{region.level === 'districts' && selectedState ? 'Все территории' : 'Все земли'}</button> : <span className="muted">Текущая выборка</span>}</header>
     <div className="pending-line" role="status">{pending ? 'Загрузка новой площадки…' : ''}</div>
-    <div className="analytics-scroll">
+    <div className="analytics-scroll" ref={scrollRef} onScroll={event => { if (contentKey === 'overview') overviewScroll.current = event.currentTarget.scrollTop }}>
       {status && status !== 'Готово' && <p role="status">{status}</p>}
       {error && <div className="error" role="alert">{error} <button onClick={onRetry}>Повторить</button></div>}
       {cluster ? <ClusterContent cluster={cluster} onZoom={onZoomCluster} /> : site ? <SiteContent site={site} autobahnSite={autobahnSite} /> : region ? <RegionContent region={region} metric={metric} showSites={showSites} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} distributionOpen={distributionOpen} onDistributionOpen={setDistributionOpen} /> : states ? <OverviewContent states={states} metric={metric} data={data} showSites={showSites} onSelect={onSelectRegion} activeTab={activeTab} onTab={setActiveTab} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} distributionOpen={distributionOpen} onDistributionOpen={setDistributionOpen} /> : <p role="status">Подготовка региональной аналитики…</p>}

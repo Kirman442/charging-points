@@ -69,6 +69,7 @@ export default function App() {
   const revealAnalytics = useCallback(() => { setAnalyticsOpen(true); setListOpen(false); setSheetState('half'); setLegendOpen(false); if (window.innerWidth < 1200) setControlsOpen(false) }, [])
   const [viewState, setViewState] = useState(GERMANY)
   const [clickedRegion, setClickedRegion] = useState(null), [mapError, setMapError] = useState('')
+  const rankingView = useRef(null)
   const [siteMode, setSiteMode] = useState(false)
   const [cluster, setCluster] = useState(null)
   const effectiveFilters = useMemo(() => a9Enabled ? { ...filters, state: '' } : filters, [filters, a9Enabled])
@@ -112,6 +113,7 @@ export default function App() {
     return () => cancelAnimationFrame(frame)
   }, [focusLand])
   const onFilters = useCallback(next => {
+    rankingView.current = null
     setCluster(null); setAutobahnFocus(null); setSelectedSegment(null)
     setFilters(next)
     if (next.state !== filters.state) { setClickedRegion(null); setOptions(previous => territoryForSelection(previous, next.state)); focusLand(next.state) }
@@ -127,6 +129,7 @@ export default function App() {
     }
   }, [options.metric, options.territory, options.clusterSites, filters.state, regions, selectSite])
   const resetSettings = useCallback(() => {
+    rankingView.current = null
     pendingFocus.current = null
     setSheetState('peek'); setAnalyticsOpen(true); setListOpen(false); setLegendOpen(false)
     setA9Enabled(false); setHideOthers(true); setShowUnrouted(false); setAutobahnFocus(null); setA9Direction('north'); setAutobahnRoute('A9')
@@ -135,15 +138,26 @@ export default function App() {
     setClickedRegion(null); closeSite()
   }, [closeSite, focusFeature])
   const showRegion = useCallback(value => {
+    rankingView.current = null
     setCluster(null); setSiteMode(false); setAutobahnFocus(null); selectSite(-1); setClickedRegion(value); revealAnalytics()
   }, [selectSite, revealAnalytics])
+  const showRankedRegion = useCallback(value => {
+    if (!rankingView.current) rankingView.current = { ...viewState }
+    setCluster(null); setSiteMode(false); setAutobahnFocus(null); selectSite(-1); setClickedRegion(value); revealAnalytics()
+    const feature = regions?.states.find(item => item.properties.state_code === value.state_code)
+    requestAnimationFrame(() => focusFeature(feature))
+  }, [viewState, regions, selectSite, revealAnalytics, focusFeature])
   const allTerritories = useCallback(() => {
     if (filters.state) focusLand(filters.state)
     setClickedRegion(null)
     closeSite()
   }, [closeSite, filters.state, focusLand])
   const overview = useCallback(() => {
-    if (filters.state) focusLand('')
+    if (rankingView.current) {
+      const saved = rankingView.current
+      setViewState(previous => transitionViewState(previous, saved))
+      rankingView.current = null
+    } else if (filters.state) focusLand('')
     pendingFocus.current = null
     setCluster(null); setAutobahnFocus(null); setClickedRegion(null); setOptions(previous => territoryForSelection(previous, '')); setFilters(previous => ({ ...previous, state: '' })); setSiteMode(false); selectSite(-1)
   }, [selectSite, filters.state, focusLand])
@@ -206,7 +220,7 @@ export default function App() {
         sites={siteMode ? 1 : summary.sites ?? data?.count ?? 0} points={siteMode ? detail?.selected_point_count ?? 0 : summary.points ?? data?.totalPoints ?? 0} routeSummary={a9Enabled && !siteMode && !listOpen ? routeSummary : null} pending={!data || siteMode && detailPending || a9Enabled && a9Pending} error={error || (a9Enabled ? a9Error : '') || mapError}>
         {listOpen ? <ResultsPanel data={displayData} center={listCenter} onRefresh={() => setListCenter(viewState)} onSelect={row => focusSite(row.rowIndex, [row.longitude, row.latitude])} /> : a9Enabled && !siteMode ? <AutobahnPanel showUnrouted={showUnrouted} onShowUnrouted={setShowUnrouted} route={autobahnRoute} pilot={a9} selectedSegment={selectedSegment} direction={a9Direction} pending={a9Pending} error={a9Error} onRetry={loadA9} onSite={focusSite} /> :
           <AnalyticsPanel autobahnSite={a9Enabled ? a9?.sites.find(s => s.site_row === autobahnFocus && s.direction === a9Direction && s.registry_site_id === detail?.site_id) : null} cluster={cluster} onZoomCluster={() => { setViewState(previous => zoomViewState(previous, cluster)); setCluster(null) }} selectedState={filters.state} states={regions?.states} site={siteMode ? detail : null} region={activeRegion} metric={options.metric} pending={siteMode && detailPending}
-            data={data} operatorBasis={options.operatorBasis} onOperatorBasis={value => onOptions({ ...options, operatorBasis: value })} showSites={options.showSites} status={status} error={error || mapError} onRetry={() => { closeSite(); setClickedRegion(null); reload() }} onCloseSite={returnToAnalytics} onAllTerritories={allTerritories} onOverview={overview} onSelectRegion={showRegion} />}
+            data={data} operatorBasis={options.operatorBasis} onOperatorBasis={value => onOptions({ ...options, operatorBasis: value })} showSites={options.showSites} status={status} error={error || mapError} onRetry={() => { closeSite(); setClickedRegion(null); reload() }} onCloseSite={returnToAnalytics} onAllTerritories={allTerritories} onOverview={overview} onSelectRegion={showRankedRegion} />}
       </PanelShell>
     </div>
     <div className="source">Данные: <a href="https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/start.html" target="_blank" rel="noreferrer">BNetzA · CC BY 4.0</a> · KBA · BKG · {a9Enabled && <><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OSM · ODbL</a> · </>}обработка и группировка</div>

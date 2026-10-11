@@ -6,7 +6,7 @@ import { filterKey } from '../src/data/filterKey.js'
 
 // Run the real browser Worker pipeline with Node's equivalent Parquet decoder.
 // The transport is mocked to control response order and regional failures.
-function startWorker({ filters = {}, failRegions = false, holdDetails = false, failDetails = false, staleDetails = false } = {}) {
+function startWorker({ filters = {}, failRegions = false, holdDetails = false, failDetails = false, staleDetails = false, failAutobahnOnce = false } = {}) {
   const sourceURL = new URL('../src/workers/charging.worker.js', import.meta.url)
   let source = fs.readFileSync(sourceURL, 'utf8')
     .replace(/from '(\.\.\/[^']+)'/g, (_, relative) => `from '${new URL(relative, sourceURL).href}'`)
@@ -20,9 +20,11 @@ function startWorker({ filters = {}, failRegions = false, holdDetails = false, f
     import fs from 'node:fs';
     globalThis.self = { postMessage: (message, transfers) => parentPort.postMessage(message, transfers) };
     let releaseDetails;
+    let failAutobahnOnce = ${failAutobahnOnce};
     const detailsGate = new Promise(resolve => { releaseDetails = resolve });
     globalThis.fetch = async url => {
       parentPort.postMessage({type:'fetch', url});
+      if (failAutobahnOnce && url.includes('autobahn_a2_intervals')) { failAutobahnOnce = false; return {ok:false, status:503}; }
       if (url.includes('site_details')) {
         if (${holdDetails}) await detailsGate;
         if (${failDetails}) return {ok:false, status:503};
@@ -56,6 +58,43 @@ function startWorker({ filters = {}, failRegions = false, holdDetails = false, f
 test('initial selection keys ignore identity and normalize default values', () => {
   assert.equal(filterKey({}), filterKey({state:'', minPower:'0', dcOnly:false, alwaysOpen:false}))
   for (const filters of [{state:'Bayern'}, {minPower:150}, {dcOnly:true}, {alwaysOpen:true}]) assert.notEqual(filterKey(filters), filterKey({}))
+})
+
+for (const [route, routedCounts] of [['A2', [422, 398]], ['A3', [622, 643]], ['A4', [438, 408]], ['A6', [307, 280]], ['A8', [376, 409]]]) test(`${route} loads its saved tables lazily, caches the route and joins site cards correctly`, async () => {
+  const { worker, messages, waitFor } = startWorker()
+  const prefix = `autobahn_${route.toLowerCase()}`
+  try {
+    await waitFor('ready')
+    assert.ok(!messages.some(m => m.type === 'fetch' && m.url.includes(prefix)))
+    worker.postMessage({ type: 'load-a9', route, url: `${prefix}_zstd10.parquet` })
+    const { pilot } = await waitFor('a9-ready', m => m.route === route)
+    assert.deepEqual(pilot.summary.map(s => s.routed), routedCounts)
+    assert.deepEqual(messages.filter(m => m.type === 'fetch' && m.url.includes(prefix)).map(m => m.url).sort(), ['intervals', 'routes', 'sites'].map(k => `${prefix}_${k}_zstd10.parquet`))
+    assert.equal(pilot.sections?.length || 0, route === 'A8' ? 6 : route === 'A4' ? 4 : 0)
+    const cachedReady = new Promise(resolve => worker.on('message', m => { if (m.type === 'a9-ready' && m.route === route) resolve(m) }))
+    worker.postMessage({ type: 'load-a9', route, url: `${prefix}_zstd10.parquet` })
+    await cachedReady
+    assert.equal(messages.filter(m => m.type === 'fetch' && m.url.includes(prefix)).length, 3)
+    worker.postMessage({ type: 'load-details' })
+    await waitFor('performance', m => m.phase === 'Подробности площадок готовы (фон)')
+    const site = pilot.sites.find(s => s.direction === 'west' && s.status === 'road_route_found_entrance_unverified')
+    worker.postMessage({ type: 'detail', index: site.site_row })
+    const { detail } = await waitFor('detail')
+    assert.equal(detail.site_id, site.registry_site_id)
+  } finally { await worker.terminate() }
+})
+
+test('A2 failed table loading can be retried without mixing partial results', async () => {
+  const { worker, waitFor } = startWorker({ failAutobahnOnce: true })
+  try {
+    await waitFor('ready')
+    worker.postMessage({ type: 'load-a9', route: 'A2', url: 'autobahn_a2_zstd10.parquet' })
+    assert.match((await waitFor('a9-error', m => m.route === 'A2')).message, /503/)
+    worker.postMessage({ type: 'load-a9', route: 'A2', url: 'autobahn_a2_zstd10.parquet' })
+    const { pilot } = await waitFor('a9-ready', m => m.route === 'A2')
+    assert.equal(pilot.sites.length, 3108)
+    assert.equal(pilot.segments.length, 86)
+  } finally { await worker.terminate() }
 })
 test('startup requests preserve counts; details start only after ready/render acknowledgement and reuse one load', async () => {
   const {worker,messages,waitFor} = startWorker()

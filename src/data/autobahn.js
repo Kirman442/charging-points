@@ -1,5 +1,16 @@
 import { hasAccessConditions } from './autobahnAccess.js'
-export const AUTOBAHNS = { A5: { north: 'В сторону Hattenbacher Dreieck', south: 'В сторону Basel', view: { longitude: 8.2, latitude: 49.5, zoom: 6.3, pitch: 0, bearing: 0 } }, A9: { north: 'В сторону Берлина', south: 'В сторону Мюнхена', view: { longitude: 12.1, latitude: 50.3, zoom: 6.2, pitch: 0, bearing: 0 } }, A1: { north: 'В сторону Heiligenhafen', south: 'В сторону Saarbrücken', view: { longitude: 8.5, latitude: 51.8, zoom: 5.7, pitch: 0, bearing: 0 } } }
+export const AUTOBAHNS = {
+  A1: { north: 'В сторону Heiligenhafen', south: 'В сторону Saarbrücken', view: { longitude: 8.5, latitude: 51.8, zoom: 5.7, pitch: 0, bearing: 0 } },
+  A2: { east: 'В сторону Dreieck Werder', west: 'В сторону Kreuz Oberhausen', tables: ['sites', 'intervals', 'routes'], view: { longitude: 9.8, latitude: 52.1, zoom: 6.3, pitch: 0, bearing: 0 } },
+  A3: { east: 'В сторону Passau', west: 'В сторону Emmerich', tables: ['sites', 'intervals', 'routes'], view: { longitude: 9.8, latitude: 50.2, zoom: 6, pitch: 0, bearing: 0 } },
+  A4: { east: 'В сторону Görlitz', west: 'В сторону Aachen', tables: ['sites', 'intervals', 'routes'], sectionIds: ['section_01', 'section_02'], sectionLabels: { section_01: 'Aachen — Kreuz Olpe-Süd', section_02: 'Kirchheimer Dreieck — Görlitz' }, gapNote: 'Между Kreuz Olpe-Süd и Kirchheimer Dreieck A4 прерывается.', view: { longitude: 10.5, latitude: 51, zoom: 6.1, pitch: 0, bearing: 0 } },
+  A5: { north: 'В сторону Hattenbacher Dreieck', south: 'В сторону Basel', view: { longitude: 8.2, latitude: 49.5, zoom: 6.3, pitch: 0, bearing: 0 } },
+  A6: { east: 'В сторону Waidhaus', west: 'В сторону Saarbrücken', tables: ['sites', 'intervals', 'routes'], view: { longitude: 9.7, latitude: 49.3, zoom: 6.4, pitch: 0, bearing: 0 } },
+  A8: { east: 'В сторону Salzburg', west: 'В сторону Perl', tables: ['sites', 'intervals', 'routes'], sectionIds: ['section_01', 'section_02', 'section_03'], sectionLabels: { section_01: 'Perl — Pirmasens', section_02: 'Karlsruhe — München', section_03: 'München — Salzburg' }, gapNote: 'A8 состоит из трёх раздельных участков: разрывы между Pirmasens и Karlsruhe и в районе München.', view: { longitude: 9.8, latitude: 48.7, zoom: 6.1, pitch: 0, bearing: 0 } },
+  A9: { north: 'В сторону Берлина', south: 'В сторону Мюнхена', view: { longitude: 12.1, latitude: 50.3, zoom: 6.2, pitch: 0, bearing: 0 } },
+}
+export const autobahnDirections = route => Object.keys(AUTOBAHNS[route] || {}).filter(key => ['north', 'south', 'east', 'west'].includes(key))
+export const autobahnDirection = (route, preferred) => autobahnDirections(route).includes(preferred) ? preferred : autobahnDirections(route)[0]
 export const A9_STATUS = {
   within: { label: 'Расчётный интервал ≤50 км', color: [68,190,170,255], dash: [0,0] },
   near: { label: 'Расчётный интервал >50–60 км', color: [240,194,70,255], dash: [8,4] },

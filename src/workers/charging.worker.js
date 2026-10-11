@@ -1,4 +1,5 @@
-import { decodeAutobahn } from '../data/autobahn.js'
+import { AUTOBAHNS, decodeAutobahn } from '../data/autobahn.js'
+import { decodeMotorwayModel } from '../data/motorwayModel.js'
 import { validateDetails, siteDetail } from '../data/siteDetails.js'
 import { selectPoints } from '../data/pointSelection.js'
 import { fingerprint, readRuntimeIndexes } from '../data/runtimeIndexes.js'
@@ -99,7 +100,7 @@ self.onmessage = async ({ data: message }) => {
         readLabels(message.urls.labels, trace),
       ]).then(value => ({ value }), error => ({ error }))
       const bytes = await sitesLoad
-      const hashesReady = Promise.all([fingerprint(bytes[0]), fingerprint(bytes[1])])
+      const hashesReady = Promise.all([fingerprint(bytes[0]), fingerprint(bytes[1]), fingerprint(bytes[2])])
         .then(value => ({ value }), error => ({ error }))
       await wasmReady
       table = decodeTable(bytes[0], trace, 'площадки (5 колонок)')
@@ -108,9 +109,9 @@ self.onmessage = async ({ data: message }) => {
       const hashWaitStarted = performance.now(), hashResult = await hashesReady
       trace.record('Ожидание SHA-256 после декодирования', hashWaitStarted)
       if (hashResult.error) throw hashResult.error
-      const [sitesHash, groupsHash] = hashResult.value
+      const [sitesHash, groupsHash, catalogHash] = hashResult.value
       const indexes = trace.measure('Подключение числовых индексов', () => readRuntimeIndexes(table, groupsTable, catalogTable, { sites: sitesHash, groups: groupsHash }))
-      detailContext = { url: message.urls.details, catalog: catalogTable, sitesHash }
+      detailContext = { url: message.urls.details, catalog: catalogTable, sitesHash, registryHashes: { sites_startup: sitesHash, point_groups_numeric: groupsHash, runtime_catalog: catalogHash, site_details: catalogTable.schema.metadata.get('details_sha256') } }
       pointGroups = indexes.pointGroups
       operatorIndex = indexes.operatorIndex
       self.postMessage({ type: 'catalog', states: [...pointGroups.stateNames].sort() })
@@ -131,8 +132,19 @@ self.onmessage = async ({ data: message }) => {
     if (message.type === 'load-a9') {
       if (!detailContext || !table) throw new Error('Сначала дождись загрузки площадок')
       const route = message.route || 'A9'
-      if (!['A1','A5','A9'].includes(route)) throw new Error('Неизвестный автобан')
+      if (!Object.hasOwn(AUTOBAHNS, route)) throw new Error('Неизвестный автобан')
       if (!autobahnLoads.has(route)) autobahnLoads.set(route, (async () => {
+        if (AUTOBAHNS[route].tables) {
+          const entries = await Promise.all(AUTOBAHNS[route].tables.map(async kind => {
+            const url = message.url.replace(/_zstd10\.parquet$/, `_${kind}_zstd10.parquet`)
+            const response = await fetch(url)
+            if (!response.ok) throw new Error(`Загрузка ${route}: HTTP ${response.status}`)
+            const bytes = new Uint8Array(await response.arrayBuffer())
+            await wasmReady
+            return [kind, tableFromIPC(readParquet(bytes).intoIPCStream())]
+          }))
+          return decodeMotorwayModel(Object.fromEntries(entries), table, route, detailContext.registryHashes)
+        }
         const response = await fetch(message.url)
         if (!response.ok) throw new Error(`Загрузка ${route}: HTTP ${response.status}`)
         await wasmReady

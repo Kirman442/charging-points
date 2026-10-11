@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ChargingMap from './components/ChargingMap.jsx'
 import AutobahnPanel from './components/AutobahnPanel.jsx'
-import { AUTOBAHNS, autobahnDisplayData } from './data/autobahn.js'
+import { AUTOBAHNS, autobahnDirection, autobahnDisplayData } from './data/autobahn.js'
 import ControlPanel from './components/ControlPanel.jsx'
 import AnalyticsPanel from './components/AnalyticsPanel.jsx'
 import MapLegend from './components/MapLegend.jsx'
@@ -240,7 +240,7 @@ export default function App() {
     {mobile && controlsVisible && <div className="dialog-backdrop" onClick={closeControls} />}
     {controlsOpen && <div ref={dialogRef} hidden={!controlsVisible} className="control-shell" role={mobile ? 'dialog' : undefined} aria-modal={mobile || undefined} aria-label="Настройки карты">
       <ControlPanel key={controlTab} initialTab={controlTab} onTab={setControlTab} mobile={mobile} onClose={closeControls} onLegend={a9Enabled ? undefined : toggleLegend} onApply={() => { if (Object.keys(filters).some(key => filters[key] !== draftFilters[key])) onFilters(draftFilters); closeControls() }}
-        autobahnRoute={autobahnRoute} onAutobahnRoute={route => { setAutobahnRoute(route); setSelectedSegment(null); closeSite(); if (a9Enabled) { loadAutobahn(route); setViewState(previous => transitionViewState(previous, AUTOBAHNS[route].view)) } }}
+        autobahnRoute={autobahnRoute} onAutobahnRoute={route => { setA9Direction(autobahnDirection(route, a9Direction)); setAutobahnRoute(route); setSelectedSegment(null); closeSite(); if (a9Enabled) { loadAutobahn(route); setViewState(previous => transitionViewState(previous, AUTOBAHNS[route].view)) } }}
         a9Enabled={a9Enabled} a9Direction={a9Direction} hideOthers={hideOthers} a9Available={!!data}
         onA9Enabled={enabled => { setA9Enabled(enabled); setSelectedSegment(null); closeSite(); if (enabled) { pendingFocus.current = null; if (!a9 && !a9Pending) loadA9(); setViewState(previous => transitionViewState(previous, AUTOBAHNS[autobahnRoute].view)) } else { focusLand(filters.state) } }}
         onA9Direction={value => { setA9Direction(value); setSelectedSegment(null); closeSite() }} onHideOthers={setHideOthers} states={states} filters={mobile ? draftFilters : filters} onFilters={mobile ? setDraftFilters : onFilters} options={options} onOptions={onOptions} onReset={() => { resetSettings(); setDraftFilters(DEFAULT_FILTERS) }} />

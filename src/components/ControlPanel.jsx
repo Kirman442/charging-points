@@ -1,5 +1,5 @@
 import { METRIC_CHOICES } from '../map/settings.js'
-import { AUTOBAHNS } from '../data/autobahn.js'
+import { AUTOBAHNS, autobahnDirections } from '../data/autobahn.js'
 import Switch from './Switch.jsx'
 import Icon from './Icon.jsx'
 export default function ControlPanel({ states, filters, onFilters, options, onOptions, onReset, a9Enabled, a9Direction, hideOthers, a9Available, onA9Enabled, onA9Direction, onHideOthers, autobahnRoute = 'A9', onAutobahnRoute, onClose, onLegend, mobile, onApply, initialTab = 'filters', onTab }) {
@@ -30,11 +30,11 @@ export default function ControlPanel({ states, filters, onFilters, options, onOp
       {tab === 'road' && <fieldset className="controls"><legend>Анализ дорожного доступа</legend>
         <Switch checked={!!a9Enabled} disabled={!a9Available} onChange={onA9Enabled}>Режим автобана</Switch>
         {a9Enabled ? <>
-          <label>Автобан<select value={autobahnRoute} onChange={event => onAutobahnRoute(event.target.value)}><option value="A1">A1</option><option value="A5">A5</option><option value="A9">A9</option></select></label>
-          <label>Направление<select value={a9Direction} onChange={event => onA9Direction(event.target.value)}><option value="north">{AUTOBAHNS[autobahnRoute].north}</option><option value="south">{AUTOBAHNS[autobahnRoute].south}</option></select></label>
+          <label>Автобан<select value={autobahnRoute} onChange={event => onAutobahnRoute(event.target.value)}>{Object.keys(AUTOBAHNS).map(route => <option key={route} value={route}>{route}</option>)}</select></label>
+          <label>Направление<select value={a9Direction} onChange={event => onA9Direction(event.target.value)}>{autobahnDirections(autobahnRoute).map(direction => <option key={direction} value={direction}>{AUTOBAHNS[autobahnRoute][direction]}</option>)}</select></label>
           <Switch checked={hideOthers} onChange={onHideOthers}>Скрыть площадки вне коридора</Switch>
           <p className="note">Цвет линии показывает расчётный интервал. Символы площадок показывают дорожную связь и условия доступа.</p>
-        </> : <p className="note">Исследуйте интервалы между зарядными площадками вдоль A1, A5 и A9. Подъезд и возврат оцениваются по дорожной модели.</p>}
+        </> : <p className="note">Исследуйте интервалы между зарядными площадками вдоль {Object.keys(AUTOBAHNS).join(', ')}. Подъезд и возврат оцениваются по дорожной модели.</p>}
       </fieldset>}
     </div>
     <footer className="control-footer">{onLegend && <button className="settings-legend" onClick={onLegend}><Icon name="layers" />Легенда карты</button>}{mobile && tab !== 'filters' && <p className="note">Изменения отображения применяются сразу.</p>}{mobile && <button className="primary-button" onClick={tab === 'filters' ? onApply : onClose}>{tab === 'filters' ? 'Применить фильтры' : 'Готово'}</button>}<button className="reset" onClick={onReset}>Сбросить настройки</button></footer>

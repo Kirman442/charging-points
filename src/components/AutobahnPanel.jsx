@@ -30,6 +30,7 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
     {selectedSegment && <section className="metric-card"><span>Выбранный участок</span><strong>{selectedSegment.status === 'unknown' ? 'Нет расчёта' : `${number(selectedSegment.gap_km)} км`}</strong><small>{A9_STATUS[selectedSegment.status].label}</small><p className="note">Предварительная оценка интервала по дорожной модели.</p></section>}
     {summary && <>
       <p><strong>{number(summary.length_km)} км</strong> · расчётная длина направления</p>
+      {pilot.sections && <p className="note">Сумма длин раздельных участков. {AUTOBAHNS[route].gapNote || 'Между ними реальный разрыв в Эйфеле.'} Интервалы через разрыв не рассчитываются.</p>}
       <p className="note">Доступность по дорожной модели · OSM · 3 км / 3 км / 60 м</p>
       <section className="a9-summary-block" aria-label="Площадки с найденным маршрутом">
         <h3>Площадки с найденным маршрутом</h3>
@@ -61,7 +62,7 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
       <section className="power-distribution a9-method" aria-label="Методика и пояснения">
         <h3><button type="button" className="distribution-toggle" aria-expanded={methodOpen} aria-controls={methodId} onClick={() => setMethodOpen(open => !open)}><span>Методика и пояснения</span><span aria-hidden="true">{methodOpen ? '−' : '+'}</span></button></h3>
         <div id={methodId} hidden={!methodOpen}>
-          {excluded > 0 && <p className="note">{number(excluded)} {siteWord(excluded)} {excluded % 10 === 1 && excluded % 100 !== 11 ? 'исключена' : 'исключены'} по длине подъезда в модели OSM. Они не показываются и не участвуют в интервалах.</p>}
+          {excluded > 0 && !pilot.diagnostic && <p className="note">{number(excluded)} {siteWord(excluded)} {excluded % 10 === 1 && excluded % 100 !== 11 ? 'исключена' : 'исключены'} по длине подъезда в модели OSM. Они не показываются и не участвуют в интервалах.</p>}
           {pilot.accessNetwork && <div className="a9-count-explanation">
             <p className="note">Площадки с DC-точкой ≥150 кВт входят в указанные выше группы:</p>
             <ul className="a9-method-list note">
@@ -71,10 +72,11 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
             <p className="note">Всего площадок с DC-точкой ≥150 кВт среди этих двух групп: {number(fastTotal)} = {number(summary.fast_routed)} + {number(reviewFast)}. Площадки, требующие проверки, не участвуют в расчёте интервалов.</p>
           </div>}
           {pilot.sections && <>
-            <p className="note">Длина A1 — сумма длин двух раздельных участков направления. Между ними реальный разрыв в Эйфеле. Интервалы считаются внутри каждого участка; через разрыв линия не проводится.</p>
-            <ul className="a9-method-list note">{pilot.sections.filter(s => s.direction === direction).map(s => <li key={s.section}>{s.section === 'northern' ? 'Heiligenhafen — Blankenheim' : 'Kelberg — Saarbrücken'}: {number(s.length_km)} км · максимальный расчётный интервал {s.max_gap_km == null ? '—' : number(s.max_gap_km)} км.</li>)}</ul>
+            <p className="note">Длина {route} — сумма длин раздельных участков направления. Интервалы считаются внутри каждого участка; через разрыв линия не проводится.</p>
+            <ul className="a9-method-list note">{pilot.sections.filter(s => s.direction === direction).map(s => <li key={s.section}>{AUTOBAHNS[route].sectionLabels?.[s.section] || (s.section === 'northern' ? 'Heiligenhafen — Blankenheim' : 'Kelberg — Saarbrücken')}: {number(s.length_km)} км · максимальный расчётный интервал {s.max_gap_km == null ? '—' : number(s.max_gap_km)} км.</li>)}</ul>
           </>}
           {exitZones && <p className="note">Оба направления проверены отдельно от всех разрешённых ответвлений, включая площадки отдыха. В подъездной сети учитываются другие автобаны. Развязки помогают разбирать участки; отбор идёт по дорожному пути, а не по расстоянию вдоль {route}. Длинные подъезды исключены по диагностической сети OSM; это не заключение об отсутствии короткого пути на местности. Диагностическое снятие ограничений не подтверждает доступ.</p>}
+          {pilot.candidateCorridorM != null && <p className="note">Кандидаты отобраны в пределах {number(pilot.candidateCorridorM / 1000)} км от геометрии трассы. Это область поиска кандидатов, а не условие доступности. {pilot.diagnostic ? 'Очередь проверки уточнена диагностикой сохранённой дорожной сети. Ослабленные диагностические ограничения не подтверждают доступ. Найденные маршруты и интервалы сохранены.' : 'Площадки без найденной связи остаются в проверке; диагностическое исключение по длинному подъезду в этих данных не выполнялось.'}</p>}
           <p className="note">Площадки с найденным маршрутом показаны сразу; цвет обозначает мощность точки. Площадки, требующие проверки, включаются переключателем в правой панели. Реальные въезды требуют проверки. Группировка временно отключена.</p>
           <p className="note">Обводка выделяет площадки с найденным маршрутом, номинальной мощностью установок ≥400 кВт и DC-точкой ≥150 кВт. Цвет показывает мощность одной точки и сам по себе не означает выполнение этих условий.</p>
           <p className="note">{pilot.accessNetwork ? 'Маршруты по OSM учитывают одностороннее движение, запреты поворотов и ограничения доступа. Подъезд ≤3 км, возврат на своё направление ≤3 км; привязка к ближайшей дороге ≤60 м. Это доступность по дорожной модели, а не подтверждение фактического въезда.' : 'Подъездная сеть ещё не проверена. Близость к автобану не подтверждает доступность с выбранного направления.'}</p>

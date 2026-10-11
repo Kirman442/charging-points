@@ -75,7 +75,7 @@ function loadDetails() {
     const index = pendingDetail
     pendingDetail = -1
     detailsLoad = null
-    self.postMessage({ type: 'detail-error', index, message: `Карточки: ${error.message}` })
+    self.postMessage({ type: 'detail-error', category: 'details', index, message: `Карточки: ${error.message}` })
   })
 }
 self.onmessage = async ({ data: message }) => {
@@ -83,7 +83,7 @@ self.onmessage = async ({ data: message }) => {
     if (message.type === 'load') {
       currentZoom = message.zoom
       const started = performance.now(), trace = createTrace(started)
-      self.postMessage({ type: 'progress', message: 'Загрузка площадок…' })
+      self.postMessage({ type: 'progress', phase: 'sites', message: 'Загрузка площадок…' })
       const wasmStarted = performance.now()
       wasmReady ||= initWasm(wasmUrl).then(() => trace.record('Загрузка и инициализация WASM', wasmStarted))
       // Fetch every file now; defer all territory decoding until sites are ready.
@@ -127,7 +127,7 @@ self.onmessage = async ({ data: message }) => {
         const regions = trace.measure('Привязка региональной аналитики', () => applyRegionStats(base, selection.stats))
         self.postMessage({ type: 'regions', ...regions })
         trace.report('Территории и аналитика готовы')
-      } catch (error) { self.postMessage({ type: 'error', message: `Границы: ${error.message}` }) }
+      } catch (error) { self.postMessage({ type: 'error', category: 'boundaries', message: `Границы: ${error.message}` }) }
     }
     if (message.type === 'load-a9') {
       if (!detailContext || !table) throw new Error('Сначала дождись загрузки площадок')
@@ -152,7 +152,7 @@ self.onmessage = async ({ data: message }) => {
         return decodeAutobahn(decoded, detailContext.sitesHash, table.numRows, route)
       })())
       try { self.postMessage({ type: 'a9-ready', route, pilot: await autobahnLoads.get(route) }) }
-      catch (error) { autobahnLoads.delete(route); self.postMessage({ type: 'a9-error', route, message: error.message }) }
+      catch (error) { autobahnLoads.delete(route); self.postMessage({ type: 'a9-error', route, category: error.code || 'motorway-load', message: error.message }) }
     }
     if (message.type === 'load-details') loadDetails()
     if (message.type === 'filter' && table && pointGroups) { sendSites('filtered', message.requestId, message.filters, performance.now()) }

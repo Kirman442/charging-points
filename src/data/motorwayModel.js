@@ -1,7 +1,7 @@
 import { AUTOBAHNS, autobahnDirections, autobahnIntervalSite, A9_STATUS } from './autobahn.js'
 import { MOTORWAY_REVIEW_REASONS } from './motorwayDiagnostics.js'
 
-const invalid = () => new Error('Готовые данные автобана не соответствуют реестру или дорожной модели.')
+const invalid = () => Object.assign(new Error('Готовые данные автобана не соответствуют реестру или дорожной модели.'), { code: 'motorway-data-mismatch' })
 const requireValid = condition => { if (!condition) throw invalid() }
 const finite = value => Number.isFinite(value)
 const point = value => Array.isArray(value) && value.length === 2 && value.every(finite) && Math.abs(value[0]) <= 180 && Math.abs(value[1]) <= 90
@@ -90,7 +90,7 @@ export function decodeMotorwayModel(tables, registry, route, registryHashes) {
     const accessConditions = [...restrictions.map(c => ({ ...c, kind: 'road_restriction' })), ...barriers.map(c => ({ ...c, kind: 'barrier' }))]
     requireValid(accessConditions.every(c => c.tags && typeof c.tags === 'object' && !Array.isArray(c.tags) && Object.values(c.tags).every(value => typeof value === 'string')))
     seen.add(key)
-    return { ...s, chain_m: found ? s.chain_m : s.projected_chain_m, position: [s.longitude, s.latitude], registry_site_id: s.site_id, accessConditions, accessEvidenceChecked: false, accessEvidenceSource: `сохранённые данные OSM из расчёта ${route}` }
+    return { ...s, chain_m: found ? s.chain_m : s.projected_chain_m, position: [s.longitude, s.latitude], registry_site_id: s.site_id, accessConditions, accessEvidenceChecked: false, accessEvidenceSourceKey: 'osm-route', accessEvidenceRoute: route, accessEvidenceSource: `сохранённые данные OSM из расчёта ${route}` }
   })
   const segments = rows(tables.intervals).map(s => {
     const path = JSON.parse(s.geometry_json)

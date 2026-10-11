@@ -18,7 +18,7 @@ export const A9_STATUS = {
   gap: { label: 'Расчётный интервал >60 км', color: [232,104,126,255], dash: [2,3] },
   unknown: { label: 'Интервал не рассчитан / край маршрута', color: [150,162,179,255], dash: [4,5] },
 }
-const invalid = () => new Error('Данные автобана не соответствуют площадкам или имеют неверную структуру. Пересоздай пилот.')
+const invalid = () => Object.assign(new Error('Данные автобана не соответствуют площадкам или имеют неверную структуру. Пересоздай пилот.'), { code: 'motorway-data-mismatch' })
 export function decodeAutobahn(table, sitesHash, siteCount, expectedRoute = 'A9') {
   const metadata = table.schema.metadata
   if (!['autobahn-pilot-v2'].includes(metadata.get('format')) || (metadata.get('route') || '').replaceAll(' ', '') !== expectedRoute || metadata.get('startup_sites_sha256') !== sitesHash || Number(metadata.get('site_count')) !== siteCount) throw invalid()

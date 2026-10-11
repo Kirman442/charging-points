@@ -20,6 +20,7 @@ export const MAP_PALETTES = {
 export const paletteFor = style => MAP_PALETTES[style] || MAP_PALETTES.dark
 export const rgba = (hex, alpha = 255) => [1,3,5].map(i => parseInt(hex.slice(i, i + 2), 16)).concat(alpha)
 export const powerIndex = value => value >= 150 ? 3 : value >= 50 ? 2 : value > 22 ? 1 : 0
+export const POWER_LABELS = ['≤ 22 кВт', '> 22–< 50 кВт', '50–< 150 кВт', '≥ 150 кВт']
 export function sequentialColor(value, maximum, style) {
   const colors = paletteFor(style).sequential
   const t = Math.max(0, Math.min(1, value / Math.max(1, maximum))) * (colors.length - 1)
@@ -35,8 +36,7 @@ export function displayColors(data, options, clustered = false) {
     if (clustered && data.siteCounts[i] > 1) color = rgba(palette.cluster)
     else if (options.a9Mode) {
       const alpha = data.colors[i * 4 + 3]
-      color = options.style !== 'light' ? Array.from(data.colors.subarray(i * 4, i * 4 + 4))
-        : rgba(alpha === 255 ? palette.route.within : palette.missing, alpha)
+      color = rgba(palette.power[powerIndex(data.powers[i])], alpha)
     } else color = rgba(palette.power[powerIndex(data.powers[i])])
     colors.set(color, i * 4)
   }

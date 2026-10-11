@@ -2,9 +2,8 @@ import { CONCENTRATION_THRESHOLD } from '../data/concentration.js'
 import { METRICS } from '../data/analytics.js'
 import { format } from '../utils/format.js'
 import { createLayers } from '../map/layers.js'
-import { paletteFor } from '../map/palette.js'
+import { paletteFor, POWER_LABELS as labels } from '../map/palette.js'
 import Icon from './Icon.jsx'
-const labels = ['≤ 22 кВт', '> 22–< 50 кВт', '50–< 150 кВт', '≥ 150 кВт']
 export default function MapLegend({ regions, options, open = true, onToggle }) {
   const { maximum } = createLayers(null, regions, { ...options, showSites: false })
   const palette = paletteFor(options.style)

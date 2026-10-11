@@ -3,13 +3,17 @@ import { useId, useState } from 'react'
 import { AUTOBAHNS, A9_STATUS } from '../data/autobahn.js'
 import Switch from './Switch.jsx'
 import { countWord } from '../utils/siteSelection.js'
+import { paletteFor, POWER_LABELS } from '../map/palette.js'
 
 const number = value => value.toLocaleString('ru-RU')
 const siteWord = count => countWord(count, ['площадка', 'площадки', 'площадок'])
 
-export default function AutobahnPanel({ pilot, direction, pending, error, onRetry, route = 'A9', showUnrouted, onShowUnrouted, selectedSegment }) {
+export default function AutobahnPanel({ pilot, direction, pending, error, onRetry, route = 'A9', style = 'dark', showUnrouted, onShowUnrouted, selectedSegment }) {
   const [methodOpen, setMethodOpen] = useState(false)
   const methodId = useId()
+  const [legendOpen, setLegendOpen] = useState(false)
+  const legendId = useId()
+  const palette = paletteFor(style)
   const summary = pilot?.summary.find(s => s.direction === direction)
   const exitZones = pilot?.candidateMethod === 'all-exits-road-zones-v1' || (route === 'A5' && pilot?.candidateMethod === 'a5-all-exits-road-zones-v1')
   const directionSites = pilot?.sites.filter(s => s.direction === direction) || []
@@ -35,9 +39,17 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
           <li><strong>{number(summary.eligible_routed)}</strong> {siteWord(summary.eligible_routed)} с суммарной мощностью ≥400 кВт и хотя бы одной DC-точкой ≥150 кВт.</li>
         </ul>}
       </section>
-      <div className="a9-key"><div><i className="a9-point a9-point-access" />Есть условия доступа — см. карточку</div></div>
+      <section className="power-distribution a9-site-legend" aria-label="Обозначения площадок · легенда">
+        <h3><button type="button" className="distribution-toggle" aria-expanded={legendOpen} aria-controls={legendId} onClick={() => setLegendOpen(open => !open)}><span>Обозначения площадок · легенда</span><span aria-hidden="true">{legendOpen ? '−' : '+'}</span></button></h3>
+        <div id={legendId} hidden={!legendOpen}>
+        <p className="note">Цвет — максимум мощности одной точки на площадке.</p>
+        <div className="power-bands">{POWER_LABELS.map((label, index) => <div key={label}><i style={{ background: palette.power[index] }} aria-hidden="true" />{label}</div>)}</div>
+        <div className="a9-key a9-shape-key"><div><i className="a9-point" aria-hidden="true" />Круг — отдельные условия доступа не отмечены</div><div><i className="a9-point a9-point-access" aria-hidden="true" />Квадрат — отмечены условия доступа, см. карточку</div><div><i className="a9-point a9-point-eligible" aria-hidden="true" />Обводка — участвует в расчёте интервалов</div></div>
+        <p className="note">Цвет не подтверждает дорожную связь. Отсутствие отмеченных условий не гарантирует свободный доступ.</p>
       <section aria-label="Отдельные условия доступа">
         <p className="note">У {number(accessConditionSites.length)} {countWord(accessConditionSites.length, ['площадки', 'площадок', 'площадок'])} с найденным маршрутом отмечены отдельные условия доступа. На карте они обозначены квадратами; подробности — в карточке площадки. Эти признаки сами по себе не исключают площадку из интервалов.</p>
+      </section>
+        </div>
       </section>
       <section className="a9-review-block" aria-label="Площадки, требующие проверки">
         <p><strong>{number(reviewSites.length)}</strong> {siteWord(reviewSites.length)} {reviewSites.length % 10 === 1 && reviewSites.length % 100 !== 11 ? 'требует' : 'требуют'} проверки.</p>
@@ -63,13 +75,13 @@ export default function AutobahnPanel({ pilot, direction, pending, error, onRetr
             <ul className="a9-method-list note">{pilot.sections.filter(s => s.direction === direction).map(s => <li key={s.section}>{s.section === 'northern' ? 'Heiligenhafen — Blankenheim' : 'Kelberg — Saarbrücken'}: {number(s.length_km)} км · максимальный расчётный интервал {s.max_gap_km == null ? '—' : number(s.max_gap_km)} км.</li>)}</ul>
           </>}
           {exitZones && <p className="note">Оба направления проверены отдельно от всех разрешённых ответвлений, включая площадки отдыха. В подъездной сети учитываются другие автобаны. Развязки помогают разбирать участки; отбор идёт по дорожному пути, а не по расстоянию вдоль {route}. Длинные подъезды исключены по диагностической сети OSM; это не заключение об отсутствии короткого пути на местности. Диагностическое снятие ограничений не подтверждает доступ.</p>}
-          <p className="note">Бирюзовые площадки с найденным маршрутом показаны сразу. Площадки, требующие проверки, включаются переключателем в правой панели. Реальные въезды требуют проверки. Группировка временно отключена.</p>
-          <div className="a9-key a9-point-key"><div><i className="a9-point a9-point-eligible" />Маршрут найден, ≥400 кВт и DC ≥150 кВт</div><div><i className="a9-point" />Маршрут найден, мощности недостаточно для расчёта</div><div><i className="a9-point a9-point-unrouted" />Площадка требует проверки</div></div>
+          <p className="note">Площадки с найденным маршрутом показаны сразу; цвет обозначает мощность точки. Площадки, требующие проверки, включаются переключателем в правой панели. Реальные въезды требуют проверки. Группировка временно отключена.</p>
+          <p className="note">Обводка выделяет площадки с найденным маршрутом, номинальной мощностью установок ≥400 кВт и DC-точкой ≥150 кВт. Цвет показывает мощность одной точки и сам по себе не означает выполнение этих условий.</p>
           <p className="note">{pilot.accessNetwork ? 'Маршруты по OSM учитывают одностороннее движение, запреты поворотов и ограничения доступа. Подъезд ≤3 км, возврат на своё направление ≤3 км; привязка к ближайшей дороге ≤60 м. Это доступность по дорожной модели, а не подтверждение фактического въезда.' : 'Подъездная сеть ещё не проверена. Близость к автобану не подтверждает доступность с выбранного направления.'}</p>
           <p className="note">Шлагбаум, доступ для клиентов или разрешение владельца территории показываются отдельно. Неизвестные фактические условия не считаются автоматически запретом. Соседние зарядки OSM — дополнительные сведения: они не добавляют площадку в интервалы, а отклонённое сопоставление не отменяет её собственный маршрут.</p>
           <p className="note">Срез зарядок: {pilot.sourceDate}. Это исследовательская оценка, не заключение о соответствии AFIR. Порог 50 км — наше предупреждение.</p>
           <p className="note">Базовые показатели относятся к полному исходному набору. Фильтры карты меняют только показ площадок.</p>
-          <p className="note">Интервал включает возврат предыдущей площадки, участок автобана и подъезд следующей. При несовместимых съезде и возврате интервал не рассчитан. Цветные интервалы рассчитаны между площадками с найденным маршрутом, ≥400 кВт и DC-точкой ≥150 кВт. Это не подтверждение доступности зарядки или соответствия AFIR. Бирюзовые точки — маршрут найден, въезд не проверен. Обводка выделяет площадки, участвующие в расчёте интервалов. Переключатель меняет только показ точек, интервалы не пересчитываются.</p>
+          <p className="note">Интервал включает возврат предыдущей площадки, участок автобана и подъезд следующей. При несовместимых съезде и возврате интервал не рассчитан. Цветные интервалы рассчитаны между площадками с найденным маршрутом, ≥400 кВт и DC-точкой ≥150 кВт. Это не подтверждение доступности зарядки или соответствия AFIR. Цвет точек показывает мощность; найденный маршрут не подтверждает фактический въезд. Обводка выделяет площадки, участвующие в расчёте интервалов. Переключатель меняет только показ точек, интервалы не пересчитываются.</p>
         </div>
       </section>
     </>}

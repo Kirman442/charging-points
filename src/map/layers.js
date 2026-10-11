@@ -12,12 +12,12 @@ export function createLayers(data, regions, suppliedOptions, markers = null, clu
   const options = normalizeOptions(suppliedOptions)
   const palette = paletteFor(options.style)
   const layers = []
-  const accessSquares = options.a9Mode && data?.autobahnAccess ? Array.from(data.autobahnAccess, (flag, index) => flag ? {
+  const circleColors = data && options.showSites ? displayColors(data, options) : data?.colors
+  const accessSquares = options.showSites && options.a9Mode && data?.autobahnAccess ? Array.from(data.autobahnAccess, (flag, index) => flag ? {
     position: Array.from(data.positions.subarray(index * 2, index * 2 + 2)),
-    color: options.style === 'light' ? rgba(palette.route.within) : Array.from(data.colors.subarray(index * 4, index * 4 + 4)),
+    color: Array.from(circleColors.subarray(index * 4, index * 4 + 4)),
     rowIndex: data.rowIndices[index], eligible: !!data.autobahnEligible?.[index],
   } : null).filter(Boolean) : []
-  const circleColors = data && options.showSites ? displayColors(data, options) : data?.colors
   if (accessSquares.length) data.autobahnAccess.forEach((flag, index) => { if (flag) circleColors[index * 4 + 3] = 0 })
   const level = options.territory
   const featuresFor = level => regions?.[level]?.filter(feature => !options.state || (

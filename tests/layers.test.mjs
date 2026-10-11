@@ -1,3 +1,4 @@
+import { paletteFor, rgba } from '../src/map/palette.js'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createLayers } from '../src/map/layers.js'
@@ -68,7 +69,7 @@ test('legend domain follows analytical territories and selected state, regardles
 })
 
 test('Autobahn outlines identify interval sites and radius accessors follow zoom', () => {
-  const data={count:2,positions:new Float64Array(4),colors:new Uint8Array([68,190,170,255,68,190,170,255]),autobahnEligible:new Uint8Array([1,0])}
+  const data={count:2,powers:new Float32Array([150,22]),positions:new Float64Array(4),colors:new Uint8Array([68,190,170,255,68,190,170,255]),autobahnEligible:new Uint8Array([1,0])}
   const layerAt = zoom => createLayers(data,null,{metric:'sites',showSites:true,a9Mode:true,autobahnZoom:zoom}).layers[0]
   const far=layerAt(6), near=layerAt(14)
   assert.equal(far.props.radiusUnits,'pixels')
@@ -79,16 +80,37 @@ test('Autobahn outlines identify interval sites and radius accessors follow zoom
 
 test('Access squares preserve color, eligibility and registry click row without mutating buffers', () => {
   const colors = new Uint8Array([68,190,170,255,68,190,170,255,185,191,205,235])
-  const data = { count: 3, positions: new Float64Array([8,49,9,50,10,51]), rowIndices: new Uint32Array([41,53,67]), colors, autobahnEligible: new Uint8Array([1,0,0]), autobahnAccess: new Uint8Array([1,1,0]) }
+  const data = { count: 3, powers: new Float32Array([150,50,22]), positions: new Float64Array([8,49,9,50,10,51]), rowIndices: new Uint32Array([41,53,67]), colors, autobahnEligible: new Uint8Array([1,0,0]), autobahnAccess: new Uint8Array([1,1,0]) }
   const { layers } = createLayers(data,null,{ metric:'sites',showSites:true,a9Mode:true,autobahnZoom:14,showBoundaries:false })
   const circles = layers.find(l => l.id === 'charging-sites')
   const squares = layers.find(l => l.id === 'charging-access-sites')
   const outlines = layers.find(l => l.id === 'charging-access-outlines')
   assert.deepEqual(squares.props.data.map(s => s.rowIndex), [41,53])
-  assert.deepEqual(squares.props.data[0].color, [68,190,170,255])
+  assert.deepEqual(squares.props.data[0].color, rgba(paletteFor('dark').power[3]))
   assert.equal(outlines.props.data.length,1)
   assert.equal(circles.props.data.attributes.getFillColor.value[3],0)
   assert.equal(circles.props.getLineWidth(null,{index:0}),0)
   assert.equal(colors[3],255)
   assert.ok(squares.props.pickable)
+})
+
+test('motorway circles and access squares share all power bands and preserve source opacity in both themes', () => {
+  const powers = new Float32Array([22,23,50,150,22,23,50,150])
+  const colors = new Uint8Array(Array.from({length:8}, (_, i) => [68,190,170,i === 3 || i === 7 ? 235 : 255]).flat())
+  const original = colors.slice()
+  const data = {count:8,powers,colors,positions:new Float64Array(16),rowIndices:new Uint32Array([1,2,3,4,5,6,7,8]),autobahnAccess:new Uint8Array([0,0,0,0,1,1,1,1]),autobahnEligible:new Uint8Array(8)}
+  for (const style of ['dark','light']) {
+    const {layers} = createLayers(data,null,{showSites:true,a9Mode:true,metric:'sites',style})
+    const circles = layers.find(l => l.id === 'charging-sites').props.data.attributes.getFillColor.value
+    const squares = layers.find(l => l.id === 'charging-access-sites').props.data
+    for (let band = 0; band < 4; band++) {
+      const expected = rgba(paletteFor(style).power[band], band === 3 ? 235 : 255)
+      assert.deepEqual(Array.from(circles.subarray(band*4,band*4+4)), expected)
+      assert.deepEqual(squares[band].color, expected)
+      assert.equal(circles[(band+4)*4+3],0)
+    }
+    assert.deepEqual(colors,original)
+    assert.equal(createLayers(data,null,{showSites:false,a9Mode:true}).layers.some(l => l.id === 'charging-access-sites'),false)
+    assert.deepEqual(colors,original)
+  }
 })

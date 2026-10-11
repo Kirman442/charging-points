@@ -60,7 +60,7 @@ test('initial selection keys ignore identity and normalize default values', () =
   for (const filters of [{state:'Bayern'}, {minPower:150}, {dcOnly:true}, {alwaysOpen:true}]) assert.notEqual(filterKey(filters), filterKey({}))
 })
 
-for (const [route, routedCounts] of [['A2', [422, 398]], ['A3', [622, 643]], ['A4', [438, 408]], ['A6', [307, 280]], ['A8', [376, 409]]]) test(`${route} loads its saved tables lazily, caches the route and joins site cards correctly`, async () => {
+for (const [route, routedCounts] of [['A2', [422, 398]], ['A3', [622, 643]], ['A4', [438, 408]], ['A6', [307, 280]], ['A7', [665, 598]], ['A8', [376, 409]]]) test(`${route} loads its saved tables lazily, caches the route and joins site cards correctly`, async () => {
   const { worker, messages, waitFor } = startWorker()
   const prefix = `autobahn_${route.toLowerCase()}`
   try {
@@ -77,7 +77,7 @@ for (const [route, routedCounts] of [['A2', [422, 398]], ['A3', [622, 643]], ['A
     assert.equal(messages.filter(m => m.type === 'fetch' && m.url.includes(prefix)).length, 3)
     worker.postMessage({ type: 'load-details' })
     await waitFor('performance', m => m.phase === 'Подробности площадок готовы (фон)')
-    const site = pilot.sites.find(s => s.direction === 'west' && s.status === 'road_route_found_entrance_unverified')
+    const site = pilot.sites.find(s => s.direction === pilot.summary[1].direction && s.status === 'road_route_found_entrance_unverified')
     worker.postMessage({ type: 'detail', index: site.site_row })
     const { detail } = await waitFor('detail')
     assert.equal(detail.site_id, site.registry_site_id)

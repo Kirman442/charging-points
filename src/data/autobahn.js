@@ -6,6 +6,7 @@ export const AUTOBAHNS = {
   A4: { east: 'В сторону Görlitz', west: 'В сторону Aachen', tables: ['sites', 'intervals', 'routes'], sectionIds: ['section_01', 'section_02'], sectionLabels: { section_01: 'Aachen — Kreuz Olpe-Süd', section_02: 'Kirchheimer Dreieck — Görlitz' }, gapNote: 'Между Kreuz Olpe-Süd и Kirchheimer Dreieck A4 прерывается.', view: { longitude: 10.5, latitude: 51, zoom: 6.1, pitch: 0, bearing: 0 } },
   A5: { north: 'В сторону Hattenbacher Dreieck', south: 'В сторону Basel', view: { longitude: 8.2, latitude: 49.5, zoom: 6.3, pitch: 0, bearing: 0 } },
   A6: { east: 'В сторону Waidhaus', west: 'В сторону Saarbrücken', tables: ['sites', 'intervals', 'routes'], view: { longitude: 9.7, latitude: 49.3, zoom: 6.4, pitch: 0, bearing: 0 } },
+  A7: { north: 'В сторону Flensburg', south: 'В сторону Füssen', tables: ['sites', 'intervals', 'routes'], view: { longitude: 10, latitude: 51, zoom: 5.7, pitch: 0, bearing: 0 } },
   A8: { east: 'В сторону Salzburg', west: 'В сторону Perl', tables: ['sites', 'intervals', 'routes'], sectionIds: ['section_01', 'section_02', 'section_03'], sectionLabels: { section_01: 'Perl — Pirmasens', section_02: 'Karlsruhe — München', section_03: 'München — Salzburg' }, gapNote: 'A8 состоит из трёх раздельных участков: разрывы между Pirmasens и Karlsruhe и в районе München.', view: { longitude: 9.8, latitude: 48.7, zoom: 6.1, pitch: 0, bearing: 0 } },
   A9: { north: 'В сторону Берлина', south: 'В сторону Мюнхена', view: { longitude: 12.1, latitude: 50.3, zoom: 6.2, pitch: 0, bearing: 0 } },
 }

@@ -535,3 +535,10 @@ html[lang="de"] .panel { hyphens: auto; }
   .map-context { top: 173px; }
   .map-navigation, .map-app:has(.analytics-shell[hidden]) .map-navigation { top: 173px; }
 }
+
+.setting-with-help { position: relative; }
+.setting-with-help:has(.help-control) > label { padding-right: 40px; }
+.setting-with-help > .help-control { position: absolute; right: 0; top: 0; margin: 0; }
+.setting-with-help .help-tooltip { left: auto; right: 0; }
+
+.map-app > .help-tooltip.is-floating { position: fixed; bottom: auto; right: auto; z-index: 60; }

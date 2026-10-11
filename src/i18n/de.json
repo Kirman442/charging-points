@@ -171,7 +171,7 @@
   "Режим автобана": "Autobahnmodus",
   "Автобан{p0}": "Autobahn{p0}",
   "Направление{p0}": "Richtung{p0}",
-  "Скрыть площадки вне коридора": "Nur im Korridor",
+  "Скрыть площадки вне коридора": "Nur Standorte entlang der Autobahn anzeigen",
   "Цвет линии показывает расчётный интервал. Символы площадок показывают дорожную связь и условия доступа.": "Die Linienfarbe zeigt die berechnete Strecke. Die Markerfarbe zeigt die maximale Ladepunktleistung; die Form kennzeichnet vermerkte Zufahrtsbedingungen. Eine Umrandung kennzeichnet die berücksichtigten Standorte.",
   "Исследуйте интервалы между зарядными площадками вдоль {p0}. Подъезд и возврат оцениваются по дорожной модели.": "Untersuche die Strecken zwischen Ladestandorten entlang der Autobahnen {p0}. Zufahrt und Rückfahrt werden anhand des Straßenmodells bewertet.",
   "{p0}Легенда карты": "{p0}Legende",
@@ -338,5 +338,11 @@
   "Не удалось загрузить маршрут.": "Die Route konnte nicht geladen werden.",
   "Число выбранных точек на 1 000 батарейных легковых автомобилей.": "Anzahl der ausgewählten Ladepunkte je 1.000 batterieelektrische Pkw.",
   "Батарейные легковые автомобили, без подключаемых гибридов.": "Batterieelektrische Pkw, ohne Plug-in-Hybride.",
-  "{p0}: {p1} км · максимальный расчётный интервал {p2}.": "{p0}: {p1} km · längste berechnete Strecke: {p2}."
+  "{p0}: {p1} км · максимальный расчётный интервал {p2}.": "{p0}: {p1} km · längste berechnete Strecke: {p2}.",
+  "Земля": "Bundesland",
+  "Аналитический слой": "Kartenindikator",
+  "Территории": "Gebiete",
+  "Доступно только вне режима автобана.": "Nur außerhalb des Autobahnmodus verfügbar.",
+  "Коридор автобана": "Autobahnkorridor",
+  "Переключатель скрывает площадки вне набора кандидатов выбранного направления. Площадки, требующие проверки, включаются отдельно. Нахождение в коридоре не подтверждает дорожную связь; расчётные интервалы не меняются.": "Der Schalter blendet Standorte außerhalb der Kandidatenauswahl der gewählten Fahrtrichtung aus. Ungeklärte Standorte werden separat eingeblendet. Die Lage im Korridor bestätigt keine Straßenanbindung; die berechneten Strecken bleiben unverändert."
 }

@@ -3,6 +3,7 @@ import { METRIC_CHOICES } from '../map/settings.js';
 import { AUTOBAHNS, autobahnDirections } from '../data/autobahn.js';
 import Switch from './Switch.jsx';
 import Icon from './Icon.jsx';
+import HelpTooltip from './HelpTooltip.jsx';
 export default function ControlPanel({
   states,
   filters,
@@ -30,6 +31,7 @@ export default function ControlPanel({
     t,
     message
   } = useI18n();
+  const unavailable = label => a9Enabled && <HelpTooltip floating label={label} text={t("Доступно только вне режима автобана.")} />;
   const tab = initialTab;
   const change = (key, value) => onFilters({
     ...filters,
@@ -53,9 +55,9 @@ export default function ControlPanel({
     <nav className="control-tabs" aria-label={t("Раздел настроек")}>{tabs.map(item => <button key={item.id} aria-pressed={tab === item.id} onClick={() => onTab(item.id)}><Icon name={item.icon} />{t(item.text)}</button>)}</nav>
     <div className="control-scroll">
       {tab === 'filters' && <fieldset className="controls"><legend>{t("Выборка инфраструктуры")}</legend>
-        <label>{message("Земля{p0}", {
+        <div className="setting-with-help"><label>{message("Земля{p0}", {
             p0: <select value={a9Enabled ? '' : filters.state} disabled={a9Enabled} onChange={event => change('state', event.target.value)}><option value="">{t("Вся Германия")}</option>{states.map(state => <option key={state}>{state}</option>)}</select>
-          })}</label>
+          })}</label>{unavailable(t("Земля"))}</div>
         {a9Enabled && <p className="note">{t("В режиме автобана показ охватывает всё выбранное направление.")}</p>}
         <label>{message("Минимальная мощность{p0}", {
             p0: <select value={filters.minPower} onChange={event => change('minPower', Number(event.target.value))}>{[0, 22, 50, 150, 300].map(power => <option key={power} value={power}>{power ? t("Точки ≥ {p0} кВт", {
@@ -71,16 +73,16 @@ export default function ControlPanel({
           ...options,
           showSites: value
         })}>{t("Зарядные площадки")}</Switch>}
-        <Switch checked={options.clusterSites && !a9Enabled} disabled={a9Enabled} onChange={value => onOptions({
+        <div className="setting-with-help"><Switch checked={options.clusterSites && !a9Enabled} disabled={a9Enabled} onChange={value => onOptions({
           ...options,
           clusterSites: value
-        })}>{t("Группировать площадки")}</Switch>
-        <label>{message("Аналитический слой{p0}", {
+        })}>{t("Группировать площадки")}</Switch>{unavailable(t("Группировать площадки"))}</div>
+        <div className="setting-with-help"><label>{message("Аналитический слой{p0}", {
             p0: <select value={options.metric} disabled={a9Enabled} onChange={event => onOptions({
               ...options,
               metric: event.target.value
             })}>{METRIC_CHOICES.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}</select>
-          })}</label>
+          })}</label>{unavailable(t("Аналитический слой"))}</div>
         {options.metric === 'concentration' && !a9Enabled && <label>{message("Доля лидера по{p0}", {
             p0: <select value={options.operatorBasis} onChange={event => onOptions({
               ...options,
@@ -96,12 +98,12 @@ export default function ControlPanel({
                 p0: options.scaleMode === 'fixed' ? t("Одинаковое значение сохраняет свой цвет при изменении фильтров. Удобно сравнивать разные выборки.") : t("Цвета растягиваются от нуля до максимума среди выбранных территорий. Удобно видеть различия внутри выборки. После изменения фильтров цвет того же значения может измениться.")
               })}</span>
           })}</label>}
-        <label>{message("Территории{p0}", {
+        <div className="setting-with-help"><label>{message("Территории{p0}", {
             p0: <select value={a9Enabled ? 'states' : options.territory} disabled={a9Enabled} onChange={event => onOptions({
               ...options,
               territory: event.target.value
             })}><option value="states">{t("Земли")}</option><option value="districts">{t("Районы KBA")}</option></select>
-          })}</label>
+          })}</label>{unavailable(t("Территории"))}</div>
         <Switch checked={options.showBoundaries} onChange={value => onOptions({
           ...options,
           showBoundaries: value
@@ -116,7 +118,7 @@ export default function ControlPanel({
           <label>{message("Направление{p0}", {
               p0: <select value={a9Direction} onChange={event => onA9Direction(event.target.value)}>{autobahnDirections(autobahnRoute).map(direction => <option key={direction} value={direction}>{t(AUTOBAHNS[autobahnRoute][direction])}</option>)}</select>
             })}</label>
-          <Switch checked={hideOthers} onChange={onHideOthers}>{t("Скрыть площадки вне коридора")}</Switch>
+          <div className="setting-with-help"><Switch checked={hideOthers} onChange={onHideOthers}>{t("Скрыть площадки вне коридора")}</Switch><HelpTooltip floating label={t("Коридор автобана")} text={t("Переключатель скрывает площадки вне набора кандидатов выбранного направления. Площадки, требующие проверки, включаются отдельно. Нахождение в коридоре не подтверждает дорожную связь; расчётные интервалы не меняются.")} /></div>
           <p className="note">{t("Цвет линии показывает расчётный интервал. Символы площадок показывают дорожную связь и условия доступа.")}</p>
         </> : <p className="note">{message("Исследуйте интервалы между зарядными площадками вдоль {p0}. Подъезд и возврат оцениваются по дорожной модели.", {
             p0: Object.keys(AUTOBAHNS).join(', ')

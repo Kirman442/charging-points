@@ -64,6 +64,8 @@ test('clicks distinguish clusters from individual sites; cursor and double-click
   assert.equal(picked.points, markers.pointCounts[cluster])
   assert.equal(markerSelection(markers, -1), null)
   assert.equal(mapCursor({ isHovering: true, markerHovered: true }), 'pointer')
+  assert.equal(mapCursor({ isHovering: true, routeHovered: true }), 'pointer')
+  assert.equal(mapCursor({ isDragging: true, isHovering: true, routeHovered: true }), 'grabbing')
   assert.equal(mapCursor({ isDragging: true, isHovering: true }), 'grabbing')
   assert.equal(mapCursor({}), 'grab')
   assert.equal(ChargingMapController.prototype.handleEvent({ type: 'dblclick' }), false)

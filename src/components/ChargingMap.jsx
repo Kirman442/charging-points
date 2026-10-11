@@ -1,5 +1,5 @@
 import { useI18n } from "../i18n/useI18n.js";
-import { PathLayer, ScatterplotLayer, GeoJsonLayer } from '@deck.gl/layers';
+import { PathLayer, GeoJsonLayer } from '@deck.gl/layers';
 import { PathStyleExtension } from '@deck.gl/extensions';
 import { A9_STATUS } from '../data/autobahn.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -15,6 +15,7 @@ import { METRICS } from '../data/analytics.js';
 import { format } from '../utils/format.js';
 import { counted } from '../utils/siteSelection.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { siteOutlineLayer } from '../map/siteOutline.js';
 import { paletteFor, rgba } from '../map/palette.js';
 export default function ChargingMap({
   data,
@@ -42,6 +43,7 @@ export default function ChargingMap({
   } = useI18n();
   const clustered = useClusters(options, viewState.zoom);
   const markerHover = useRef(false);
+  const routeHover = useRef(false);
   const [hovered, setHovered] = useState(null);
   const [hoverInfo, setHoverInfo] = useState(null);
   useEffect(() => {
@@ -108,22 +110,8 @@ export default function ChargingMap({
   const interactionLayers = useMemo(() => {
     const palette = paletteFor(options.style),
       overlays = [];
-    const ring = (id, position, radius, color, width) => overlays.push(new ScatterplotLayer({
-      id,
-      data: [{
-        position
-      }],
-      getPosition: d => d.position,
-      radiusUnits: 'pixels',
-      getRadius: radius,
-      stroked: true,
-      filled: false,
-      getLineColor: rgba(color),
-      getLineWidth: width,
-      lineWidthUnits: 'pixels',
-      pickable: false
-    }));
-    if (hovered?.position && hovered.source === (hovered.clustered ? markers : data)) ring('hover-ring', hovered.position, hovered.radius + 2, palette.outline, 2);
+    const ring = (id, position, radius, color, width, square = false) => overlays.push(siteOutlineLayer({ id, position, radius, color: rgba(color), width, square }));
+    if (hovered?.position && hovered.source === (hovered.clustered ? markers : data)) ring('hover-ring', hovered.position, hovered.radius + 2, palette.outline, 2, hovered.square);
     if (!options.a9Mode && hovered?.region && regions?.[options.territory]?.includes(hovered.region)) overlays.push(new GeoJsonLayer({
       id: 'hover-region',
       data: [hovered.region],
@@ -137,8 +125,8 @@ export default function ChargingMap({
     const index = selectedSite == null ? -1 : data?.rowIndices?.indexOf(selectedSite) ?? -1;
     if (index >= 0 && options.showSites) {
       const position = Array.from(data.positions.subarray(index * 2, index * 2 + 2));
-      ring('selected-site-casing', position, options.a9Mode ? Math.max(3.5, Math.min(7, 0.8 + (viewState.zoom - 5) * .7)) + 4 : 10, palette.casing, 5);
-      ring('selected-site-ring', position, options.a9Mode ? Math.max(3.5, Math.min(7, 0.8 + (viewState.zoom - 5) * .7)) + 4 : 10, palette.selected, 3);
+      ring('selected-site-casing', position, options.a9Mode ? Math.max(3.5, Math.min(7, 0.8 + (viewState.zoom - 5) * .7)) + 4 : 10, palette.casing, 5, !!options.a9Mode && !!data.autobahnAccess?.[index]);
+      ring('selected-site-ring', position, options.a9Mode ? Math.max(3.5, Math.min(7, 0.8 + (viewState.zoom - 5) * .7)) + 4 : 10, palette.selected, 3, !!options.a9Mode && !!data.autobahnAccess?.[index]);
     }
     const clusterIndex = selectedCluster && markers ? markers.clusterIds.indexOf(selectedCluster.id) : -1;
     if (clusterIndex >= 0) ring('selected-cluster-ring', [markers.positions[clusterIndex * 2], markers.positions[clusterIndex * 2 + 1]], markers.radii[clusterIndex] + 3, palette.selected, 3);
@@ -197,7 +185,8 @@ export default function ChargingMap({
       doubleClickZoom: true
     }} layers={[...layers, ...interactionLayers]} eventRecognizerOptions={CLICK_RECOGNIZER_OPTIONS} pickingRadius={mobile ? 12 : 6} getCursor={state => mapCursor({
       ...state,
-      markerHovered: markerHover.current
+      markerHovered: markerHover.current,
+      routeHovered: routeHover.current
     })} onAfterRender={() => {
       reportMapEvent('Первый кадр DeckGL');
       if (data) onDataRendered?.();
@@ -206,6 +195,7 @@ export default function ChargingMap({
       timing.current.packets.add(data);
       console.info(`[Charging render] Первый кадр площадок после получения Worker: ${Math.round(performance.now() - data.receivedAt)} ms; выборка ${data.requestId}`);
     }} onHover={info => {
+      routeHover.current = info.layer?.id === 'a9-route' && info.index >= 0;
       markerHover.current = (isSite(info) || isMarker(info)) && info.index >= 0;
       if (mobile) return;
       let next = null;
@@ -215,6 +205,7 @@ export default function ChargingMap({
         next = {
           position,
           radius: isMarker(info) ? markers.radii[info.index] : options.a9Mode ? Math.max(3.5, Math.min(7, 0.8 + (viewState.zoom - 5) * .7)) : 7,
+          square: isSquare(info) || (!isMarker(info) && !!options.a9Mode && !!packet.autobahnAccess?.[info.index]),
           source: packet,
           clustered: isMarker(info),
           id: `${info.layer.id}:${info.index}`

@@ -8,8 +8,8 @@ export class ChargingMapController extends MapController {
     return super.handleEvent(event)
   }
 }
-export function mapCursor({ isDragging, isHovering, markerHovered }) {
-  return isDragging ? 'grabbing' : isHovering && markerHovered ? 'pointer' : 'grab'
+export function mapCursor({ isDragging, isHovering, markerHovered, routeHovered }) {
+  return isDragging ? 'grabbing' : isHovering && (markerHovered || routeHovered) ? 'pointer' : 'grab'
 }
 
 const zoomInterpolator = new LinearInterpolator(['longitude', 'latitude', 'zoom'])

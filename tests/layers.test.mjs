@@ -114,3 +114,19 @@ test('motorway circles and access squares share all power bands and preserve sou
     assert.deepEqual(colors,original)
   }
 })
+
+ test('Access-site interaction outlines remain square, ordinary sites remain circles, and neither intercepts clicks', async () => {
+  const { siteOutlineLayer } = await import('../src/map/siteOutline.js')
+  const props = { id: 'outline', position: [9,50], radius: 8, color: [30,80,90,255], width: 3 }
+  const square = siteOutlineLayer({...props,square:true}), circle = siteOutlineLayer(props)
+  assert.equal(square.constructor.name,'IconLayer')
+  assert.equal(circle.constructor.name,'ScatterplotLayer')
+  assert.notEqual(square.id,circle.id)
+  for (const layer of [square,circle]) {
+    assert.equal(layer.props.pickable,false)
+    assert.deepEqual(layer.props.getPosition(layer.props.data[0]),props.position)
+  }
+  assert.equal(square.props.getSize,19)
+  assert.equal(circle.props.getRadius,8)
+  assert.deepEqual(square.props.getColor,props.color)
+ })

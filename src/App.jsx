@@ -384,6 +384,11 @@ export default function App() {
   }}>
     <div className="map-surface" inert={mobile && controlsVisible || undefined}>
       <ChargingMap data={displayData} autobahn={a9Enabled ? a9 : null} direction={a9Direction} markers={markers} regions={regions} options={mapOptions} viewState={viewState} onViewChange={onViewChange} selectedSite={autobahnFocus} selectedCluster={cluster} selectedSegment={selectedSegment} mobile={mobile} onSegment={segment => {
+        setListOpen(false);
+        setSiteMode(false);
+        setAutobahnFocus(null);
+        setCluster(null);
+        selectSite(-1);
         setSelectedSegment(segment);
         revealAnalytics();
       }} onCluster={value => {

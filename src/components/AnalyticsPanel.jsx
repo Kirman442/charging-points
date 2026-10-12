@@ -95,7 +95,7 @@ function SummaryGroups({
       metric: 'power'
     }]
   }];
-  return <div className="analytics-groups">{groups.map(group => <section className="analytics-group" key={t(group.title)} aria-label={t(group.title)}><h3>{t(group.title)}</h3><dl>{group.rows.map(row => <div key={t(row.label)} className={row.metric === metric ? 'summary-row selected-metric' : 'summary-row'}><dt>{row.metric === "ratio" ? <HelpTooltip label={t(row.label)} text={t("Число выбранных точек на 1 000 батарейных легковых автомобилей.")} /> : row.metric === "bev" ? <HelpTooltip label={t(row.label)} text={t("Батарейные легковые автомобили, без подключаемых гибридов.")} /> : t(row.label)}{row.metric === metric && <span className="sr-only">{t(" — выбранная метрика карты")}</span>}</dt><dd>{row.value}</dd></div>)}</dl></section>)}</div>;
+  return <div className="analytics-groups">{groups.map(group => <section className="analytics-group" key={t(group.title)} aria-label={t(group.title)}><h3>{t(group.title)}</h3><dl>{group.rows.map(row => <div key={t(row.label)} data-metric={row.metric} className={row.metric === metric ? 'summary-row selected-metric' : 'summary-row'}><dt>{row.metric === "ratio" ? <HelpTooltip label={t(row.label)} text={t("Число выбранных точек на 1 000 батарейных легковых автомобилей.")} /> : row.metric === "bev" ? <HelpTooltip label={t(row.label)} text={t("Батарейные легковые автомобили, без подключаемых гибридов.")} /> : t(row.label)}{row.metric === metric && <span className="sr-only">{t(" — выбранная метрика карты")}</span>}</dt><dd>{row.value}</dd></div>)}</dl></section>)}</div>;
 }
 function ClusterContent({
   cluster,
@@ -196,6 +196,9 @@ function AnalyticsPanel({
   visible = true,
   closeSiteLabel = 'К аналитике',
   navigationRevision = 0,
+  metricNavigationRevision = 0,
+  distributionOpen = false,
+  onDistributionOpen,
   cluster,
   selectedState,
   states,
@@ -220,35 +223,36 @@ function AnalyticsPanel({
   const {
     t
   } = useI18n();
-  const [activeTab, setActiveTab] = useState('states');
-  const [tabMetric, setTabMetric] = useState(metric);
-  if (tabMetric !== metric) {
-    setTabMetric(metric);
+  const [activeTab, setActiveTab] = useState(metric === 'concentration' ? 'operators' : 'states');
+  const [tabMetric, setTabMetric] = useState({ metric, revision: metricNavigationRevision });
+  if (tabMetric.metric !== metric || tabMetric.revision !== metricNavigationRevision) {
+    setTabMetric({ metric, revision: metricNavigationRevision });
     if (metric === 'concentration') setActiveTab('operators');
   }
-  const [distributionOpen, setDistributionOpen] = useState(false);
   const scrollRef = useRef(null),
     overviewScroll = useRef(0);
-  const previousMetric = useRef(metric),
-    metricScrollPending = useRef(false);
+  const previousMetric = useRef(metric), previousMetricNavigation = useRef(metricNavigationRevision),
+    metricScrollPending = useRef(metricNavigationRevision > 0);
   const contentKey = cluster ? `cluster:${cluster.id}` : site ? `site:${site.site_id}` : region ? `${region.level}:${region.district_code || region.state_code}` : 'overview';
   useLayoutEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = contentKey === 'overview' ? overviewScroll.current : 0;
   }, [contentKey, navigationRevision]);
   useLayoutEffect(() => {
-    if (previousMetric.current !== metric) {
+    if (previousMetric.current !== metric || previousMetricNavigation.current !== metricNavigationRevision) {
       previousMetric.current = metric;
-      metricScrollPending.current = !site && !cluster;
+      previousMetricNavigation.current = metricNavigationRevision;
+      metricScrollPending.current = true;
     }
     // A mobile legend or compact sheet can hide the panel. Defer until visible.
     if (!metricScrollPending.current || !visible || site || cluster) return;
     const container = scrollRef.current;
-    const target = metric === 'concentration' ? container?.querySelector('.operator-shares') : container;
+    const selector = metric === 'concentration' ? '.operator-shares' : metric === 'sites' ? '.power-distribution' : `[data-metric="${metric}"]`;
+    const target = container?.querySelector(selector);
     if (!container || !target) return;
-    container.scrollTop = metric === 'concentration' ? container.scrollTop + target.getBoundingClientRect().top - container.getBoundingClientRect().top : 0;
+    container.scrollTop += target.getBoundingClientRect().top - container.getBoundingClientRect().top - 8;
     if (contentKey === 'overview') overviewScroll.current = container.scrollTop;
     metricScrollPending.current = false;
-  }, [metric, visible, site, cluster, contentKey, states, activeTab]);
+  }, [metric, metricNavigationRevision, visible, site, cluster, contentKey, states, activeTab, distributionOpen]);
   return <aside className="panel analytics-panel" aria-label={t("Региональная аналитика")} aria-busy={pending}>
     <header className="analytics-toolbar"><span>{t("АНАЛИТИКА")}</span>{cluster || site || pending ? <button onClick={onCloseSite}>{closeSiteLabel}</button> : region ? <button onClick={region.level === 'districts' && selectedState ? onAllTerritories : onOverview}>{region.level === 'districts' && selectedState ? t("Все территории") : t("Все земли")}</button> : <span className="muted">{t("Текущая выборка")}</span>}</header>
     <div className="pending-line" role="status">{pending ? t("Загрузка новой площадки…") : ''}</div>
@@ -257,7 +261,7 @@ function AnalyticsPanel({
     }}>
       {status && <p role="status">{status}</p>}
       {error && <div className="error" role="alert">{error} <button onClick={onRetry}>{t("Повторить")}</button></div>}
-      {cluster ? <ClusterContent cluster={cluster} onZoom={onZoomCluster} /> : site ? <SiteContent site={site} autobahnSite={autobahnSite} /> : region ? <RegionContent region={region} metric={metric} showSites={showSites} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} distributionOpen={distributionOpen} onDistributionOpen={setDistributionOpen} /> : states ? <OverviewContent states={states} metric={metric} data={data} showSites={showSites} onSelect={onSelectRegion} activeTab={activeTab} onTab={setActiveTab} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} distributionOpen={distributionOpen} onDistributionOpen={setDistributionOpen} /> : <p role="status">{t("Подготовка региональной аналитики…")}</p>}
+      {cluster ? <ClusterContent cluster={cluster} onZoom={onZoomCluster} /> : site ? <SiteContent site={site} autobahnSite={autobahnSite} /> : region ? <RegionContent region={region} metric={metric} showSites={showSites} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} distributionOpen={distributionOpen} onDistributionOpen={onDistributionOpen} /> : states ? <OverviewContent states={states} metric={metric} data={data} showSites={showSites} onSelect={onSelectRegion} activeTab={activeTab} onTab={setActiveTab} operatorBasis={operatorBasis} onOperatorBasis={onOperatorBasis} distributionOpen={distributionOpen} onDistributionOpen={onDistributionOpen} /> : <p role="status">{t("Подготовка региональной аналитики…")}</p>}
       <details className="analytics-method"><summary>{t("Как считаются показатели")}</summary><p className="note">{t("Площадки, установки и точки — по текущим фильтрам. BEV не фильтруются. Площадка объединяет установки; установка может иметь несколько точек. Одна точка заряжает один автомобиль одновременно.")}</p>{!site && !cluster && <p className="note">{t("Мощность и DC фильтруют точки совместно. Считается полная номинальная мощность каждой установки с подходящей точкой — один раз, включая обслуживаемые установки. Фильтр 24/7 относится ко всей площадке. Мощность не показывает фактическую выдачу или число зарядок за день. BEV по 16 землям, без «Sonstige». Отношение двух снимков, не оценка занятости.")}</p>}</details>
     </div>
     <footer><p className="note">BNetzA: 01.09.2026 · KBA: 01.01.2026</p></footer>

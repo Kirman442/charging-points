@@ -10,6 +10,7 @@ export default function ControlPanel({
   onFilters,
   options,
   onOptions,
+  onMetric,
   onReset,
   a9Enabled,
   a9Direction,
@@ -78,10 +79,7 @@ export default function ControlPanel({
           clusterSites: value
         })}>{t("Группировать площадки")}</Switch>)}
         {unavailable(t("Аналитический слой"), <label>{message("Аналитический слой{p0}", {
-            p0: <select value={options.metric} disabled={a9Enabled} onChange={event => onOptions({
-              ...options,
-              metric: event.target.value
-            })}>{METRIC_CHOICES.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}</select>
+            p0: <select value={options.metric} disabled={a9Enabled} onChange={event => onMetric(event.target.value)}>{METRIC_CHOICES.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}</select>
           })}</label>)}
         {options.metric === 'concentration' && !a9Enabled && <label>{message("Доля лидера по{p0}", {
             p0: <select value={options.operatorBasis} onChange={event => onOptions({

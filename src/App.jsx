@@ -105,8 +105,8 @@ export default function App() {
       localStorage.setItem('charging-map-theme', options.style);
     } catch {/* Storage is optional. */}
   }, [options.style]);
-  const revealAnalytics = useCallback(() => {
-    setListReturn(null);
+  const revealAnalytics = useCallback(({ keepListReturn = false } = {}) => {
+    if (!keepListReturn) setListReturn(null);
     setAnalyticsOpen(true);
     setListOpen(false);
     setSheetState('half');
@@ -119,6 +119,8 @@ export default function App() {
   const mapError = errorText(language, rawMapError, 'map');
   const rankingView = useRef(null);
   const [analyticsRevision, setAnalyticsRevision] = useState(0);
+  const [metricNavigationRevision, setMetricNavigationRevision] = useState(0);
+  const [distributionOpen, setDistributionOpen] = useState(false);
   const [siteMode, setSiteMode] = useState(false);
   const [cluster, setCluster] = useState(null);
   const effectiveFilters = useMemo(() => a9Enabled ? {
@@ -235,6 +237,18 @@ export default function App() {
       setClickedRegion(previous => reconcileRegion(previous, normalized, regions));
     }
   }, [options.metric, options.territory, options.clusterSites, filters.state, regions, selectSite]);
+  const chooseMetric = metric => {
+    onOptions({ ...options, metric });
+    setListReturn(null);
+    setListOpen(false);
+    setCluster(null);
+    setAutobahnFocus(null);
+    setSiteMode(false);
+    selectSite(-1);
+    setAnalyticsOpen(true);
+    setSheetState('half');
+    setMetricNavigationRevision(value => value + 1);
+  };
   const resetSettings = useCallback(() => {
     rankingView.current = null;
     pendingFocus.current = null;
@@ -348,7 +362,7 @@ export default function App() {
     setSiteMode(true);
     setAutobahnFocus(index);
     selectSite(index);
-    revealAnalytics();
+    revealAnalytics({ keepListReturn: true });
   };
   const focusSite = (row, position) => {
     selectMapSite(row);
@@ -400,11 +414,14 @@ export default function App() {
       }} onSite={selectMapSite} onRegion={showRegion} onMapError={setMapError} onDataRendered={onDataRendered} />
     </div>
     <MapChrome options={options} onOptions={onOptions} onQuickMetric={metric => {
-      onOptions({
-        ...options,
-        metric
-      });
-      if (!controlsVisible && !legendOpen) toggleLegend();
+      chooseMetric(metric);
+      if (!controlsVisible && !legendOpen) {
+        if (mobile) {
+          legendAnalytics.current = true;
+          setLegendOpen(true);
+          setAnalyticsOpen(false);
+        } else toggleLegend();
+      }
     }} filters={filters} onFilters={onFilters} controlsOpen={controlsVisible} controlTab={controlTab} onDirection={value => {
       setA9Direction(value);
       setSelectedSegment(null);
@@ -428,7 +445,7 @@ export default function App() {
     }))} />
     {mobile && controlsVisible && <div className="dialog-backdrop" onClick={closeControls} />}
     {controlsOpen && <div ref={dialogRef} hidden={!controlsVisible} className="control-shell" role={mobile ? 'dialog' : undefined} aria-modal={mobile || undefined} aria-label={t("Настройки карты")}>
-      <ControlPanel key={controlTab} initialTab={controlTab} onTab={setControlTab} mobile={mobile} onClose={closeControls} onLegend={a9Enabled ? undefined : toggleLegend} onApply={() => {
+      <ControlPanel onMetric={chooseMetric} key={controlTab} initialTab={controlTab} onTab={setControlTab} mobile={mobile} onClose={closeControls} onLegend={a9Enabled ? undefined : toggleLegend} onApply={() => {
         if (Object.keys(filters).some(key => filters[key] !== draftFilters[key])) onFilters(draftFilters);
         closeControls();
       }} autobahnRoute={autobahnRoute} onAutobahnRoute={route => {
@@ -477,7 +494,7 @@ export default function App() {
           };
           focusSite(row.rowIndex, [row.longitude, row.latitude]);
           setListReturn(saved);
-        }} /> : a9Enabled && !siteMode ? <AutobahnPanel style={options.style} showUnrouted={showUnrouted} onShowUnrouted={setShowUnrouted} route={autobahnRoute} pilot={a9} selectedSegment={selectedSegment} direction={a9Direction} pending={a9Pending} error={a9Error} onRetry={loadA9} onSite={focusSite} /> : <AnalyticsPanel visible={analyticsOpen && (!mobile || sheetState !== 'peek')} closeSiteLabel={listReturn ? t("К списку") : t("К аналитике")} navigationRevision={analyticsRevision} autobahnSite={a9Enabled ? a9?.sites.find(s => s.site_row === autobahnFocus && s.direction === a9Direction && s.registry_site_id === detail?.site_id) : null} cluster={cluster} onZoomCluster={() => {
+        }} /> : a9Enabled && !siteMode ? <AutobahnPanel style={options.style} showUnrouted={showUnrouted} onShowUnrouted={setShowUnrouted} route={autobahnRoute} pilot={a9} selectedSegment={selectedSegment} direction={a9Direction} pending={a9Pending} error={a9Error} onRetry={loadA9} onSite={focusSite} /> : <AnalyticsPanel visible={analyticsOpen && (!mobile || sheetState !== 'peek')} closeSiteLabel={listReturn ? t("К списку") : t("К аналитике")} navigationRevision={analyticsRevision} metricNavigationRevision={metricNavigationRevision} distributionOpen={distributionOpen} onDistributionOpen={setDistributionOpen} autobahnSite={a9Enabled ? a9?.sites.find(s => s.site_row === autobahnFocus && s.direction === a9Direction && s.registry_site_id === detail?.site_id) : null} cluster={cluster} onZoomCluster={() => {
           setViewState(previous => zoomViewState(previous, cluster));
           setCluster(null);
         }} selectedState={filters.state} states={regions?.states} site={siteMode ? detail : null} region={activeRegion} metric={options.metric} pending={siteMode && detailPending} data={data} operatorBasis={options.operatorBasis} onOperatorBasis={value => onOptions({

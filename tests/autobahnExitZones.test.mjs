@@ -14,7 +14,7 @@ for (const route of ['A1', 'A9']) {
   const pilot = decodeAutobahn(table, hash, 67680, route)
   test(`${route}: exit-zone totals match visibility and power subsets in each direction`, () => {
     assert.equal(pilot.candidateMethod, 'all-exits-road-zones-v1')
-    const audit = JSON.parse(fs.readFileSync(`data_sources/${route.toLowerCase()}/pilot-3km-audit.json`))
+    const audit = JSON.parse(fs.readFileSync(`tests/fixtures/motorway-exit-zones/${route.toLowerCase()}-pilot-3km-audit.json`))
     assert.deepEqual(pilot.summary, audit.directions)
     for (const summary of pilot.summary) {
       const sites = pilot.sites.filter(s => s.direction === summary.direction)

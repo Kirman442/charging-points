@@ -35,8 +35,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate application
+        run: |
+          npm run lint
+          npm test
+
       - name: Build
         run: npm run build
+
+      - name: Verify release contents
+        run: npm run preflight
 
       - name: Configure Pages
         uses: actions/configure-pages@v6

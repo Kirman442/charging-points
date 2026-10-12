@@ -1,6 +1,0 @@
-pyarrow>=19,<26
-shapely>=2.0,<3
-pyproj>=3.6,<4
-networkx>=3.3,<4
-requests>=2.32,<3
-ijson>=3.3,<4

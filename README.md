@@ -43,4 +43,6 @@ GitHub Actions prüft und baut die Anwendung bei einem Push auf `main`; veröffe
 
 Offline-Rechenwerkzeuge, Zwischenergebnisse und interne Entwicklungsjournale gehören nicht zu diesem Anwendungsrepository. Die vorhandenen Ergebnisse werden verwendet, ohne beim Build neue Straßenberechnungen auszuführen.
 
+Die HTML-Seite enthält `noindex, nofollow`. Die mitgelieferte `robots.txt` untersagt das Crawling; sie gilt nur im Domain-Stammverzeichnis, nicht unter dem GitHub-Pages-Projektpfad `/charging-points/`. Diese Hinweise sind keine Zugriffssperre.
+
 React, deck.gl, MapLibre und Arrow/Parquet; Datenverarbeitung in Web Workers.

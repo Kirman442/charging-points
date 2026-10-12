@@ -6,7 +6,7 @@ import { FILES } from '../src/config/map.js'
 import { AUTOBAHNS } from '../src/data/autobahn.js'
 
 export const runtimeAssets = [...new Set([
-  'favicon.svg', 'data/README_charging_tables_zstd10.txt', 'data/README_emob_boundaries_string.txt',
+  'favicon.svg', 'robots.txt', 'data/README_charging_tables_zstd10.txt', 'data/README_emob_boundaries_string.txt',
   ...Object.values(FILES).map(name => `data/${name}`),
   ...Object.entries(AUTOBAHNS).flatMap(([route, info]) => info.tables
     ? info.tables.map(kind => `data/autobahn_${route.toLowerCase()}_${kind}_zstd10.parquet`)

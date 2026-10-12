@@ -10,6 +10,8 @@ import { countWord, siteSelectionText, sitePowerRows } from '../src/utils/siteSe
 import { accessConditionLabels } from '../src/data/autobahnAccess.js'
 import { AUTOBAHNS } from '../src/data/autobahn.js'
 import { MOTORWAY_REVIEW_REASONS } from '../src/data/motorwayDiagnostics.js'
+import { POWER_BANDS } from '../src/data/pointSelection.js'
+import { POWER_LABELS } from '../src/map/palette.js'
 
 test('German resources cover active messages, route directions and all diagnostic reasons without changing placeholders', () => {
   for (const [key, value] of Object.entries(de)) {
@@ -30,6 +32,10 @@ test('German resources cover active messages, route directions and all diagnosti
   })
   for (const route of Object.values(AUTOBAHNS)) for (const key of ['north','south','east','west']) if (route[key]) assert.ok(Object.hasOwn(de, route[key]))
   for (const value of Object.values(MOTORWAY_REVIEW_REASONS)) assert.ok(Object.hasOwn(de, value))
+  for (const label of [...POWER_BANDS.map(band => band.label), ...POWER_LABELS]) {
+    assert.ok(Object.hasOwn(de, label), label)
+    assert.ok(!/[А-Яа-яЁё]/.test(translate('de', label)), label)
+  }
 })
 
 test('German counts distinguish one from zero and Russian 21/101, retaining Russian plural rules', () => {

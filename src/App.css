@@ -513,8 +513,6 @@ dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 .help-button { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; min-height: 28px; padding: 2px; border: 1px solid var(--border); border-radius: 50%; background: var(--surface); color: var(--accent); font: inherit; cursor: help; }
 .help-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .help-tooltip { display: block !important; position: absolute; top: calc(100% + 6px); left: 0; width: 260px; max-width: calc(100vw - 48px); margin: 0 !important; padding: 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--panel); color: var(--text) !important; box-shadow: 0 6px 24px var(--shadow); z-index: 20; font-size: 13px; font-weight: 400; line-height: 1.5; text-transform: none; }
-.selection-stats > div:last-child .help-tooltip { left: auto; right: 0; }
-.selection-stats > div:nth-child(2) .help-tooltip { left: 50%; transform: translateX(-50%); }
 .analytics-panel .eyebrow { position: relative; }
 html[lang="de"] .panel { hyphens: auto; }
 @media (max-width: 767px) {
@@ -527,18 +525,19 @@ html[lang="de"] .panel { hyphens: auto; }
   .app-brand h1 { overflow-wrap: anywhere; }
 }
 /* Locale controls keep the same map state and remain reachable on small screens. */
-.selection-stats .help-control { display: inline-block !important; margin: 0 0 0 4px; }
-.analytics-panel .eyebrow .help-control { position: static; }
-.analytics-panel .eyebrow .help-tooltip { left: 0; right: auto; top: calc(100% + 6px); }
 @media (max-width: 767px) {
   .map-actions { top: 112px; }
   .map-context { top: 173px; }
   .map-navigation, .map-app:has(.analytics-shell[hidden]) .map-navigation { top: 173px; }
 }
 
-.setting-with-help { position: relative; }
-.setting-with-help:has(.help-control) > label { padding-right: 40px; }
-.setting-with-help > .help-control { position: absolute; right: 0; top: 0; margin: 0; }
-.setting-with-help .help-tooltip { left: auto; right: 0; }
 
-.map-app > .help-tooltip.is-floating { position: fixed; bottom: auto; right: auto; z-index: 60; }
+
+.help-control.help-inline, .selection-stats .help-control.help-inline { display: inline !important; margin: 0 !important; vertical-align: baseline; }
+.map-app .help-term { display: inline; padding: 0; border: 0; border-radius: 2px; background: transparent; color: inherit; font: inherit; line-height: inherit; text-align: inherit; text-decoration: underline dotted; text-underline-offset: 4px; cursor: help; }
+.map-app .help-term:hover { background: transparent; }
+.help-term:focus-visible, .disabled-setting-help:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.disabled-setting-help { min-width: 0; cursor: not-allowed; }
+.disabled-setting-help :disabled { pointer-events: none; }
+.map-app > .help-tooltip.is-floating { position: fixed; bottom: auto; right: auto; transform: none; width: 260px; max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px); overflow-y: auto; overflow-wrap: anywhere; z-index: 60; }
+.theme-toggle button { width: 42px; justify-content: center; padding: 10px; }

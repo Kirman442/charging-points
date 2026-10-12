@@ -58,10 +58,10 @@ export default function MapChrome({
       <div className="toolbar-preferences"><div className="language-toggle" role="group" aria-label={t('Язык интерфейса')}><button type="button" lang="de" aria-label="Deutsch" aria-pressed={language === 'de'} onClick={() => setLanguage('de')}>DE</button><button type="button" lang="ru" aria-label="Русский" aria-pressed={language === 'ru'} onClick={() => setLanguage('ru')}>RU</button></div><div className="theme-toggle" role="group" aria-label={t("Тема карты")}><button aria-label={t("Dark Matter, тёмная тема")} aria-pressed={options.style === 'dark'} onClick={() => onOptions({
             ...options,
             style: 'dark'
-          })}><Icon name="moon" /><span>{t("Тёмная")}</span></button><button aria-label={t("Positron, светлая тема")} aria-pressed={options.style === 'light'} onClick={() => onOptions({
+          })}><Icon name="moon" /></button><button aria-label={t("Positron, светлая тема")} aria-pressed={options.style === 'light'} onClick={() => onOptions({
             ...options,
             style: 'light'
-          })}><Icon name="sun" /><span>{t("Светлая")}</span></button></div>
+          })}><Icon name="sun" /></button></div>
       </div></header>
     <nav className="map-actions" aria-label={t("Панели карты")}>
       <button aria-expanded={controlsOpen && controlTab === 'filters'} onClick={() => onControls('filters')}><Icon name="filter" /><span>{t("Фильтры")}</span>{chips.length > 0 && <b className="action-count">{chips.length}</b>}</button>

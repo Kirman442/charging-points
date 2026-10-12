@@ -56,7 +56,7 @@ function SelectionStats({
     label: inflectLabels ? countWord(points, ['Точка', 'Точки', 'Точек'], language) : t("Точки"),
     description: t("Ladepunkt — зарядная точка для одного автомобиля одновременно.")
   }];
-  return <><div className={`selection-stats${equipment == null ? '' : ' three-counters'}`} aria-label={t("Зарядная инфраструктура в выборке")}>{counters.map(counter => <div key={t(counter.label)}><strong>{format(counter.value)}</strong><span><span className="term-label">{t(counter.label)} <HelpTooltip label={t(counter.label)} text={t(counter.description)} /></span></span></div>)}</div>{!showSites && <p className="note">{t("Маркеры скрыты; выборка сохранена.")}</p>}</>;
+  return <><div className={`selection-stats${equipment == null ? '' : ' three-counters'}`} aria-label={t("Зарядная инфраструктура в выборке")}>{counters.map(counter => <div key={t(counter.label)}><strong>{format(counter.value)}</strong><span><HelpTooltip label={t(counter.label)} text={t(counter.description)} /></span></div>)}</div>{!showSites && <p className="note">{t("Маркеры скрыты; выборка сохранена.")}</p>}</>;
 }
 function SummaryGroups({
   summary,
@@ -95,7 +95,7 @@ function SummaryGroups({
       metric: 'power'
     }]
   }];
-  return <div className="analytics-groups">{groups.map(group => <section className="analytics-group" key={t(group.title)} aria-label={t(group.title)}><h3>{t(group.title)}</h3><dl>{group.rows.map(row => <div key={t(row.label)} className={row.metric === metric ? 'summary-row selected-metric' : 'summary-row'}><dt>{t(row.label)}{row.metric === "ratio" && <HelpTooltip label={t("Точки на 1 000 BEV")} text={t("Число выбранных точек на 1 000 батарейных легковых автомобилей.")} />}{row.metric === "bev" && <HelpTooltip label="BEV" text={t("Батарейные легковые автомобили, без подключаемых гибридов.")} />}{row.metric === metric && <span className="sr-only">{t(" — выбранная метрика карты")}</span>}</dt><dd>{row.value}</dd></div>)}</dl></section>)}</div>;
+  return <div className="analytics-groups">{groups.map(group => <section className="analytics-group" key={t(group.title)} aria-label={t(group.title)}><h3>{t(group.title)}</h3><dl>{group.rows.map(row => <div key={t(row.label)} className={row.metric === metric ? 'summary-row selected-metric' : 'summary-row'}><dt>{row.metric === "ratio" ? <HelpTooltip label={t(row.label)} text={t("Число выбранных точек на 1 000 батарейных легковых автомобилей.")} /> : row.metric === "bev" ? <HelpTooltip label={t(row.label)} text={t("Батарейные легковые автомобили, без подключаемых гибридов.")} /> : t(row.label)}{row.metric === metric && <span className="sr-only">{t(" — выбранная метрика карты")}</span>}</dt><dd>{row.value}</dd></div>)}</dl></section>)}</div>;
 }
 function ClusterContent({
   cluster,

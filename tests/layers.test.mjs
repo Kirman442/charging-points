@@ -130,3 +130,56 @@ test('motorway circles and access squares share all power bands and preserve sou
   assert.equal(circle.props.getRadius,8)
   assert.deepEqual(square.props.getColor,props.color)
  })
+
+test('camera zoom preserves geometry snapshots, including filtered and selected territories', () => {
+  for (const territory of ['states', 'districts']) for (const state of ['', 'A', 'B']) {
+    const opts = { ...options, territory, state, selectedRegion: { level: 'states', state_code: '01' } }
+    const first = createLayers(null, regions, { ...opts, autobahnZoom: 5.1 }).layers
+    const next = createLayers(null, regions, { ...opts, autobahnZoom: 5.9 }).layers
+    for (const layer of first) assert.equal(next.find(l => l.id === layer.id).props.data, layer.props.data)
+    const boundaries = first.find(l => l.id.startsWith('boundaries-'))
+    assert.equal(first.find(l => l.id.startsWith('analysis-')).props.data, boundaries.props.data)
+    if (!state) assert.equal(boundaries.props.data, regions[territory])
+    else assert.equal(boundaries.props.data.length, 1)
+  }
+  const refreshed = { ...regions, districts: regions.districts.map(f => ({ ...f })) }
+  const before = createLayers(null, regions, { ...options, state: 'A' }).layers[0]
+  const after = createLayers(null, refreshed, { ...options, state: 'A' }).layers[0]
+  assert.notEqual(after.props.data, before.props.data)
+  assert.equal(after.props.data[0], refreshed.districts[0])
+})
+
+test('cluster rendering never reads hidden full-site colors and reuses marker buffers across zoom', () => {
+  const hiddenSites = { get powers() { throw Error('hidden sites must not be colored') } }
+  const markers = { count: 2, positions: new Float64Array([10, 50, 11, 51]),
+    powers: new Float32Array([22, 150]), radii: new Float32Array([5, 8]), siteCounts: new Uint32Array([1, 12]) }
+  const opts = { ...options, showSites: true, metric: 'sites' }
+  const render = (zoom, style = 'dark') => createLayers(hiddenSites, regions, { ...opts, autobahnZoom: zoom, style }, markers, true).layers
+  const first = render(5.1), next = render(5.9)
+  for (const id of ['charging-markers', 'cluster-labels']) {
+    assert.equal(first.find(l => l.id === id).props.data, next.find(l => l.id === id).props.data)
+  }
+  const binary = first.find(l => l.id === 'charging-markers').props.data
+  const light = render(5.9, 'light').find(l => l.id === 'charging-markers').props.data
+  assert.notEqual(binary, light)
+  assert.deepEqual(Array.from(binary.attributes.getFillColor.value), [...rgba(paletteFor('dark').power[0]), ...rgba(paletteFor('dark').cluster)])
+})
+
+test('site snapshots reuse buffers while motorway sizes follow camera zoom and new packets invalidate', () => {
+  const data = { count: 2, positions: new Float64Array([10,50,11,51]), powers: new Float32Array([22,150]),
+    colors: new Uint8Array([1,2,3,235,4,5,6,255]), rowIndices: new Uint32Array([7,8]),
+    autobahnAccess: new Uint8Array([0,1]), autobahnEligible: new Uint8Array([1,1]) }
+  const opts = { ...options, showSites: true, a9Mode: true }
+  const first = createLayers(data, regions, { ...opts, autobahnZoom: 5 }).layers
+  const next = createLayers(data, regions, { ...opts, autobahnZoom: 11 }).layers
+  for (const id of ['charging-sites', 'charging-access-sites', 'charging-access-outlines']) {
+    assert.equal(first.find(l => l.id === id).props.data, next.find(l => l.id === id).props.data)
+  }
+  const circles = first.find(l => l.id === 'charging-sites')
+  assert.notEqual(circles.props.getRadius(null, { index: 0 }), next.find(l => l.id === circles.id).props.getRadius(null, { index: 0 }))
+  assert.equal(circles.props.data.attributes.getFillColor.value[3], 235)
+  assert.equal(circles.props.data.attributes.getFillColor.value[7], 0)
+  assert.equal(data.colors[7], 255)
+  const replacement = createLayers({ ...data }, regions, opts).layers.find(l => l.id === circles.id)
+  assert.notEqual(replacement.props.data, circles.props.data)
+})

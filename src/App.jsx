@@ -147,17 +147,18 @@ export default function App() {
   } = useChargingData(effectiveFilters, viewState.zoom, options.clusterSites && !a9Enabled, autobahnRoute);
   const activeRegion = clickedRegion ? regions?.[clickedRegion.level]?.find(feature => (feature.properties.district_code || feature.properties.state_code) === (clickedRegion.district_code || clickedRegion.state_code))?.properties || null : regions?.states.find(feature => feature.properties.state_name === filters.state)?.properties || null;
   const displayData = useMemo(() => a9Enabled ? autobahnDisplayData(data, a9, a9Direction, hideOthers, showUnrouted ? 'all' : 'routed', autobahnFocus) : data, [data, a9Enabled, a9, a9Direction, hideOthers, showUnrouted, autobahnFocus]);
+  const autobahnZoom = a9Enabled ? viewState.zoom : null;
   const mapOptions = useMemo(() => ({
     ...options,
     a9Mode: a9Enabled,
     showSites: a9Enabled || options.showSites,
-    autobahnZoom: viewState.zoom,
+    autobahnZoom,
     clusterSites: options.clusterSites && !a9Enabled,
     metric: a9Enabled ? 'sites' : options.metric,
     territory: a9Enabled ? 'states' : options.territory,
     state: a9Enabled ? '' : filters.state,
     selectedRegion: a9Enabled ? null : activeRegion
-  }), [options, filters.state, activeRegion, a9Enabled, viewState.zoom]);
+  }), [options, filters.state, activeRegion, a9Enabled, autobahnZoom]);
   const closeSite = useCallback(() => {
     setListReturn(null);
     setAutobahnFocus(null);

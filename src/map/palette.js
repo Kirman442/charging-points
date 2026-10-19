@@ -31,14 +31,13 @@ export function sequentialColor(value, maximum, style) {
 export function displayColors(data, options, clustered = false) {
   const palette = paletteFor(options.style)
   const colors = new Uint8Array(data.count * 4)
+  const powerColors = palette.power.map(color => rgba(color))
+  const clusterColor = rgba(palette.cluster)
   for (let i = 0; i < data.count; i++) {
-    let color
-    if (clustered && data.siteCounts[i] > 1) color = rgba(palette.cluster)
-    else if (options.a9Mode) {
-      const alpha = data.colors[i * 4 + 3]
-      color = rgba(palette.power[powerIndex(data.powers[i])], alpha)
-    } else color = rgba(palette.power[powerIndex(data.powers[i])])
+    const isCluster = clustered && data.siteCounts[i] > 1
+    const color = isCluster ? clusterColor : powerColors[powerIndex(data.powers[i])]
     colors.set(color, i * 4)
+    if (!isCluster && options.a9Mode) colors[i * 4 + 3] = data.colors[i * 4 + 3]
   }
   return colors
 }

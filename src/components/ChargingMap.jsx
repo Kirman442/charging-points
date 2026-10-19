@@ -75,6 +75,8 @@ export default function ChargingMap({
     trace.events.add(name);
     console.info(`[Charging render] ${name}: ${Math.round(performance.now() - trace.started)} ms с запуска карты`);
   };
+  const routeZoom = autobahn ? viewState.zoom : 0;
+  const routeSegments = useMemo(() => autobahn?.segments.filter(s => s.direction === direction), [autobahn, direction]);
   const {
     layers
   } = useMemo(() => {
@@ -82,18 +84,18 @@ export default function ChargingMap({
     const palette = paletteFor(options.style);
     if (autobahn) result.layers.unshift(new PathLayer({
       id: 'a9-route-casing',
-      data: autobahn.segments.filter(s => s.direction === direction),
+      data: routeSegments,
       getPath: s => s.path,
       getColor: rgba(palette.casing, 220),
-      getWidth: viewState.zoom >= 10 ? 7 : 5,
+      getWidth: routeZoom >= 10 ? 7 : 5,
       widthUnits: 'pixels',
       pickable: false
     }), new PathLayer({
       id: 'a9-route',
-      data: autobahn.segments.filter(s => s.direction === direction),
+      data: routeSegments,
       getPath: s => s.path,
       getColor: s => rgba(palette.route[s.status]),
-      getWidth: viewState.zoom >= 10 ? 5 : 3.5,
+      getWidth: routeZoom >= 10 ? 5 : 3.5,
       widthUnits: 'pixels',
       pickable: true,
       getDashArray: s => A9_STATUS[s.status].dash,
@@ -106,7 +108,7 @@ export default function ChargingMap({
       })]
     }));
     return result;
-  }, [data, regions, options, markers, clustered, autobahn, direction, viewState.zoom]);
+  }, [data, regions, options, markers, clustered, autobahn, routeSegments, routeZoom]);
   const interactionLayers = useMemo(() => {
     const palette = paletteFor(options.style),
       overlays = [];

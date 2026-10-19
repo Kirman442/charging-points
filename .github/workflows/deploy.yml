@@ -42,6 +42,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          CHARGING_REVIEW_KEY: ${{ secrets.CHARGING_REVIEW_KEY }}
+          CHARGING_REVIEW_HASH: ${{ vars.CHARGING_REVIEW_HASH }}
 
       - name: Verify release contents
         run: npm run preflight

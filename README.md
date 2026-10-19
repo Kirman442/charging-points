@@ -1,6 +1,6 @@
 # Ladeinfrastruktur in Deutschland
 
-Interaktive Karte öffentlicher Ladeinfrastruktur mit regionaler Analyse und einem Autobahnmodus für A1–A9. Oberfläche auf Deutsch und Russisch, mit heller und dunkler Karte.
+Interaktive Karte öffentlicher Ladeinfrastruktur mit regionaler Analyse und einem Autobahnmodus für A1–A9. Veröffentlichte Oberfläche auf Deutsch, mit heller und dunkler Karte. In der Entwicklung und für die redaktionelle Prüfung sind Deutsch und Russisch verfügbar.
 
 ## Funktionen
 
@@ -40,6 +40,8 @@ npm run preview -- --host 127.0.0.1 --port 4175 --strictPort
 ## Veröffentlichung
 
 GitHub Actions prüft und baut die Anwendung bei einem Push auf `main`; veröffentlicht wird ausschließlich `dist`. Die Build-Konfiguration übernimmt nur die benötigten Laufzeitdaten, das Favicon und die Datenbeschreibungen. Referenztabellen für Tests werden nicht auf die Website kopiert.
+
+Jede Build-Version startet regulär auf Deutsch ohne Sprachumschalter, unabhängig von der gespeicherten Sprachwahl. Ein passender `?review=...`-Link aktiviert Deutsch/Russisch für die redaktionelle Prüfung. Beide Übersetzungen bleiben im Client enthalten; dies ist keine Zugriffskontrolle. Für CI muss `CHARGING_REVIEW_KEY` als Secret oder `CHARGING_REVIEW_HASH` als Variable eingerichtet sein. In die Client-Konfiguration gelangt nur der SHA-256-Hash.
 
 Offline-Rechenwerkzeuge, Zwischenergebnisse und interne Entwicklungsjournale gehören nicht zu diesem Anwendungsrepository. Die vorhandenen Ergebnisse werden verwendet, ohne beim Build neue Straßenberechnungen auszuführen.
 

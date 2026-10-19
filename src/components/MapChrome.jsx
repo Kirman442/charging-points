@@ -27,6 +27,7 @@ export default function MapChrome({
 }) {
   const {
     language,
+    canSwitch,
     setLanguage,
     t,
     message
@@ -55,7 +56,7 @@ export default function MapChrome({
       <div className="app-brand"><span className="brand-mark"><Icon name="bolt" /></span><div><h1>{t("Зарядная инфраструктура")}</h1><p>{message("Германия {p0} BNetzA + KBA", {
               p0: <span className="brand-divider">/</span>
             })}</p></div></div>
-      <div className="toolbar-preferences"><div className="language-toggle" role="group" aria-label={t('Язык интерфейса')}><button type="button" lang="de" aria-label="Deutsch" aria-pressed={language === 'de'} onClick={() => setLanguage('de')}>DE</button><button type="button" lang="ru" aria-label="Русский" aria-pressed={language === 'ru'} onClick={() => setLanguage('ru')}>RU</button></div><div className="theme-toggle" role="group" aria-label={t("Тема карты")}><button aria-label={t("Dark Matter, тёмная тема")} aria-pressed={options.style === 'dark'} onClick={() => onOptions({
+      <div className="toolbar-preferences">{canSwitch && <div className="language-toggle" role="group" aria-label={t('Язык интерфейса')}><button type="button" lang="de" aria-label="Deutsch" aria-pressed={language === 'de'} onClick={() => setLanguage('de')}>DE</button><button type="button" lang="ru" aria-label="Русский" aria-pressed={language === 'ru'} onClick={() => setLanguage('ru')}>RU</button></div>}<div className="theme-toggle" role="group" aria-label={t("Тема карты")}><button aria-label={t("Dark Matter, тёмная тема")} aria-pressed={options.style === 'dark'} onClick={() => onOptions({
             ...options,
             style: 'dark'
           })}><Icon name="moon" /></button><button aria-label={t("Positron, светлая тема")} aria-pressed={options.style === 'light'} onClick={() => onOptions({

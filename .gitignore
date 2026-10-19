@@ -48,3 +48,6 @@ data_sources/a9/exit-zone-checkpoints/
 
 # Local numbered change notes; already tracked history remains tracked
 /README_[0-9]*.md
+
+# Local editorial key and personal links; never deployment assets
+/.review/

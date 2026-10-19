@@ -5,7 +5,16 @@ import { LinearInterpolator, MapController, TRANSITION_EVENTS } from '@deck.gl/c
 export class ChargingMapController extends MapController {
   handleEvent(event) {
     if (event.type === 'dblclick') return false
-    return super.handleEvent(event)
+    const handled = super.handleEvent(event)
+    if (event.type === 'wheel' || event.type === 'panstart') {
+      this.reportedInputs ||= new Set()
+      if (!this.reportedInputs.has(event.type)) {
+        this.reportedInputs.add(event.type)
+        console.info('[Charging controller]', JSON.stringify({ event: event.type, handled,
+          size: [this.props.width, this.props.height], position: this.getCenter(event) }))
+      }
+    }
+    return handled
   }
 }
 export function mapCursor({ isDragging, isHovering, markerHovered, routeHovered }) {

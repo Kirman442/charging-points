@@ -2,7 +2,7 @@ import { useI18n } from "../i18n/useI18n.js";
 import { PathLayer, GeoJsonLayer } from '@deck.gl/layers';
 import { PathStyleExtension } from '@deck.gl/extensions';
 import { A9_STATUS } from '../data/autobahn.js';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import DeckGL from '@deck.gl/react';
 import Map from 'react-map-gl/maplibre';
 import maplibre from '../map/maplibre.js';
@@ -17,6 +17,8 @@ import { counted } from '../utils/siteSelection.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { siteOutlineLayer } from '../map/siteOutline.js';
 import { paletteFor, rgba } from '../map/palette.js';
+import { observeMapSize } from '../map/size.js';
+const basemapStyle = { position: 'absolute', inset: 0, width: '100%', height: '100%' };
 export default function ChargingMap({
   data,
   autobahn,
@@ -42,6 +44,9 @@ export default function ChargingMap({
     t
   } = useI18n();
   const clustered = useClusters(options, viewState.zoom);
+  const containerRef = useRef(null), deckRef = useRef(null);
+  const [mapSize, setMapSize] = useState(null);
+  useLayoutEffect(() => observeMapSize(containerRef.current, setMapSize), []);
   const markerHover = useRef(false);
   const routeHover = useRef(false);
   const [hovered, setHovered] = useState(null);
@@ -74,6 +79,19 @@ export default function ChargingMap({
     if (trace.started === null || trace.events.has(name)) return;
     trace.events.add(name);
     console.info(`[Charging render] ${name}: ${Math.round(performance.now() - trace.started)} ms с запуска карты`);
+  };
+  const reportFirstInput = event => {
+    const name = `input:${event.type}`;
+    if (timing.current.events.has(name)) return;
+    timing.current.events.add(name);
+    const deck = deckRef.current?.deck;
+    const viewport = deck?.isInitialized ? deck.getViewports()[0] : null;
+    console.info('[Charging input]', {
+      event: event.type, elapsedMs: Math.round(performance.now() - timing.current.started),
+      sitesReceived: !!data, regionsReceived: !!regions, deckReady: !!deck?.isInitialized,
+      container: [containerRef.current.clientWidth, containerRef.current.clientHeight],
+      viewport: viewport ? [viewport.width, viewport.height] : null,
+    });
   };
   const routeZoom = autobahn ? viewState.zoom : 0;
   const routeSegments = useMemo(() => autobahn?.segments.filter(s => s.direction === direction), [autobahn, direction]);
@@ -176,13 +194,21 @@ export default function ChargingMap({
     }
     return null;
   };
-  return <div className="charging-map" onPointerLeave={() => {
+  return <div className="charging-map" ref={containerRef} onWheelCapture={reportFirstInput} onPointerDownCapture={reportFirstInput} onPointerLeave={() => {
     markerHover.current = false;
     setHovered(null);
     setHoverInfo(null);
-  }}><DeckGL viewState={viewState} onViewStateChange={({
-      viewState: next
-    }) => onViewChange(next)} controller={{
+  }}><Map mapLib={maplibre} mapStyle={MAP_STYLES[options.style]} style={basemapStyle}
+    longitude={viewState.longitude} latitude={viewState.latitude} zoom={viewState.zoom}
+    pitch={viewState.pitch || 0} bearing={viewState.bearing || 0} padding={viewState.padding}
+    interactive={false} onLoad={() => reportMapEvent('Подложка: load')} onIdle={() => reportMapEvent('Подложка: первый idle')}
+    onError={event => onMapError(event.error?.message || t("Ошибка подложки"))} />
+    {mapSize && <DeckGL ref={deckRef} width={mapSize.width} height={mapSize.height} viewState={viewState} onViewStateChange={({
+      viewState: next, interactionState
+    }) => {
+      if (!data && (interactionState?.isDragging || interactionState?.isZooming)) reportMapEvent('Камера реагирует до данных');
+      onViewChange(next);
+    }} controller={{
       type: ChargingMapController,
       doubleClickZoom: true
     }} layers={[...layers, ...interactionLayers]} eventRecognizerOptions={CLICK_RECOGNIZER_OPTIONS} pickingRadius={mobile ? 12 : 6} getCursor={state => mapCursor({
@@ -233,7 +259,5 @@ export default function ChargingMap({
         return;
       }
       if (info.layer?.id === 'a9-route') onSegment?.(info.object);else if (selection?.type === 'cluster') onCluster(selection);else if (selection?.type === 'site') onSite(selection.rowIndex);else if (isSite(info) && info.index >= 0) onSite(isSquare(info) ? info.object.rowIndex : data.rowIndices[info.index]);else if (!options.a9Mode && info.object?.properties) onRegion(info.object.properties);
-    }} getTooltip={null}>
-    <Map mapLib={maplibre} mapStyle={MAP_STYLES[options.style]} onLoad={() => reportMapEvent('Подложка: load')} onIdle={() => reportMapEvent('Подложка: первый idle')} onError={event => onMapError(event.error?.message || t("Ошибка подложки"))} />
-  </DeckGL>{!mobile && !options.a9Mode && hovered && hoverCurrent && hoverInfo?.context === hoverContext && hoverInfo?.id === hovered.id && hoverInfo?.source === hovered.source && <aside className="map-hover-info panel" aria-label={t("Информация при наведении")}>{t(hoverInfo.text)}</aside>}</div>;
+    }} getTooltip={null} />}{!mobile && !options.a9Mode && hovered && hoverCurrent && hoverInfo?.context === hoverContext && hoverInfo?.id === hovered.id && hoverInfo?.source === hovered.source && <aside className="map-hover-info panel" aria-label={t("Информация при наведении")}>{t(hoverInfo.text)}</aside>}</div>;
 }

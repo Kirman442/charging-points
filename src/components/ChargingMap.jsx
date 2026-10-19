@@ -18,6 +18,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { siteOutlineLayer } from '../map/siteOutline.js';
 import { paletteFor, rgba } from '../map/palette.js';
 import { observeMapSize } from '../map/size.js';
+import { observeMainThread } from '../utils/stallDiagnostics.js';
 const basemapStyle = { position: 'absolute', inset: 0, width: '100%', height: '100%' };
 export default function ChargingMap({
   data,
@@ -47,6 +48,14 @@ export default function ChargingMap({
   const containerRef = useRef(null), deckRef = useRef(null);
   const [mapSize, setMapSize] = useState(null);
   useLayoutEffect(() => observeMapSize(containerRef.current, setMapSize), []);
+  const diagnosticContext = useRef({});
+  useEffect(() => {
+    diagnosticContext.current = { sitesReceived: !!data, regionsReceived: !!regions, zoom: viewState.zoom };
+  }, [data, regions, viewState.zoom]);
+  useEffect(() => observeMainThread(
+    entry => console.warn('[Charging stall]', JSON.stringify(entry)),
+    () => diagnosticContext.current
+  ), []);
   const markerHover = useRef(false);
   const routeHover = useRef(false);
   const [hovered, setHovered] = useState(null);

@@ -5,6 +5,7 @@ import { filterKey } from '../data/filterKey.js'
 import { FILES } from '../config/map.js'
 import { useI18n } from '../i18n/useI18n.js'
 import { errorText } from '../i18n/errors.js'
+import { workerTiming } from '../utils/stallDiagnostics.js'
 
 export function useChargingData(filters, zoom, clusterSites, autobahnRoute = 'A9') {
   const { language, t } = useI18n()
@@ -26,15 +27,17 @@ export function useChargingData(filters, zoom, clusterSites, autobahnRoute = 'A9
   const error = errorText(language, errorState.message, errorState.category)
   const [ready, setReady] = useState(false), [retry, setRetry] = useState(0)
   useEffect(() => {
+    const started = performance.now(), createdAt = performance.timeOrigin + started
     const worker = new Worker(new URL('../workers/charging.worker.js', import.meta.url), { type: 'module' })
     workerRef.current = worker
     requestId.current = 0
     detailsStarted.current = false
-    const started = performance.now()
     worker.onmessage = ({ data: message }) => {
       if (message.type === 'a9-ready') { setAutobahnPackets(previous => ({ ...previous, [message.route || 'A9']: { pilot: message.pilot, pending: false, error: '' } })) }
       if (message.type === 'a9-error') { setAutobahnPackets(previous => ({ ...previous, [message.route || 'A9']: { pending: false, error: message.message, errorCategory: message.category } })) }
       if (message.type === 'performance') {
+        const timing = workerTiming(message, createdAt, performance.timeOrigin + performance.now())
+        if (timing) console.info('[Charging timing]', JSON.stringify(timing))
         console.info(`[Charging performance] ${message.phase}: Worker ${Math.round(message.elapsedMs)} ms; с запуска загрузки ${Math.round(performance.now() - started)} ms`)
         console.table(message.stages.map(stage => ({ 'Этап': stage.stage, 'Начало, мс': Math.round(stage.startMs), 'Время, мс': Math.round(stage.durationMs) })))
       }

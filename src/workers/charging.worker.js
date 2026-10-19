@@ -10,6 +10,7 @@ import { tableFromIPC } from 'apache-arrow'
 import { prepareSites } from '../data/prepareSites.js'
 import { applyRegionStats, decodeRegions } from '../data/regions.js'
 
+const moduleReadyAt = performance.timeOrigin + performance.now()
 const autobahnLoads = new Map()
 let detailsTable, detailsLoad, detailContext, pendingDetail = -1
 let table, operatorIndex, pointGroups, selection, wasmReady, clusterIndex, currentZoom = 5, selectionRequestId = 0
@@ -30,7 +31,11 @@ function createTrace(started) {
   return {
     record,
     measure(name, operation) { const start = performance.now(); const result = operation(); record(name, start); return result },
-    report(phase) { self.postMessage({ type: 'performance', phase, elapsedMs: performance.now() - started, stages: stages.splice(0) }) },
+    report(phase) {
+      const now = performance.now()
+      self.postMessage({ type: 'performance', phase, elapsedMs: now - started, stages: stages.splice(0),
+        moduleReadyAt, startedAt: performance.timeOrigin + started, sentAt: performance.timeOrigin + now })
+    },
   }
 }
 async function readBytes(url, trace, label) {

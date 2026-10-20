@@ -210,6 +210,7 @@ export default function ChargingMap({
   }}><Map mapLib={maplibre} mapStyle={MAP_STYLES[options.style]} style={basemapStyle}
     longitude={viewState.longitude} latitude={viewState.latitude} zoom={viewState.zoom}
     pitch={viewState.pitch || 0} bearing={viewState.bearing || 0} padding={viewState.padding}
+    cancelPendingTileRequestsWhileZooming={false}
     interactive={false} onLoad={() => reportMapEvent('Подложка: load')} onIdle={() => reportMapEvent('Подложка: первый idle')}
     onError={event => onMapError(event.error?.message || t("Ошибка подложки"))} />
     {mapSize && <DeckGL ref={deckRef} width={mapSize.width} height={mapSize.height} viewState={viewState} onViewStateChange={({

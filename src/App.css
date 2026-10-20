@@ -541,3 +541,13 @@ html[lang="de"] .panel { hyphens: auto; }
 .disabled-setting-help :disabled { pointer-events: none; }
 .map-app > .help-tooltip.is-floating { position: fixed; bottom: auto; right: auto; transform: none; width: 260px; max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px); overflow-y: auto; overflow-wrap: anywhere; z-index: 60; }
 .theme-toggle button { width: 42px; justify-content: center; padding: 10px; }
+
+.privacy-mobile { display: none; }
+@media (max-width:767px) {
+  .privacy-mobile { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--muted); font-size: 11px; }
+  .privacy-mobile a { color: inherit; display: inline-flex; align-items: center; min-height: 44px; }
+  .sheet-actions .privacy-mobile { order: 1; margin-right: 6px; flex-direction: column; align-items: flex-start; gap: 0; }
+  .sheet-actions .privacy-mobile > span { display: none; }
+  .sheet-actions .privacy-mobile a { min-height: 24px; }
+  .sheet-actions > .icon-button { order: 2; }
+}

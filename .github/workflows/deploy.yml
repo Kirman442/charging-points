@@ -41,10 +41,16 @@ jobs:
           npm test
 
       - name: Build
-        run: npm run build
+        run: |
+          if [ -z "$VITE_CARTO_BASEMAP_API_KEY" ]; then
+            echo "::error::Set the CARTO_BASEMAP_API_KEY repository secret before publishing."
+            exit 1
+          fi
+          npm run build
         env:
           CHARGING_REVIEW_KEY: ${{ secrets.CHARGING_REVIEW_KEY }}
           CHARGING_REVIEW_HASH: ${{ vars.CHARGING_REVIEW_HASH }}
+          VITE_CARTO_BASEMAP_API_KEY: ${{ secrets.CARTO_BASEMAP_API_KEY }}
 
       - name: Verify release contents
         run: npm run preflight

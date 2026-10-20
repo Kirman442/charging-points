@@ -20,6 +20,8 @@ import { paletteFor, rgba } from '../map/palette.js';
 import { observeMapSize } from '../map/size.js';
 import { DEVELOPMENT_DIAGNOSTICS, observeMainThread } from '../utils/stallDiagnostics.js';
 import { localizeBasemap } from '../map/basemap-language.js';
+import { cartoRequest } from '../map/carto-access.js';
+const transformBasemapRequest = url => cartoRequest(url, import.meta.env.VITE_CARTO_BASEMAP_API_KEY);
 const basemapStyle = { position: 'absolute', inset: 0, width: '100%', height: '100%' };
 export default function ChargingMap({
   data,
@@ -214,7 +216,7 @@ export default function ChargingMap({
     markerHover.current = false;
     setHovered(null);
     setHoverInfo(null);
-  }}><Map mapLib={maplibre} mapStyle={MAP_STYLES[options.style]} style={basemapStyle}
+  }}><Map mapLib={maplibre} mapStyle={MAP_STYLES[options.style]} style={basemapStyle} transformRequest={transformBasemapRequest}
     longitude={viewState.longitude} latitude={viewState.latitude} zoom={viewState.zoom}
     pitch={viewState.pitch || 0} bearing={viewState.bearing || 0} padding={viewState.padding}
     cancelPendingTileRequestsWhileZooming={false}

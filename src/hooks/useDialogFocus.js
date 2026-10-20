@@ -8,6 +8,7 @@ export default function useDialogFocus(ref, enabled, onClose) {
     const targets = () => Array.from(root.querySelectorAll('button,select,input,a[href],summary,[tabindex="0"]')).filter(node => !node.disabled && node.getClientRects().length)
     targets()[0]?.focus()
     const keyDown = event => {
+      if (root.closest('[inert]')) return
       if (event.key === 'Escape') { event.preventDefault(); onClose(); return }
       if (event.key !== 'Tab') return
       const nodes = targets(), first = nodes[0], last = nodes.at(-1)

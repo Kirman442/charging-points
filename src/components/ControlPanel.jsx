@@ -1,3 +1,4 @@
+import PrivacyLink from './PrivacyLink.jsx';
 import { useI18n } from "../i18n/useI18n.js";
 import { METRIC_CHOICES } from '../map/settings.js';
 import { AUTOBAHNS, autobahnDirections } from '../data/autobahn.js';
@@ -125,6 +126,6 @@ export default function ControlPanel({
     </div>
     <footer className="control-footer">{onLegend && <button className="settings-legend" onClick={onLegend}>{message("{p0}Легенда карты", {
           p0: <Icon name="layers" />
-        })}</button>}{mobile && tab !== 'filters' && <p className="note">{t("Изменения отображения применяются сразу.")}</p>}{mobile && <button className="primary-button" onClick={tab === 'filters' ? onApply : onClose}>{tab === 'filters' ? t("Применить фильтры") : t("Готово")}</button>}<button className="reset" onClick={onReset}>{t("Сбросить настройки")}</button></footer>
+        })}</button>}{mobile && tab !== 'filters' && <p className="note">{t("Изменения отображения применяются сразу.")}</p>}{mobile && <button className="primary-button" onClick={tab === 'filters' ? onApply : onClose}>{tab === 'filters' ? t("Применить фильтры") : t("Готово")}</button>}<button className="reset" onClick={onReset}>{t("Сбросить настройки")}</button>{mobile && <PrivacyLink className="privacy-mobile" />}</footer>
   </aside>;
 }

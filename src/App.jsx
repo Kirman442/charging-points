@@ -89,6 +89,7 @@ export default function App() {
   useEffect(() => {
     if (!legendOpen) return;
     const dismiss = event => {
+      if (mapContainer.current?.closest('[inert]')) return;
       if (event.key !== 'Escape') return;
       event.preventDefault();
       event.stopPropagation();
@@ -100,11 +101,6 @@ export default function App() {
   const closeControls = useCallback(() => setControlsOpen(false), []);
   useDialogFocus(dialogRef, mobile && controlsVisible, closeControls);
   useDialogFocus(legendRef, mobile && legendOpen && controlsOpen, closeLegend);
-  useEffect(() => {
-    try {
-      localStorage.setItem('charging-map-theme', options.style);
-    } catch {/* Storage is optional. */}
-  }, [options.style]);
   const revealAnalytics = useCallback(({ keepListReturn = false } = {}) => {
     if (!keepListReturn) setListReturn(null);
     setAnalyticsOpen(true);
@@ -227,6 +223,9 @@ export default function App() {
   }, [filters.state, selectSite, focusLand]);
   const onOptions = useCallback(next => {
     const normalized = next.metric !== options.metric ? territoryForSelection(next, filters.state) : normalizeOptions(next);
+    if (normalized.style !== options.style) {
+      try { localStorage.setItem('charging-map-theme', normalized.style); } catch { /* Storage is optional. */ }
+    }
     setOptions(normalized);
     if (!normalized.showSites || normalized.clusterSites !== options.clusterSites) setCluster(null);
     if (normalized.metric !== options.metric || normalized.territory !== options.territory) {
@@ -237,7 +236,7 @@ export default function App() {
       selectSite(-1);
       setClickedRegion(previous => reconcileRegion(previous, normalized, regions));
     }
-  }, [options.metric, options.territory, options.clusterSites, filters.state, regions, selectSite]);
+  }, [options.metric, options.territory, options.clusterSites, options.style, filters.state, regions, selectSite]);
   const chooseMetric = metric => {
     onOptions({ ...options, metric });
     setListReturn(null);
@@ -511,6 +510,6 @@ export default function App() {
     <div className="source">{message("Данные: {p0} · KBA · BKG · {p1}обработка и группировка", {
         p0: <a href="https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/start.html" target="_blank" rel="noreferrer">BNetzA · CC BY 4.0</a>,
         p1: a9Enabled && <><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OSM · ODbL</a> · </>
-      })}</div>
+      })} · <a href={`${import.meta.env.BASE_URL}datenschutz.html#datenschutz`} lang="de">Datenschutz</a> · <a href={`${import.meta.env.BASE_URL}impressum.html`} lang="de">Impressum</a></div>
   </main>;
 }

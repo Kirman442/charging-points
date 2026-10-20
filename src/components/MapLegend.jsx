@@ -5,6 +5,7 @@ import { format } from '../utils/format.js';
 import { createLayers } from '../map/layers.js';
 import { paletteFor, POWER_LABELS as labels } from '../map/palette.js';
 import Icon from './Icon.jsx';
+import PrivacyLink from './PrivacyLink.jsx';
 export default function MapLegend({
   regions,
   options,
@@ -49,6 +50,6 @@ export default function MapLegend({
                 p0: <i className="concentration-missing" />
               })}</span></div></>}<p className="note">{options.territory === 'districts' ? t("Заливка по районам KBA.") : t("Заливка по землям.")}</p></section>}
       {!options.showSites && options.metric === 'sites' && <p className="note">{t("Маркеры скрыты. Выборка сохранена.")}</p>}
-    </div>}
+    <PrivacyLink className="privacy-mobile" /></div>}
   </aside>;
 }

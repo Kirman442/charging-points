@@ -21,10 +21,13 @@ export default function LanguageProvider({ children }) {
   useEffect(() => {
     document.documentElement.lang = language
     document.title = language === 'de' ? 'Ladeinfrastruktur in Deutschland' : 'Зарядная инфраструктура Германии'
-    try { if (canSwitch) localStorage.setItem('charging-language', language) } catch { /* Storage is optional. */ }
-  }, [language, canSwitch])
+  }, [language])
   const value = useMemo(() => ({
-    language, canSwitch, setLanguage: next => { if (canSwitch && LANGUAGES.includes(next)) setLanguage(next) },
+    language, canSwitch, setLanguage: next => {
+      if (!canSwitch || !LANGUAGES.includes(next)) return
+      setLanguage(next)
+      try { localStorage.setItem('charging-language', next) } catch { /* Storage is optional. */ }
+    },
     t: (key, values) => translate(language, key, values),
     message: (key, values) => messageParts(language, key, values).map((part, index) => <Fragment key={index}>{part}</Fragment>),
   }), [language, canSwitch])

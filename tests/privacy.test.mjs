@@ -21,7 +21,7 @@ test('privacy page remains independent of map/data and uses only its local theme
     assert.doesNotMatch(tag[0], /(?:src|href)="https?:/)
   }
   assert.match(html, /mailto:k\.lisochenko@web\.de/)
-  assert.match(html, /Entwurf zur lokalen Prüfung/)
+  assert.doesNotMatch(html, /Entwurf zur lokalen Prüfung/)
 })
 test('all privacy contents links and the direct landing anchor have unique targets', () => {
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1])

@@ -21,6 +21,7 @@ for (const name of runtimeAssets) if (!readFileSync(join(dist,name)).equals(read
 const language = JSON.parse(readFileSync(join(root, '.review/build-language.json'), 'utf8'))
 if (!language.germanOnly || !/^[a-f0-9]{64}$/.test(language.reviewHash)) throw new Error('Missing publication language configuration')
 const clientText = built.filter(name => /\.(js|html|css|json)$/.test(name)).map(name => readFileSync(join(dist, name), 'utf8')).join('\n')
+if (/\[Charging (render|input|controller|timing|performance|stall)\]/.test(clientText)) throw new Error('Development diagnostics included in publication build')
 if (!clientText.includes(language.reviewHash)) throw new Error('Review hash missing from publication build')
 const accessFile = join(root, '.review/review-access.json')
 if (existsSync(accessFile) && clientText.includes(JSON.parse(readFileSync(accessFile, 'utf8')).key)) throw new Error('Local review key included in publication build')

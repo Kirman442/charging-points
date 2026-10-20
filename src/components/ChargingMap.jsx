@@ -18,7 +18,8 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { siteOutlineLayer } from '../map/siteOutline.js';
 import { paletteFor, rgba } from '../map/palette.js';
 import { observeMapSize } from '../map/size.js';
-import { observeMainThread } from '../utils/stallDiagnostics.js';
+import { DEVELOPMENT_DIAGNOSTICS, observeMainThread } from '../utils/stallDiagnostics.js';
+import { localizeBasemap } from '../map/basemap-language.js';
 const basemapStyle = { position: 'absolute', inset: 0, width: '100%', height: '100%' };
 export default function ChargingMap({
   data,
@@ -50,12 +51,16 @@ export default function ChargingMap({
   useLayoutEffect(() => observeMapSize(containerRef.current, setMapSize), []);
   const diagnosticContext = useRef({});
   useEffect(() => {
+    if (!DEVELOPMENT_DIAGNOSTICS) return;
     diagnosticContext.current = { sitesReceived: !!data, regionsReceived: !!regions, zoom: viewState.zoom };
   }, [data, regions, viewState.zoom]);
-  useEffect(() => observeMainThread(
-    entry => console.warn('[Charging stall]', JSON.stringify(entry)),
-    () => diagnosticContext.current
-  ), []);
+  useEffect(() => {
+    if (!DEVELOPMENT_DIAGNOSTICS) return;
+    return observeMainThread(
+      entry => console.warn('[Charging stall]', JSON.stringify(entry)),
+      () => diagnosticContext.current
+    );
+  }, []);
   const markerHover = useRef(false);
   const routeHover = useRef(false);
   const [hovered, setHovered] = useState(null);
@@ -84,12 +89,14 @@ export default function ChargingMap({
     return () => window.removeEventListener('keydown', dismiss);
   }, []);
   const reportMapEvent = name => {
+    if (!DEVELOPMENT_DIAGNOSTICS) return;
     const trace = timing.current;
     if (trace.started === null || trace.events.has(name)) return;
     trace.events.add(name);
     console.info(`[Charging render] ${name}: ${Math.round(performance.now() - trace.started)} ms с запуска карты`);
   };
   const reportFirstInput = event => {
+    if (!DEVELOPMENT_DIAGNOSTICS) return;
     const name = `input:${event.type}`;
     if (timing.current.events.has(name)) return;
     timing.current.events.add(name);
@@ -211,7 +218,13 @@ export default function ChargingMap({
     longitude={viewState.longitude} latitude={viewState.latitude} zoom={viewState.zoom}
     pitch={viewState.pitch || 0} bearing={viewState.bearing || 0} padding={viewState.padding}
     cancelPendingTileRequestsWhileZooming={false}
-    interactive={false} onLoad={() => reportMapEvent('Подложка: load')} onIdle={() => reportMapEvent('Подложка: первый idle')}
+    interactive={false} onLoad={({ target }) => {
+      localizeBasemap(target);
+      reportMapEvent('Подложка: load');
+    }} onStyleData={({ target }) => localizeBasemap(target)} onIdle={({ target }) => {
+      localizeBasemap(target);
+      reportMapEvent('Подложка: первый idle');
+    }}
     onError={event => onMapError(event.error?.message || t("Ошибка подложки"))} />
     {mapSize && <DeckGL ref={deckRef} width={mapSize.width} height={mapSize.height} viewState={viewState} onViewStateChange={({
       viewState: next, interactionState
@@ -228,6 +241,7 @@ export default function ChargingMap({
     })} onAfterRender={() => {
       reportMapEvent('Первый кадр DeckGL');
       if (data) onDataRendered?.();
+      if (!DEVELOPMENT_DIAGNOSTICS) return;
       if (!data?.count || !Number.isFinite(data.receivedAt) || timing.current.packets.has(data)) return;
       if (!layers.some(layer => layer.id === 'charging-sites' || layer.id === 'charging-markers')) return;
       timing.current.packets.add(data);

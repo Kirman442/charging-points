@@ -1,4 +1,5 @@
 import { LinearInterpolator, MapController, TRANSITION_EVENTS } from '@deck.gl/core'
+import { DEVELOPMENT_DIAGNOSTICS } from '../utils/stallDiagnostics.js'
 
 // Keep the double-click recognizer enabled; let the map component choose the
 // target zoom instead of applying the controller's default zoom as well.
@@ -6,7 +7,7 @@ export class ChargingMapController extends MapController {
   handleEvent(event) {
     if (event.type === 'dblclick') return false
     const handled = super.handleEvent(event)
-    if (event.type === 'wheel' || event.type === 'panstart') {
+    if (DEVELOPMENT_DIAGNOSTICS && (event.type === 'wheel' || event.type === 'panstart')) {
       this.reportedInputs ||= new Set()
       if (!this.reportedInputs.has(event.type)) {
         this.reportedInputs.add(event.type)

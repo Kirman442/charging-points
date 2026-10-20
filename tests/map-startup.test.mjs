@@ -61,7 +61,7 @@ test('basemap mounts with no data and before Deck has a measured viewport; camer
   const require = createRequire(import.meta.url)
   const reactUrl = pathToFileURL(require.resolve('react')).href
   const moduleUrl = source => 'data:text/javascript;base64,' + Buffer.from(source).toString('base64')
-  const mapStub = moduleUrl(`import {createElement} from '${reactUrl}'; export default props => createElement('div', {'data-basemap': true, 'data-longitude': props.longitude, 'data-zoom': props.zoom, 'data-interactive': String(props.interactive)})`)
+  const mapStub = moduleUrl(`import {createElement} from '${reactUrl}'; export const mounts=[]; export default props => { mounts.push(props); return createElement('div', {'data-basemap': true, 'data-longitude': props.longitude, 'data-zoom': props.zoom, 'data-interactive': String(props.interactive)}) }`)
   const deckStub = moduleUrl(`export default () => { throw Error('Deck must wait for measured dimensions') }`)
   let source = "import React from 'react'\n" + readFileSync(new URL('../src/components/ChargingMap.jsx', import.meta.url), 'utf8')
   source = source.replace(/^import ['"][^'"]+\.css['"];?\s*$/gm, '')
@@ -84,4 +84,22 @@ test('basemap mounts with no data and before Deck has a measured viewport; camer
   const moved = render({ longitude: 11, latitude: 51, zoom: 6 })
   assert.match(moved, /data-longitude="11"/)
   assert.match(moved, /data-zoom="6"/)
+  const { mounts } = await import(mapStub)
+  for (const props of mounts) {
+    assert.equal(typeof props.onLoad, 'function')
+    assert.equal(typeof props.onStyleData, 'function')
+    assert.equal(typeof props.onIdle, 'function')
+    const layer = { id: 'city', layout: { 'text-field': '{name_en}' } }
+    let writes = 0
+    const map = { isStyleLoaded: () => true, getStyle: () => ({ layers: [layer] }),
+      setLayoutProperty: (id, key, value) => { assert.equal(id, 'city'); layer.layout[key] = value; writes++ } }
+    props.onLoad({ target: map })
+    props.onStyleData({ target: map })
+    props.onIdle({ target: map })
+    assert.equal(writes, 1)
+    layer.layout['text-field'] = '{name}'
+    props.onStyleData({ target: map })
+    props.onIdle({ target: map })
+    assert.equal(writes, 2)
+  }
 })

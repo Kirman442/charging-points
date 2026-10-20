@@ -1,3 +1,5 @@
+export const DEVELOPMENT_DIAGNOSTICS = import.meta.env?.DEV === true
+
 // Epoch-based monotonic timestamps are comparable between Window and Worker.
 export function workerTiming(message, createdAt, receivedAt) {
   const round = value => Math.round(value)

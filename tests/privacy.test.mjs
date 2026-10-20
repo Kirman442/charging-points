@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { runInNewContext } from 'node:vm'
 import { LocalStorage as LogMemory } from '../src/utils/log-memory-storage.js'
 
 const html = readFileSync(new URL('../datenschutz.html', import.meta.url), 'utf8')
@@ -16,12 +17,31 @@ test('privacy page remains independent of map/data and uses only its local theme
   assert.match(html, /<html lang="de">/)
   assert.match(html, /<h1>Datenschutzerklärung<\/h1>/)
   assert.doesNotMatch(html, /<iframe|<object|@import|url\(/i)
-  assert.deepEqual([...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map(m=>m[1]), ['/src/legal/theme.js'])
+  assert.equal([...html.matchAll(/<script[^>]*src=/g)].length, 0)
   for (const tag of html.matchAll(/<(?:link|img|source)\b[^>]*>/gi)) {
     assert.doesNotMatch(tag[0], /(?:src|href)="https?:/)
   }
   assert.match(html, /mailto:k\.lisochenko@web\.de/)
   assert.doesNotMatch(html, /Entwurf zur lokalen Prüfung/)
+})
+test('legal theme executes before styles and restores the first-paint background without writes', () => {
+  const bootstrap = readFileSync(new URL('../src/legal/theme.js', import.meta.url), 'utf8').trim()
+  const imprint = readFileSync(new URL('../impressum.html', import.meta.url), 'utf8')
+  for (const page of [html, imprint]) {
+    const script = page.match(/<script>([\s\S]*?)<\/script>/)
+    assert.equal(script[1].trim(), bootstrap)
+    assert.ok(page.indexOf('<script>') < page.indexOf('rel="stylesheet"'))
+  }
+  for (const [value, theme, background] of [['light','light','#e8edf0'], ['dark','dark','#10181e'], [null,'dark','#10181e'], ['blocked','dark','#10181e']]) {
+    const root = { dataset: {}, style: {} }
+    runInNewContext(bootstrap, { document: { documentElement: root }, localStorage: {
+      getItem() { if (value === 'blocked') throw Error('blocked'); return value },
+      setItem() { throw Error('must not write') },
+    } })
+    assert.equal(root.dataset.theme, theme)
+    assert.equal(root.style.colorScheme, theme)
+    assert.equal(root.style.backgroundColor, background)
+  }
 })
 test('all privacy contents links and the direct landing anchor have unique targets', () => {
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1])

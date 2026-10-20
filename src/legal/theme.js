@@ -1,6 +1,6 @@
 // Restore only the existing, user-selected theme; never create a preference.
-try {
-  document.documentElement.dataset.theme = localStorage.getItem('charging-map-theme') === 'light' ? 'light' : 'dark'
-} catch {
-  document.documentElement.dataset.theme = 'dark'
-}
+let legalTheme = 'dark'
+try { legalTheme = localStorage.getItem('charging-map-theme') === 'light' ? 'light' : 'dark' } catch { /* Optional storage. */ }
+document.documentElement.dataset.theme = legalTheme
+document.documentElement.style.colorScheme = legalTheme
+document.documentElement.style.backgroundColor = legalTheme === 'light' ? '#e8edf0' : '#10181e'

@@ -7,8 +7,15 @@
   <meta name="referrer" content="no-referrer" />
   <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
   <title>Datenschutz · Ladeinfrastruktur in Deutschland</title>
+  <script>
+// Restore only the existing, user-selected theme; never create a preference.
+let legalTheme = 'dark'
+try { legalTheme = localStorage.getItem('charging-map-theme') === 'light' ? 'light' : 'dark' } catch { /* Optional storage. */ }
+document.documentElement.dataset.theme = legalTheme
+document.documentElement.style.colorScheme = legalTheme
+document.documentElement.style.backgroundColor = legalTheme === 'light' ? '#e8edf0' : '#10181e'
+  </script>
   <link rel="stylesheet" href="/src/legal/page.css" />
-  <script type="module" src="/src/legal/theme.js"></script>
 </head>
 <body>
 <main id="datenschutz">

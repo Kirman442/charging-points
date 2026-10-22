@@ -1,0 +1,16 @@
+name: Public repository hygiene
+on:
+  push:
+    branches: [dev, codex/ui-ux-redesign]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  documents:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Reject internal notes and local configuration
+        run: node scripts/check-public-documents.cjs

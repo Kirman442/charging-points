@@ -45,3 +45,7 @@ pbf-work-*/
 data_sources/road-analysis-cache/
 data_sources/a1/exit-zone-checkpoints/
 data_sources/a9/exit-zone-checkpoints/
+
+# Internal working notes live outside the public repository
+/README_*.md
+/*handoff*.md

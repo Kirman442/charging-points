@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>Зарядная инфраструктура</title>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#52c7b6" stroke="#182229" stroke-width="2"/>
+  <path d="M36 12 18 36h13l-3 16 19-28H34z" fill="#182229"/>
+</svg>

@@ -1,0 +1,63 @@
+name: Publish prepared application
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.repository == 'Kirman442/charging-points'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Check public payload and SHA-256
+        shell: python
+        run: |
+          import hashlib, json, pathlib, re, subprocess
+          root = pathlib.Path('.')
+          release = json.loads((root / 'release.json').read_text())
+          assert release['schema'] == 1
+          assert release['basePath'] == '/charging-points/'
+          assert re.fullmatch(r'[0-9a-f]{40}', release['sourceCommit'])
+          names = set(release['files'])
+          assert {'index.html', 'datenschutz.html', 'impressum.html'} <= names
+          for name, expected in release['files'].items():
+              path = pathlib.PurePosixPath(name)
+              assert not path.is_absolute() and '..' not in path.parts
+              assert re.fullmatch(r'(index|datenschutz|impressum)\.html|favicon\.svg|robots\.txt|assets/[A-Za-z0-9._-]+\.(js|css|wasm|woff2|svg|png)|data/[A-Za-z0-9._-]+\.(parquet|txt|json)', name), name
+              source = root / name
+              assert source.is_file() and not source.is_symlink(), name
+              assert hashlib.sha256(source.read_bytes()).hexdigest() == expected, name
+          tracked = set(subprocess.check_output(['git', 'ls-files', '-z']).decode().split('\0')) - {''}
+          assert tracked == names | {'README.md', 'release.json', '.gitattributes', '.github/workflows/deploy.yml'}, sorted(tracked - names)
+          print(f'Validated {len(names)} application files; no source tree or internal documents.')
+      - name: Stage website without repository metadata
+        shell: python
+        run: |
+          import json, os, pathlib, shutil
+          root = pathlib.Path('.')
+          target = pathlib.Path(os.environ['RUNNER_TEMP']) / 'charging-pages'
+          target.mkdir()
+          for name in json.loads((root / 'release.json').read_text())['files']:
+              dest = target / name
+              dest.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copyfile(root / name, dest)
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: ${{ runner.temp }}/charging-pages
+      - uses: actions/deploy-pages@v5
+        id: deployment

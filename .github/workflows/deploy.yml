@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.repository == 'Kirman442/charging-points'
+    if: github.repository == 'Kirman442/charging-points' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -33,11 +33,13 @@ jobs:
           assert release['basePath'] == '/charging-points/'
           assert re.fullmatch(r'[0-9a-f]{40}', release['sourceCommit'])
           names = set(release['files'])
-          assert {'index.html', 'datenschutz.html', 'impressum.html'} <= names
+          runtime = set(json.loads(r'''["data/autobahn_a1_zstd10.parquet","data/autobahn_a2_intervals_zstd10.parquet","data/autobahn_a2_routes_zstd10.parquet","data/autobahn_a2_sites_zstd10.parquet","data/autobahn_a3_intervals_zstd10.parquet","data/autobahn_a3_routes_zstd10.parquet","data/autobahn_a3_sites_zstd10.parquet","data/autobahn_a4_intervals_zstd10.parquet","data/autobahn_a4_routes_zstd10.parquet","data/autobahn_a4_sites_zstd10.parquet","data/autobahn_a5_zstd10.parquet","data/autobahn_a6_intervals_zstd10.parquet","data/autobahn_a6_routes_zstd10.parquet","data/autobahn_a6_sites_zstd10.parquet","data/autobahn_a7_intervals_zstd10.parquet","data/autobahn_a7_routes_zstd10.parquet","data/autobahn_a7_sites_zstd10.parquet","data/autobahn_a8_intervals_zstd10.parquet","data/autobahn_a8_routes_zstd10.parquet","data/autobahn_a8_sites_zstd10.parquet","data/autobahn_a9_zstd10.parquet","data/charging_point_groups_numeric_zstd10.parquet","data/charging_runtime_catalog_zstd10.parquet","data/charging_site_details_zstd10.parquet","data/charging_sites_startup_zstd10.parquet","data/district_labels.json","data/districts_bev_display_100m_string.parquet","data/site_district_counts_zstd10.parquet","data/states_bev_display_100m_string.parquet","favicon.svg","robots.txt"]'''))
+          required = {'index.html', 'datenschutz.html', 'impressum.html'} | runtime
+          assert required <= names, sorted(required - names)
+          assert all(name in required or re.fullmatch(r'assets/[A-Za-z0-9._-]+\.(js|css|wasm|woff2|svg|png)', name) for name in names)
           for name, expected in release['files'].items():
               path = pathlib.PurePosixPath(name)
               assert not path.is_absolute() and '..' not in path.parts
-              assert re.fullmatch(r'(index|datenschutz|impressum)\.html|favicon\.svg|robots\.txt|assets/[A-Za-z0-9._-]+\.(js|css|wasm|woff2|svg|png)|data/[A-Za-z0-9._-]+\.(parquet|txt|json)', name), name
               source = root / name
               assert source.is_file() and not source.is_symlink(), name
               assert hashlib.sha256(source.read_bytes()).hexdigest() == expected, name

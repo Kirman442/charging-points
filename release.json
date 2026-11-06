@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "sourceCommit": "92a7bf9573ecafa5247f2f4faf3936a8da5fcfb8",
+  "sourceCommit": "7c686d73a541344875d03b238852ec73fb209374",
   "basePath": "/charging-points/",
   "delivery": "accepted-static-release-v1",
   "sourceWorkingTreeDirty": false,
@@ -14,15 +14,15 @@
     "accepted-release.json": "d2cb0ab9b6589d3ffac5a94b7a728e9410ae50c008cdce93a7af542331a60275",
     "assets/array-utils-flat-DwebQfqq.js": "ac97757163163317846fd260a14fa0ec52e7d6a4ab37158e7542f44c764a4f9d",
     "assets/charging.worker-Bu0LuGYs.js": "dee8bc5048ef852eb5f78b79db2b45706c5af5a93595ef577bdf2a335ddb1126",
-    "assets/confirmedMotorway.worker-DzUPxNAZ.js": "ac825b65ed96798cba6497d3a43fe15953353c3c3e972a749f03d7769fffce87",
+    "assets/confirmedMotorway.worker-CASr0yU4.js": "982ece66a2176f6588bcb3091b1bb75759e0958fd265e58f8b184896de3634ec",
     "assets/expression-BbC881BM.js": "56c120b52b1bcb6a0f3c07da7614e37a096eea635585dab1ea9f04d78e1193db",
     "assets/get-attribute-from-layouts-l16GuH5D.js": "c9170f8cee8ace72eaf466a1a46c1a7e3f0fee9d2e4c8e5793e055df45047998",
+    "assets/main-BD9mo9De.js": "a6e1ecafa57f4ae0cc3d054588d523a22679ab7b93a12f7da12a090facea6846",
     "assets/main-Csr6IC6k.css": "b1f5d8bec2f781d94ccc05b50f526049f959956dd988344ab70c802be9bceb1b",
-    "assets/main-DXcK4OZO.js": "8bee080f617182a1575ff1c53b105cd237cbc7b90805cdb191258f74fcbc8322",
     "assets/maplibre-gl-worker-DRFeyNJw.js": "39826cbc947ceaa0dc52c32fa773f0b374ae0867e3f8079b87f6aac75afdaaf6",
     "assets/page-jRKvzPRG.css": "7e21942c58e91b5c0aed2038533f8aea89dce0a443e2144ec562cfbf9312c1bb",
     "assets/parquet_wasm_bg-DrNke8Bl.wasm": "1e2ff2657d0c6b776eee88fe67392fdab59fea95821089bc60883e948f652eaf",
-    "assets/webgl-CFozYEQi.js": "8b508a9e7bf97f2246243c08c46f530724275d446348895c6b713b66effda5d8",
+    "assets/webgl-HHIC-FQ7.js": "9ee73ca7f933212164584fcdb4462b573715d17fadebc6f23c8a5f9c28f68d40",
     "data/charging_point_groups_numeric_zstd10.parquet": "a088b226c31c31c63c01c7c87843507fa6866e54ea8140b0722eb2eaf573e3ee",
     "data/charging_runtime_catalog_zstd10.parquet": "b1f651d9ad971dbe04c9a2c2eb1a05302e385d9900480087b1ff8ba580976082",
     "data/charging_site_details_zstd10.parquet": "bf98b139fa17a646b8b6934a45c3614a05e6f1290c74758c4f7e157fd1242256",
@@ -546,7 +546,7 @@
     "datenschutz.html": "7576eebca2503c8b8d1bed7636a4c23aa02f13b140ab6a960d17982af2f88a89",
     "favicon.svg": "9a0c746a25d6561aef2ff7bec6c50b10cfb335bf73adb66338814b1f0b666e60",
     "impressum.html": "22607a2a093a251de303cf7020c146e03f2b478c39121bd77e6e83e8d39c6040",
-    "index.html": "810ec366abf8dfa1957d54cd8e797a803329bcf0debc2414e7e34bcc83d2b8a5",
+    "index.html": "93cd7b80cbcbc7e24b7c3bc358f5b0b298297d00c44d1bbb1a48fb107f39b62f",
     "robots.txt": "a8f31103361fca68bef71fc69cff844b7c23bd3d64d2b872d74690cbda656bfc"
   }
 }

@@ -21,6 +21,7 @@ Eine interaktive Karte der öffentlich zugänglichen Ladeinfrastruktur in Deutsc
 | Verwaltungsgrenzen VG250 | [© BKG](https://www.bkg.bund.de/) · dl-de/by-2-0 | 01.01.2026 |
 | Straßenmodell, gespeicherter Deutschland-Extrakt | [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright) · ODbL, via [Geofabrik](https://download.geofabrik.de/europe/germany.html) | 06.10.2026 |
 | Hintergrundkarten Positron und Dark Matter | [© CARTO](https://carto.com/attributions), © OpenStreetMap contributors | Online-Kartendienst |
+| Ergänzende Betreiberangaben für ausgewählte Ladeeinrichtungen | EWE Go und E.ON Drive Infrastructure über [Mobilithek](https://mobilithek.info/) · CC0 1.0 | Abruf 07.11.2026 |
 
 Ausführliche Quellen, Lizenzen, Kennzahlendefinitionen und die Methodik stehen in der Anwendung unter **Info**. Ladestandorte, regionale Kennzahlen und Autobahnintervalle werden aus den Ausgangsdaten abgeleitet. Die unterschiedlichen Stichtage bleiben bestehen.
 

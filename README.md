@@ -1,6 +1,6 @@
 # Ladeinfrastruktur in Deutschland
 
-[Interaktive Karte öffnen](https://kirman442.github.io/charging-points/)
+[Interaktive Karte öffnen](https://gis.krmn.app/charging-points/)
 
 Eine interaktive Karte der öffentlich zugänglichen Ladeinfrastruktur in Deutschland. Sie verbindet das Ladesäulenregister mit dem Bestand batterieelektrischer Pkw und zeigt regionale Unterschiede sowie ein experimentelles Straßenmodell für die Autobahnen A1–A9.
 
@@ -35,6 +35,6 @@ Der Autobahnmodus ist eine Modellrechnung: Eine berechnete Straßenanbindung bes
 
 Dieses Repository enthält die fertig gebaute Webanwendung. Die Entwicklung und interne Dokumentation werden separat geführt. React, deck.gl, MapLibre GL JS, Apache Arrow und Parquet/WASM bilden die technische Grundlage.
 
-Datenschutz und Impressum sind in **Info** sowie als [Datenschutzseite](https://kirman442.github.io/charging-points/datenschutz.html) und [Impressum](https://kirman442.github.io/charging-points/impressum.html) erreichbar. Datenquellen und Bibliotheken unterliegen ihren jeweiligen Lizenzbedingungen.
+Datenschutz und Impressum sind in **Info** sowie als [Datenschutzseite](./datenschutz.html) und [Impressum](./impressum.html) erreichbar. Datenquellen und Bibliotheken unterliegen ihren jeweiligen Lizenzbedingungen.
 
 Die Standortkarten enthalten gruppierte Anschlüsse und Bezahlmöglichkeiten. Zugeordnete Angaben aus OBELIS / NOW GmbH ergänzen einen Teil der Ladeeinrichtungen (Stand 23.10.2026, CC BY 4.0). Preise sind gemeldete Werte, keine bestätigten aktuellen Tarife; Angaben ohne Einheit werden nicht als Eurobeträge interpretiert. Die Auswahl für A1–A9 verbindet die bestätigten Modellrouten mit dem aktualisierten Registerbestand.

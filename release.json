@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "sourceCommit": "2c7455768760bdf1232053687935e818216ca423",
+  "sourceCommit": "4eee7e88e72173a6167e665156ef58285e69c9a4",
   "basePath": "/charging-points/",
   "delivery": "accepted-static-release-v1",
   "sourceWorkingTreeDirty": false,
@@ -18,11 +18,11 @@
     "assets/expression-BbC881BM.js": "56c120b52b1bcb6a0f3c07da7614e37a096eea635585dab1ea9f04d78e1193db",
     "assets/get-attribute-from-layouts-l16GuH5D.js": "c9170f8cee8ace72eaf466a1a46c1a7e3f0fee9d2e4c8e5793e055df45047998",
     "assets/main-CspRwZ2L.css": "1625edb326dbb61214bcc8c80b69c5b708b62810030a902d4eedeeac4b668006",
-    "assets/main-D1U8tN7z.js": "046e505e3b196f8047076ce975b98da03107483a5220e0fe711637ede7d3d6ef",
+    "assets/main-CtEdpTKo.js": "979c9abb7f902cc84956d3d6712c9f8256df18f16616cb89d00d113164117255",
     "assets/maplibre-gl-worker-DRFeyNJw.js": "39826cbc947ceaa0dc52c32fa773f0b374ae0867e3f8079b87f6aac75afdaaf6",
     "assets/page-jRKvzPRG.css": "7e21942c58e91b5c0aed2038533f8aea89dce0a443e2144ec562cfbf9312c1bb",
     "assets/parquet_wasm_bg-DrNke8Bl.wasm": "1e2ff2657d0c6b776eee88fe67392fdab59fea95821089bc60883e948f652eaf",
-    "assets/webgl-C5iX5zEr.js": "5b1983fc2d0feb42eb7abfa39b4f2fd6e5a3cede28df487f3f859a69270a8b50",
+    "assets/webgl-BkETLpaB.js": "77fbcd65096ef2918c9a41a1e6affc3016fdbd32aa4f071a3c9955ecaf7d3c22",
     "data/charging_point_groups_numeric_zstd10.parquet": "a088b226c31c31c63c01c7c87843507fa6866e54ea8140b0722eb2eaf573e3ee",
     "data/charging_runtime_catalog_zstd10.parquet": "b1f651d9ad971dbe04c9a2c2eb1a05302e385d9900480087b1ff8ba580976082",
     "data/charging_site_details_zstd10.parquet": "bf98b139fa17a646b8b6934a45c3614a05e6f1290c74758c4f7e157fd1242256",
@@ -546,7 +546,7 @@
     "datenschutz.html": "7576eebca2503c8b8d1bed7636a4c23aa02f13b140ab6a960d17982af2f88a89",
     "favicon.svg": "9a0c746a25d6561aef2ff7bec6c50b10cfb335bf73adb66338814b1f0b666e60",
     "impressum.html": "22607a2a093a251de303cf7020c146e03f2b478c39121bd77e6e83e8d39c6040",
-    "index.html": "78a63a8cc93e7970601d014680a82ff66e0f77e55fed40a747744d202930bfed",
+    "index.html": "f4f91179b4a3b12866eac067fa24c197af705d59983bdc1535a116d799f40bb6",
     "robots.txt": "a8f31103361fca68bef71fc69cff844b7c23bd3d64d2b872d74690cbda656bfc"
   }
 }

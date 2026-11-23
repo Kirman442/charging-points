@@ -7,7 +7,8 @@ Eine interaktive Karte der öffentlich zugänglichen Ladeinfrastruktur in Deutsc
 ## Funktionen
 
 - Ladestandorte, Ladepunkte, AC/DC und Nennleistung auf der Karte und in einer Standortliste erkunden.
-- Nach Bundesland, Leistung, DC und Öffnung rund um die Uhr filtern.
+- Nach Betreiber und Leistung suchen; nach Bundesland, DC und Öffnung rund um die Uhr filtern.
+- Standortkarten mit gruppierten Anschlüssen, Bezahlmöglichkeiten und zugeordneten Ad-hoc-Preisen öffnen. Ohne Preisangaben bleibt ein kurzer Hinweis statt eines leeren Preisblocks.
 - Ladepunkte und Leistung nach Ländern bzw. Kreisen vergleichen, auch je 1.000 BEV.
 - Im Autobahnmodus eine Autobahn und Fahrtrichtung wählen, Straßenanbindungen und berechnete Streckenintervalle untersuchen.
 - Kartenansicht und Filter über Links teilen; helle und dunkle Darstellung sowie mobile Bedienung nutzen.

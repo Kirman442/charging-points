@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "sourceCommit": "0121999d62c90d8220872feab2fca04e9fbc80f0",
+  "sourceCommit": "b82db054e9872d725cfd73a832a03d95a08e7d7b",
   "basePath": "/charging-points/",
   "delivery": "accepted-static-release-v1",
   "sourceWorkingTreeDirty": false,
@@ -18,11 +18,11 @@
     "assets/expression-BbC881BM.js": "56c120b52b1bcb6a0f3c07da7614e37a096eea635585dab1ea9f04d78e1193db",
     "assets/get-attribute-from-layouts-l16GuH5D.js": "c9170f8cee8ace72eaf466a1a46c1a7e3f0fee9d2e4c8e5793e055df45047998",
     "assets/main-BZqYJJZf.css": "77ee0346908aaf25cdb879d3e1f909f310da871f089ed19b49a28e9ed1e8ad98",
-    "assets/main-DbUoCt_f.js": "808511f4dc0f7869d8d97672bee5bf2b1abd5e79b7f69d2f4b5ee1ab6a454a71",
+    "assets/main-D--CAzNn.js": "4fb1ee15d6bc20a2b237a7a99914d3a40c85696c365347608cb321110d211542",
     "assets/maplibre-gl-worker-DRFeyNJw.js": "39826cbc947ceaa0dc52c32fa773f0b374ae0867e3f8079b87f6aac75afdaaf6",
     "assets/page-jRKvzPRG.css": "7e21942c58e91b5c0aed2038533f8aea89dce0a443e2144ec562cfbf9312c1bb",
     "assets/parquet_wasm_bg-DrNke8Bl.wasm": "1e2ff2657d0c6b776eee88fe67392fdab59fea95821089bc60883e948f652eaf",
-    "assets/webgl-BP2jH5Iu.js": "e5433f35b6c410eee820faaa735fc9793f840178149614fe9575c8ea62bb2683",
+    "assets/webgl-C_iaq-yD.js": "63d0dea0a3783c7f38abacbd15b7fd305cbfaad88ab9e6437fb59f246e26e608",
     "data/charging_point_groups_numeric_zstd10.parquet": "a088b226c31c31c63c01c7c87843507fa6866e54ea8140b0722eb2eaf573e3ee",
     "data/charging_runtime_catalog_zstd10.parquet": "b1f651d9ad971dbe04c9a2c2eb1a05302e385d9900480087b1ff8ba580976082",
     "data/charging_site_details_zstd10.parquet": "bf98b139fa17a646b8b6934a45c3614a05e6f1290c74758c4f7e157fd1242256",
@@ -546,7 +546,7 @@
     "datenschutz.html": "7576eebca2503c8b8d1bed7636a4c23aa02f13b140ab6a960d17982af2f88a89",
     "favicon.svg": "9a0c746a25d6561aef2ff7bec6c50b10cfb335bf73adb66338814b1f0b666e60",
     "impressum.html": "22607a2a093a251de303cf7020c146e03f2b478c39121bd77e6e83e8d39c6040",
-    "index.html": "339d1ebb2a60cc2c07d573240209288309e98d3080e6c85929b997358025129b",
+    "index.html": "b4918e5d15f1c13ce2c9146cb7c4f4506ab09eec34651abe7d96efe6f1049078",
     "robots.txt": "a8f31103361fca68bef71fc69cff844b7c23bd3d64d2b872d74690cbda656bfc"
   }
 }
